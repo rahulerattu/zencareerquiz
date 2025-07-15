@@ -3,36 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forest Career Quiz</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}" />
+  <title>World Explorer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+  <script defer src="{{ url_for('static', filename='js/quiz.js') }}"></script>
 </head>
 <body>
+  <div class="forest-bg"></div>
 
   <div id="quiz-container">
-  <div id="character-container">
-    <div id="main-character"></div>
-    <div class="speech-bubble">
-      <p id="question-text">Loading question...</p>
+    <!-- Character Column -->
+    <div id="character-container">
+      <div id="main-character"></div>
+      <div class="speech-bubble">
+        <p id="question-text">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Video Column -->
+    <div id="video-column">
+      <video id="journey-video" width="700" muted playsinline></video>
+        <source src="https://zencareer.b-cdn.net/world_journey.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+
+      <div id="answers">
+        <button class="answer-btn">Option 1</button>
+        <button class="answer-btn">Option 2</button>
+        <button class="answer-btn">Option 3</button>
+      </div>
     </div>
   </div>
-
-  <video id="journey-video" width="800" muted>
-    <source src="https://zencareer.b-cdn.net/world_journey.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-
-  <div id="answers">
-    <button class="answer-btn">Option 1</button>
-    <button class="answer-btn">Option 2</button>
-    <button class="answer-btn">Option 3</button>
-    </div>
-    </div>
-
-
-  <script src="{{ url_for('static', filename='js/quiz.js') }}">
-  </script>
-
 </body>
 </html>
