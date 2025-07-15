@@ -81,3 +81,68 @@ body {
 .start-btn:hover {
   background: #27ae60;
 }
+
+#quiz-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  padding: 30px;
+}
+
+#character-container {
+  position: relative;
+  width: 200px;
+  height: 250px;
+}
+
+#main-character {
+  width: 180px;
+  height: 180px;
+}
+
+.speech-bubble {
+  position: absolute;
+  top: -30px;
+  left: 100px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 12px 20px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 250px;
+  font-size: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  animation: floatBubble 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes floatBubble {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-4px);
+  }
+}
+
+#answers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.answer-btn {
+  padding: 12px 24px;
+  background-color: #e6f4f1;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.answer-btn:hover {
+  background-color: #cde7df;
+}
+
