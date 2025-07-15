@@ -1,0 +1,83 @@
+body {
+  font-family: 'Quicksand', sans-serif;
+  margin: 0;
+  background-color: #0e1d1b;
+  color: #fff;
+  cursor: url('../images/cursor.png'), auto;
+  overflow-x: hidden;
+}
+
+.forest-bg {
+  background: url('../images/forest-bg.jpg') no-repeat center center/cover;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -2;
+  filter: brightness(0.7);
+}
+
+.firefly {
+  width: 5px;
+  height: 5px;
+  background: yellow;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: fly 6s infinite ease-in-out;
+  opacity: 0.7;
+}
+@keyframes fly {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(50px, -50px); }
+  100% { transform: translate(0, 0); }
+}
+
+.container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.nickname-box input {
+  padding: 10px;
+  font-size: 1.2em;
+  border-radius: 10px;
+  border: none;
+  margin-top: 10px;
+}
+
+.pet-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.pet {
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  border: 3px solid transparent;
+  transition: transform 0.3s, border 0.3s;
+  cursor: pointer;
+}
+
+.pet.selected {
+  border-color: #ffcc00;
+  box-shadow: 0 0 15px #ffcc00aa;
+}
+
+.start-btn {
+  display: inline-block;
+  padding: 12px 25px;
+  font-size: 1.3em;
+  background: #2ecc71;
+  color: white;
+  border-radius: 25px;
+  text-decoration: none;
+  margin-top: 20px;
+  transition: background 0.3s;
+}
+.start-btn:hover {
+  background: #27ae60;
+}

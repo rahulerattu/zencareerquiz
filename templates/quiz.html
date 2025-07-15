@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forest Career Quiz</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+</head>
+<body>
+  <div id="quiz-container">
+    <video id="journey-video" width="800" controls muted>
+      <source src="https://zencareer.b-cdn.net/world_journey.mp4" type="video/mp4">
+       Your browser does not support the video tag.
+     </video>
+
+    <div id="character-panel">
+      <div id="main-character"></div>
+    </div>
+
+    <div id="question-box">
+      <div class="speech-bubble">
+        <p id="question-text">Loading question...</p>
+      </div>
+      <div id="answers">
+        <button class="answer-btn">Option 1</button>
+        <button class="answer-btn">Option 2</button>
+        <button class="answer-btn">Option 3</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('journey-video');
+    const questionBox = document.getElementById('question-box');
+    const questionText = document.getElementById('question-text');
+    const answerButtons = document.querySelectorAll('.answer-btn');
+    const characterPanel = document.getElementById('main-character');
+
+    const pet = localStorage.getItem('selectedPet') || 'panda';
+
+    const characterFiles = {
+      panda: '/static/lottie/panda.json',
+      puppy: '/static/lottie/puppy.json',
+      penguin: '/static/lottie/penguin.json'
+    };
+
+    lottie.loadAnimation({
+      container: characterPanel,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: characterFiles[pet] || characterFiles['panda']
+    });
+
+    const questionTimestamps = Array.from({ length: 39 }, (_, i) => i === 0 ? 1 : 6 * i);
+    let currentQuestion = 0;
+    let waitingForAnswer = false;
+
+    const questions = [
+      "What makes you feel truly alive?",
+      "Which of these aligns with your childhood dream?",
+      "How do you define success?",
+      "What kind of tasks drain you?",
+      "Which type of work energizes you most?",
+      "What kind of people do you enjoy helping?",
+      "If money weren't a concern, what would you do every day?",
+      "Which activities make you lose track of time?",
+      "What problems in the world do you feel called to solve?",
+      "What would you regret not doing in your lifetime?",
+      "How do you react to competition?",
+      "Do you prefer structure or spontaneity?",
+      "Which describes your dream work environment?",
+      "Do you value recognition or inner satisfaction more?",
+      "Would you lead or collaborate in a group?",
+      "What kind of legacy do you want to leave behind?",
+      "Which best describes your role in a team?",
+      "Are you more analytical or creative?",
+      "Do you work better under pressure or with calm deadlines?",
+      "How important is personal freedom to you?",
+      "What do you fear losing the most?",
+      "Are you more of a planner or a go-with-the-flow type?",
+      "How do you resolve conflicts?",
+      "Which natural element do you resonate with most?",
+      "If you were an animal, which would you be?",
+      "Which do you value more: stability or excitement?",
+      "Would you prefer routine or novelty in work?",
+      "Are you results-focused or process-enjoying?",
+      "Which color appeals to you most today?",
+      "Do you prefer exploring ideas or solving problems?",
+      "Where would you build your dream home?",
+      "What role does intuition play in your decisions?",
+      "How do you handle criticism?",
+      "What drives you more: purpose or pleasure?",
+      "Do you enjoy guiding others or being guided?",
+      "Would you rather write a book or build a product?",
+      "Which quote resonates most with you?",
+      "How would friends describe your energy?",
+      "What's your ultimate life goal?"
+    ];
+
+    video.currentTime = questionTimestamps[0];
+    video.pause();
+    showQuestion(currentQuestion);
+
+    function showQuestion(index) {
+      waitingForAnswer = true;
+      questionBox.style.display = 'block';
+      questionText.textContent = questions[index] || "Question coming soon...";
+    }
+
+    answerButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (!waitingForAnswer) return;
+        waitingForAnswer = false;
+        questionBox.style.display = 'none';
+        currentQuestion++;
+
+        if (currentQuestion < questionTimestamps.length) {
+          video.play();
+          const pauseAt = questionTimestamps[currentQuestion];
+          const checkPause = () => {
+            if (video.currentTime >= pauseAt) {
+              video.pause();
+              showQuestion(currentQuestion);
+              video.removeEventListener('timeupdate', checkPause);
+            }
+          };
+          video.addEventListener('timeupdate', checkPause);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

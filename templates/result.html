@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Your Career Path</title></head>
+<body>
+  <h2>Your Personality Type: {{ personality }}</h2>
+  <p>Your Top Career Matches:</p>
+  <ul>
+    {% for career in careers %}
+      <li>{{ career }}</li>
+    {% endfor %}
+  </ul>
+  <p>To get a detailed 3-page report, please proceed to payment.</p>
+  <a href="/pay">Go to Payment</a>
+</body>
+</html>
