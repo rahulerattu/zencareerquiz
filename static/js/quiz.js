@@ -20,44 +20,53 @@ const clickSound = document.getElementById('clickSound');
 const traitMessage = document.getElementById('trait-message');
 const finalScreen = document.getElementById('final-screen');
 
+const questions = window.allQuestions || [];
 let currentQuestion = 0;
 let answered = false;
 
-const questions = window.allQuestions; // From inline HTML
-
-video.addEventListener('timeupdate', () => {
-  if (currentQuestion >= timestamps.length) return;
-
-  const currentTime = video.currentTime;
-  if (currentTime >= timestamps[currentQuestion]) {
-    video.pause();
-    showQuestion(currentQuestion);
-  }
-});
+window.onload = () => {
+  video.addEventListener("timeupdate", () => {
+    const currentTime = Math.floor(video.currentTime);
+    if (currentQuestion < timestamps.length && currentTime >= timestamps[currentQuestion]) {
+      video.pause();
+      showQuestion(currentQuestion);
+      clickSound.play();
+    }
+  });
+};
 
 function showQuestion(index) {
   answered = false;
+
   const q = questions[index];
+  if (!q) return;
+
   questionText.innerHTML = `<strong>${placeNames[index]}</strong><br/>${q.question}`;
   answerButtons.innerHTML = "";
 
   q.answers.forEach((ans) => {
     const btn = document.createElement("button");
     btn.textContent = ans;
-    btn.onclick = () => {
-      if (answered) return;
-      answered = true;
-      clickSound.play();
-      if ((index + 1) % 5 === 0) showTraitMessage(); // Show every 5th question
-      currentQuestion++;
-      if (currentQuestion < timestamps.length) {
-        setTimeout(() => video.play(), 1000);
-      } else {
-        showFinalScreen();
-      }
-    };
+    btn.onclick = () => handleAnswer(index);
     answerButtons.appendChild(btn);
   });
+}
+
+function handleAnswer(index) {
+  if (answered) return;
+  answered = true;
+
+  clickSound.play();
+
+  if ((index + 1) % 5 === 0) showTraitMessage();
+
+  currentQuestion++;
+
+  if (currentQuestion < timestamps.length) {
+    setTimeout(() => video.play(), 1000);
+  } else {
+    showFinalScreen();
+  }
 }
 
 function showTraitMessage() {
