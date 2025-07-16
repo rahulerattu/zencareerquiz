@@ -1,94 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forest Path Career Quiz - Welcome</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Explorer Personality Quiz</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Main Stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet"/>
+  <!-- Custom Cursor -->
+  <style>
+    body {
+      cursor: url('{{ url_for('static', filename='images/cursor.png') }}') 32 32, auto;
+    }
+  </style>
+  <!-- GSAP for Animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Lottie for Animations -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
 </head>
-<body class="welcome-body">
+<body>
+  <!-- Background Image -->
+  <div class="background"></div>
 
-  <audio id="ambienceMusic" src="{{ url_for('static', filename='audio/ambience.mp3') }}" autoplay loop></audio>
+  <!-- Welcome Container -->
+  <div class="welcome-container">
+    <h1 class="title">World Explorer Personality Quiz</h1>
+    <p class="subtitle">Embark on a journey of self-discovery by traveling around the world.</p>
 
-  <div class="container">
-    <header>
-      <h1>🌳 Welcome to the Forest Path Career Quiz 🌍</h1>
-      <p class="tagline">Start your journey with a spirit animal guide</p>
-    </header>
-
-    <h2 class="choose-title">Choose Your Companion</h2>
+    <h2 class="select-title">Choose Your Travel Companion</h2>
     <div class="pet-selection">
-      <div class="pet-option" data-pet="panda">
-        <div class="lottie" id="panda-animation"></div>
+      <div class="pet-card" data-pet="panda">
+        <div id="panda-lottie" class="pet-anim"></div>
         <p>Panda</p>
       </div>
-      <div class="pet-option" data-pet="puppy">
-        <div class="lottie" id="puppy-animation"></div>
-        <p>Puppy</p>
-      </div>
-      <div class="pet-option" data-pet="penguin">
-        <div class="lottie" id="penguin-animation"></div>
+      <div class="pet-card" data-pet="penguin">
+        <div id="penguin-lottie" class="pet-anim"></div>
         <p>Penguin</p>
       </div>
+      <div class="pet-card" data-pet="puppy">
+        <div id="puppy-lottie" class="pet-anim"></div>
+        <p>Puppy</p>
+      </div>
     </div>
 
-    <div class="nickname-input">
-      <label for="nickname">Choose Your Nickname:</label><br>
-      <input type="text" id="nickname" placeholder="e.g. MysticTraveler">
-    </div>
-
-    <div style="text-align: center;">
-      <a href="{{ url_for('quiz') }}" class="start-button" id="start-btn" style="display:none;">Start Journey</a>
-    </div>
-
-    <footer>
-      <p>&copy; 2025 Forest Career Quest | Crafted by Rahul</p>
-    </footer>
+    <button id="start-btn" class="start-btn" disabled>Start Your Journey</button>
   </div>
 
+  <!-- Inline Script: Lottie & Interaction Logic -->
   <script>
-    const loadLottie = (id, path) => {
-      lottie.loadAnimation({
-        container: document.getElementById(id),
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        path: path
+    document.addEventListener('DOMContentLoaded', () => {
+      // Fade in container
+      gsap.from('.welcome-container', { opacity: 0, y: 50, duration: 1 });
+
+      // Load Lottie animations
+      const pets = [
+        { id: 'panda-lottie', path: '{{ url_for('static', filename='lottie/panda.json') }}' },
+        { id: 'penguin-lottie', path: '{{ url_for('static', filename='lottie/penguin.json') }}' },
+        { id: 'puppy-lottie', path: '{{ url_for('static', filename='lottie/puppy.json') }}' }
+      ];
+      pets.forEach(pet => {
+        lottie.loadAnimation({
+          container: document.getElementById(pet.id),
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: pet.path
+        });
       });
-    };
 
-    window.addEventListener("load", () => {
-      gsap.from("header h1", { opacity: 0, y: -30, duration: 1 });
-      loadLottie("panda-animation", "{{ url_for('static', filename='lottie/panda.json') }}");
-      loadLottie("puppy-animation", "{{ url_for('static', filename='lottie/puppy.json') }}");
-      loadLottie("penguin-animation", "{{ url_for('static', filename='lottie/penguin.json') }}");
-    });
+      // Selection Logic
+      let selectedPet = null;
+      const petCards = document.querySelectorAll('.pet-card');
+      const startBtn = document.getElementById('start-btn');
 
-    const pets = document.querySelectorAll('.pet-option');
-    const startBtn = document.getElementById('start-btn');
-    const nicknameInput = document.getElementById('nickname');
-
-    pets.forEach(pet => {
-      pet.addEventListener('click', () => {
-        pets.forEach(p => p.classList.remove('selected'));
-        pet.classList.add('selected');
-        localStorage.setItem('selectedPet', pet.dataset.pet);
-        if (nicknameInput.value.trim()) startBtn.style.display = 'inline-block';
+      petCards.forEach(card => {
+        card.addEventListener('click', () => {
+          petCards.forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedPet = card.getAttribute('data-pet');
+          startBtn.disabled = false;
+        });
       });
-    });
 
-    nicknameInput.addEventListener('input', () => {
-      localStorage.setItem('nickname', nicknameInput.value.trim());
-      if (document.querySelector('.pet-option.selected') && nicknameInput.value.trim()) {
-        startBtn.style.display = 'inline-block';
-      } else {
-        startBtn.style.display = 'none';
-      }
+      // Start Quiz
+      startBtn.addEventListener('click', () => {
+        if (selectedPet) {
+          window.location.href = `{{ url_for('quiz') }}?pet=${selectedPet}`;
+        }
+      });
     });
   </script>
-
 </body>
 </html>
+
