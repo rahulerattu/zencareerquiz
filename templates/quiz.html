@@ -2,42 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ZenCareer Quiz</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explore Your Inner Self</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.4/lottie.min.js"></script>
 </head>
 <body>
+  <audio id="clickSound" src="{{ url_for('static', filename='click.mp3') }}"></audio>
+  <audio id="ambience" src="{{ url_for('static', filename='ambience.mp3') }}" autoplay loop></audio>
 
-  <div id="video-container">
-    <video
-      id="quizVideo"
-      src="https://zencareer.b-cdn.net/world_journey.mp4"
-      width="100%"
-      muted
-      autoplay
-      playsinline
-    ></video>
+  <div id="loading">Loading...</div>
 
-    <div id="questionOverlay">
-      <div class="character-container">
-        <div id="petLottie" class="pet-lottie"></div>
-        <div class="speech-bubble" id="questionText">Loading...</div>
-      </div>
-      <div id="answers" class="answers-container"></div>
+  <div class="container">
+    <video id="quizVideo" width="100%" autoplay muted>
+      <source src="https://zencareer.b-cdn.net/worldjourney.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <div id="questionBox" class="speech-bubble">
+      <p id="questionText"></p>
+      <div id="answers"></div>
     </div>
 
-    <div id="trait-message">🌟 New personality trait gained!</div>
-
-    <div id="final-screen">
-      <h2>🎉 You've completed your journey!</h2>
-      <button onclick="showFinalResult()">Show My Results</button>
-    </div>
+    <div id="petLottie" class="pet-animation"></div>
   </div>
 
-  <audio id="clickSound" src="{{ url_for('static', filename='audio/click.mp3') }}"></audio>
+  <script>
+    window.onload = () => {
+      document.title = "Explore Your Inner Self";
 
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+      const video = document.getElementById("quizVideo");
+      const questionText = document.getElementById("questionText");
+      const answersDiv = document.getElementById("answers");
+      const clickSound = document.getElementById("clickSound");
 
+      const loadingDiv = document.getElementById("loading");
+      if (loadingDiv) loadingDiv.style.display = "none";
+
+      const selectedPet = localStorage.getItem("selectedPet") || "panda";
+      const petContainer = document.getElementById("petLottie");
+      lottie.loadAnimation({
+        container: petContainer,
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: `https://zencareer.b-cdn.net/${selectedPet}.json`
+      });
+
+      const timestamps = Array.from({ length: 40 }, (_, i) => (i + 1) * 6);
+
+      const questions = [
+        { question: "Which activity gives you the most joy?", answers: ["Solving problems", "Helping others", "Creating art", "Leading a team", "Learning something new"] },
+        { question: "What motivates you to work hard?", answers: ["Sense of purpose", "Rewards and recognition", "Helping the society", "Personal growth", "Team success"] },
+        { question: "Which environment feels most natural to you?", answers: ["A peaceful forest", "A busy city", "A structured classroom", "A creative studio", "A tech lab"] },
+        { question: "When do you feel most energetic?", answers: ["Early morning", "Late night", "After exercise", "When inspired", "During challenges"] },
+        { question: "Which of these describes you best?", answers: ["Calm and grounded", "Driven and focused", "Empathetic and kind", "Curious and adaptable", "Bold and confident"] },
+        { question: "You’re handed a team project. What's your first move?", answers: ["Divide roles logically", "Check in with teammates", "Make it visually appealing", "Take initiative as a leader", "Research best approaches"] },
+        { question: "What’s your ideal weekend?", answers: ["Reading or learning", "Volunteering or helping", "Painting or crafting", "Planning next week", "Outdoor adventure"] },
+        { question: "Which task do you enjoy more?", answers: ["Fixing a bug", "Counseling a friend", "Singing or dancing", "Organizing files", "Inventing a gadget"] },
+        { question: "If you got a free day, how would you spend it?", answers: ["Solving puzzles", "Caring for animals", "Writing poetry", "Setting goals", "Exploring tech"] },
+        { question: "What drives your decisions most?", answers: ["Logic", "Compassion", "Inspiration", "Ambition", "Curiosity"] },
+        // 30 more MBTI + psychometric + interest questions
+        { question: "You prefer to plan things in advance rather than be spontaneous.", answers: ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"] },
+        { question: "You gain energy from being around people.", answers: ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"] },
+        { question: "You are more logical than emotional.", answers: ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"] },
+        { question: "You often reflect on your actions and thoughts.", answers: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+        { question: "Which career feels exciting to you?", answers: ["Scientist", "Artist", "Therapist", "Entrepreneur", "Teacher"] },
+        { question: "Do you enjoy solving complex puzzles or problems?", answers: ["Yes, a lot", "Yes", "Neutral", "Not really", "No"] },
+        { question: "Would you rather create something new or improve something existing?", answers: ["Create", "Improve", "Depends", "Neither", "Not sure"] },
+        { question: "Do you often help friends find solutions to their issues?", answers: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+        { question: "Do you value independence at work?", answers: ["Very much", "Yes", "Somewhat", "Not really", "No"] },
+        { question: "Are you comfortable making quick decisions?", answers: ["Very comfortable", "Mostly", "Neutral", "Not much", "Not at all"] },
+        { question: "Do you prefer working with data or people?", answers: ["Data", "Mostly data", "Both", "Mostly people", "People"] },
+        { question: "Do you like taking leadership roles?", answers: ["Yes, always", "Often", "Sometimes", "Rarely", "No"] },
+        { question: "You enjoy hands-on, practical tasks more than abstract ideas.", answers: ["Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"] },
+        { question: "Do you like experimenting with ideas?", answers: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+        { question: "Are you more driven by goals or curiosity?", answers: ["Goals", "Mostly goals", "Both", "Mostly curiosity", "Curiosity"] },
+        { question: "How often do you seek feedback?", answers: ["Very often", "Often", "Sometimes", "Rarely", "Never"] },
+        { question: "How do you react to criticism?", answers: ["Welcome it", "Accept it", "Neutral", "Defensive", "Reject it"] },
+        { question: "Do you prefer tasks with clear instructions or open-ended ones?", answers: ["Clear", "Mostly clear", "Both", "Mostly open", "Open"] },
+        { question: "Do you enjoy collaborating with others?", answers: ["Love it", "Enjoy it", "Neutral", "Not really", "Dislike"] },
+        { question: "How do you handle stress?", answers: ["Calmly", "Manageable", "Neutral", "Overwhelmed", "Avoidant"] },
+        { question: "What role do emotions play in your decision making?", answers: ["Big role", "Moderate", "Balanced", "Minimal", "None"] },
+        { question: "Do you often daydream or imagine things?", answers: ["Always", "Often", "Sometimes", "Rarely", "Never"] },
+        { question: "Would you rather design a system or tell a story?", answers: ["Design system", "Mostly design", "Both", "Mostly story", "Tell story"] },
+        { question: "Are you easily bored by routine?", answers: ["Yes", "Often", "Sometimes", "Rarely", "No"] },
+        { question: "Do you often seek variety in your work?", answers: ["Always", "Often", "Sometimes", "Rarely", "Never"] }
+      ];
+
+      let currentQuestion = 0;
+
+      video.pause();
+      showQuestion(currentQuestion);
+
+      video.addEventListener("timeupdate", () => {
+        const currentTime = Math.floor(video.currentTime);
+        if (currentQuestion < timestamps.length && currentTime >= timestamps[currentQuestion]) {
+          video.pause();
+          showQuestion(currentQuestion);
+          clickSound.play();
+        }
+      });
+
+      function showQuestion(index) {
+        const q = questions[index];
+        if (!q) return;
+        questionText.textContent = q.question;
+        answersDiv.innerHTML = "";
+        q.answers.forEach((answer) => {
+          const btn = document.createElement("button");
+          btn.className = "answer-btn";
+          btn.textContent = answer;
+          btn.onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+              video.play();
+            }
+          };
+          answersDiv.appendChild(btn);
+        });
+      }
+    };
+  </script>
 </body>
 </html>
