@@ -140,6 +140,45 @@ body {
   }
 }
 
+#gift-badge-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+}
+
+.gift-badge {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-image: url('/static/images/gift.png'); /* your icon */
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: flyToTray 1.2s ease-out forwards;
+}
+
+@keyframes flyToTray {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(500px, -300px) scale(0.5); /* Adjust as per screen */
+    opacity: 0;
+  }
+}
+
+#gift-tray {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  z-index: 1000;
+}
+
+
 #answers {
   display: flex;
   flex-direction: column;

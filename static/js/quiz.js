@@ -130,6 +130,22 @@ function showQuestion(index) {
   }
 }
 
+function showGiftBadge() {
+  const badge = document.createElement("div");
+  badge.classList.add("gift-badge");
+  document.getElementById("gift-badge-container").appendChild(badge);
+
+  setTimeout(() => {
+    badge.remove();
+    // Add a static badge to the tray
+    const staticBadge = document.createElement("img");
+    staticBadge.src = "/static/images/gift.png";
+    staticBadge.style.width = "30px";
+    staticBadge.style.height = "30px";
+    document.getElementById("gift-tray").appendChild(staticBadge);
+  }, 1200); // match the duration of flyToTray animation
+}
+
 // handle answer clicks
 answerButtons.forEach(button => {
   button.addEventListener('click', () => {
