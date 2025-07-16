@@ -1,144 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ZenCareer Quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
 </head>
 <body>
+
   <div id="video-container">
-    <video id="quizVideo" src="https://YOUR_CLOUD_URL/video/world_journey.mp4" width="100%" autoplay muted playsinline></video>
+    <video
+      id="quizVideo"
+      src="https://zencareer.b-cdn.net/world_journey.mp4"
+      width="100%"
+      muted
+      autoplay
+      playsinline
+    ></video>
 
     <div id="questionOverlay">
       <div class="character-container">
-        <img src="{{ url_for('static', filename='images/character.png') }}" class="character">
+        <div id="petLottie" class="pet-lottie"></div>
         <div class="speech-bubble" id="questionText">Loading...</div>
-        <div id="answers" class="answer-options"></div>
       </div>
+      <div id="answers" class="answers-container"></div>
     </div>
 
     <div id="trait-message">🌟 New personality trait gained!</div>
 
     <div id="final-screen">
-      <h2>🌈 You've completed your journey!</h2>
-      <button onclick="showFinalResult()">Show Results</button>
+      <h2>🎉 You've completed your journey!</h2>
+      <button onclick="showFinalResult()">Show My Results</button>
     </div>
   </div>
 
   <audio id="clickSound" src="{{ url_for('static', filename='audio/click.mp3') }}"></audio>
 
-  <script>
-    const video = document.getElementById("quizVideo");
-    const questionText = document.getElementById("questionText");
-    const answersDiv = document.getElementById("answers");
-    const clickSound = document.getElementById("clickSound");
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-    const timestamps = [
-      0, 7, 12, 18, 23, 29, 35, 40, 45, 51, 57, 63, 68, 77, 82, 87,
-      94, 99, 105, 111, 117, 122, 128, 133, 138, 145, 150, 154, 160,
-      165, 171, 175, 183, 190, 195, 201, 207, 213, 218, 223
-    ];
-
-    const placeNames = [
-      "Mount Fuji", "Zen Garden", "Shaolin Temple", "Luang Prabang", "Tawang", "Varanasi", "Auroville", "Borobudur", "Angkor Wat",
-      "Leishan Buddha", "Terracotta Warrior", "Great Wall", "Himeji Castle", "Moai Statues", "Machu Picchu", "Chichen Itza",
-      "Stonehenge", "Neuschwanstein Castle", "Acropolis", "Gobleki Tepe", "Petra", "Pyramids of Khufu", "Plitvice Lakes", "Aurora Observatory",
-      "Lake Baikal", "Banff", "Niagara Falls", "Yellowstone", "Grand Canyon", "Amazon Rainforest", "Iguazu Waterfall", "Salar de Uyuni",
-      "Galapagos", "Volcano Islands", "Uluru", "Great Barrier Reef", "Ha Long Bay", "Western Ghats", "Kilimanjaro"
-    ];
-
-    const allQuestions = [
-      { question: "What excites you the most in life?", answers: ["Exploring", "Helping", "Creating", "Building", "Healing"] },
-      { question: "How do you feel in nature?", answers: ["Peaceful", "Inspired", "Curious", "Empowered", "Reflective"] },
-      { question: "Pick a color.", answers: ["Blue", "Green", "Orange", "Purple", "Yellow"] },
-      { question: "What matters most?", answers: ["Truth", "Growth", "Joy", "Connection", "Balance"] },
-      { question: "How do you recharge?", answers: ["Solitude", "Music", "Movement", "Reading", "Meditation"] },
-      { question: "What's your dream job?", answers: ["Teacher", "Designer", "Explorer", "Leader", "Scientist"] },
-      { question: "What’s your weakness?", answers: ["Overthinking", "Impatience", "Shyness", "Perfectionism", "Self-doubt"] },
-      { question: "Which season are you?", answers: ["Spring", "Summer", "Winter", "Autumn", "Monsoon"] },
-      { question: "What motivates you?", answers: ["Success", "Harmony", "Challenge", "Purpose", "Legacy"] },
-      { question: "How do you solve problems?", answers: ["Logically", "Creatively", "Emotionally", "Intuitively", "Collaboratively"] },
-      { question: "Your ideal weekend?", answers: ["Adventure", "Relaxation", "Learning", "Volunteering", "Creating"] },
-      { question: "Choose an element.", answers: ["Fire", "Water", "Air", "Earth", "Ether"] },
-      { question: "How do others see you?", answers: ["Leader", "Supportive", "Innovative", "Grounded", "Passionate"] },
-      { question: "What do you value most?", answers: ["Freedom", "Wisdom", "Security", "Love", "Truth"] },
-      { question: "How do you prefer to work?", answers: ["Team", "Solo", "Flexible", "Guided", "Independent"] },
-      { question: "Pick a dream.", answers: ["Write a book", "Travel the world", "Build a company", "Heal others", "Inspire change"] },
-      { question: "How do you handle stress?", answers: ["Think", "Cry", "Act", "Rest", "Share"] },
-      { question: "What animal do you admire?", answers: ["Owl", "Dolphin", "Tiger", "Elephant", "Butterfly"] },
-      { question: "How do you make decisions?", answers: ["Head", "Heart", "Gut", "Votes", "Timing"] },
-      { question: "What scares you?", answers: ["Failure", "Loneliness", "Change", "Rejection", "Stagnation"] },
-      { question: "What's your pace?", answers: ["Fast", "Steady", "Slow", "Rhythmic", "Unpredictable"] },
-      { question: "Pick a time of day.", answers: ["Dawn", "Noon", "Night", "Twilight", "Midnight"] },
-      { question: "Which word fits you?", answers: ["Visionary", "Empath", "Strategist", "Explorer", "Peacemaker"] },
-      { question: "How do you express love?", answers: ["Words", "Actions", "Time", "Gifts", "Touch"] },
-      { question: "Where do you thrive?", answers: ["Mountains", "Ocean", "City", "Forest", "Desert"] },
-      { question: "Your secret power?", answers: ["Focus", "Imagination", "Courage", "Clarity", "Hope"] },
-      { question: "Your dream vacation?", answers: ["Japan", "Greece", "Amazon", "Iceland", "Morocco"] },
-      { question: "Your ideal gift?", answers: ["Book", "Experience", "Hug", "Tool", "Wisdom"] },
-      { question: "Pick a plant.", answers: ["Bamboo", "Sunflower", "Moss", "Fern", "Cactus"] },
-      { question: "What’s more important?", answers: ["Respect", "Love", "Success", "Joy", "Peace"] },
-      { question: "You are best at?", answers: ["Planning", "Building", "Leading", "Inventing", "Teaching"] },
-      { question: "What draws you?", answers: ["Beauty", "Meaning", "Mystery", "Energy", "Harmony"] },
-      { question: "A perfect day is?", answers: ["Peaceful", "Productive", "Playful", "Magical", "Free"] },
-      { question: "Which movie role?", answers: ["Explorer", "Inventor", "Healer", "Visionary", "Protector"] },
-      { question: "What’s your energy like?", answers: ["Flowing", "Bright", "Calm", "Fiery", "Gentle"] },
-      { question: "How do you learn?", answers: ["Doing", "Reading", "Observing", "Listening", "Feeling"] },
-      { question: "Favorite subject?", answers: ["Science", "Art", "People", "Philosophy", "Nature"] },
-      { question: "You are...", answers: ["Introvert", "Ambivert", "Extrovert", "Dreamer", "Realist"] },
-      { question: "Choose a guide.", answers: ["Wolf", "Elephant", "Falcon", "Bear", "Dolphin"] }
-    ];
-
-    let currentQuestion = 0;
-
-    window.onload = () => {
-      video.addEventListener("timeupdate", () => {
-        const currentTime = Math.floor(video.currentTime);
-        if (currentQuestion < timestamps.length && currentTime >= timestamps[currentQuestion]) {
-          video.pause();
-          showQuestion(currentQuestion);
-          clickSound.play();
-        }
-      });
-    };
-
-    function showQuestion(index) {
-      questionText.textContent = `${placeNames[index]}\nQ${index + 1}: ${allQuestions[index].question}`;
-      answersDiv.innerHTML = "";
-      allQuestions[index].answers.forEach(answer => {
-        const btn = document.createElement("button");
-        btn.textContent = answer;
-        btn.onclick = answerQuestion;
-        answersDiv.appendChild(btn);
-      });
-    }
-
-    function answerQuestion() {
-      currentQuestion++;
-      if (currentQuestion % 5 === 0) showTraitMessage();
-      if (currentQuestion < timestamps.length) {
-        video.play();
-      } else {
-        showFinalScreen();
-      }
-    }
-
-    function showTraitMessage() {
-      const msg = document.getElementById("trait-message");
-      msg.style.opacity = 1;
-      setTimeout(() => msg.style.opacity = 0, 2000);
-    }
-
-    function showFinalScreen() {
-      const screen = document.getElementById("final-screen");
-      screen.style.display = "block";
-    }
-
-    function showFinalResult() {
-      window.location.href = "/results";
-    }
-  </script>
 </body>
 </html>
