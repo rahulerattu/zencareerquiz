@@ -132,9 +132,12 @@ footer {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: flex-start;
+  max-width: 650px;
 }
 
 #answers button {
+  flex: 1 1 calc(50% - 10px);
   background: #009999;
   color: #fff;
   border: none;
@@ -147,44 +150,6 @@ footer {
 
 #answers button:hover {
   background: #007777;
-}
-
-#badge-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 20;
-}
-
-.badge-instance {
-  width: 100px;
-  height: 100px;
-  animation: flyBadge 1.5s ease-out forwards;
-}
-
-@keyframes flyBadge {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: translate(500px, -250px) scale(0.5); opacity: 0; }
-}
-
-#badge-tray {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  z-index: 15;
-}
-
-.tray-badge {
-  background: gold;
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.3);
 }
 
 #trait-message {
