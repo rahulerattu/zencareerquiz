@@ -1,23 +1,46 @@
+<!-- templates/quiz.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Explorer Quiz</title>
+  <title>World Explorer Personality Quiz</title>
+
   <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
+
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <!-- GSAP & Lottie (deferred) -->
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+    defer
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"
+    defer
+  ></script>
+
+  <!-- Quiz Logic -->
+  <script src="{{ url_for('static', filename='js/quiz.js') }}" defer></script>
 </head>
 <body>
   <div class="quiz-container">
     <!-- Video Player -->
-    <video id="quizVideo" autoplay muted playsinline src="{{ video_url }}"></video>
+    <video
+      id="quizVideo"
+      autoplay
+      muted
+      playsinline
+      src="{{ video_url }}"
+    ></video>
 
     <!-- Progress Bar -->
-    <div id="progressBar">
-      <div id="progress"></div>
-    </div>
+    <div id="progressBar"><div id="progress"></div></div>
 
     <!-- Question Overlay -->
     <div id="questionOverlay" class="overlay hidden">
@@ -34,159 +57,19 @@
       <h2>Your Exploration Profile</h2>
       <p id="resultSummary"></p>
       <form id="emailForm">
-        <label for="emailInput">Enter your email to receive the full 3-page report:</label>
-        <input type="email" id="emailInput" placeholder="you@example.com" required />
+        <label for="emailInput">
+          Enter your email to receive the full 3‑page report:
+        </label>
+        <input
+          type="email"
+          id="emailInput"
+          placeholder="you@example.com"
+          required
+        />
         <button type="submit" class="start-btn">Get My Report</button>
       </form>
       <button id="restartBtn" class="restart-btn">Restart Quiz</button>
     </div>
   </div>
-
-  <!-- GSAP & Lottie -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
-  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
-
-
-  <script>
-    // Question Data (40 total)
-    const questions = [
-      // 9 Ikigai + Guna
-      { q: "When you wake up in the morning, what drives you to start your day?", a: ["Purposeful goals", "Excitement for new experiences", "Comfort of familiar routines"] },
-      { q: "Which activity makes you lose track of time?", a: ["Meditating or reading", "Brainstorming new ideas", "Doing household chores"] },
-      { q: "In a group project, you usually take on the role of:", a: ["Harmonizer", "Innovator", "Implementer"] },
-      { q: "Your favorite type of music genre is:", a: ["Classical or ambient", "Upbeat or electronic", "Soft indie or acoustic"] },
-      { q: "On a weekend, you prefer to:", a: ["Reflect and relax", "Attend lively events", "Stick to home activities"] },
-      { q: "Which word resonates most with you?", a: ["Balance", "Action", "Stability"] },
-      { q: "When learning something new, you:", a: ["Study theory deeply", "Jump right into practice", "Follow step-by-step instructions"] },
-      { q: "Your ideal holiday:", a: ["Yoga retreat", "Adventure trekking", "Resort relaxation"] },
-      { q: "Which color palette appeals to you most?", a: ["Pastel hues", "Vibrant neons", "Earthy tones"] },
-      // 15 Interest & Ambition
-      { q: "Which field are you most passionate about exploring?", a: ["Science & Technology", "Art & Creativity", "Business & Entrepreneurship", "Social Impact"] },
-      { q: "Your dream career would involve:", a: ["Innovating new solutions", "Expressing creativity", "Leading teams", "Supporting others"] },
-      { q: "Do you see yourself as more of a visionary or a detail-oriented planner?", a: ["Visionary", "Planner", "Both equally", "Neither"] },
-      { q: "When facing a challenge, you:", a: ["Strategize thoroughly", "Take bold action", "Seek advice", "Adapt as you go"] },
-      { q: "Which environment energizes you?", a: ["Fast-paced urban", "Tranquil nature", "Collaborative workspace", "Structured setting"] },
-      { q: "Your ideal team size is:", a: ["One-on-one", "Small group (3-5)", "Medium team (6-10)", "Large team (10+)"] },
-      { q: "You measure success by:", a: ["Personal growth", "Achievements & awards", "Work-life balance", "Impact on others"] },
-      { q: "Which tool appeals to you most?", a: ["Data analytics software", "Design tools", "Communication platforms", "Hands-on equipment"] },
-      { q: "Your motivation comes from:", a: ["Learning new skills", "Recognition", "Helping others", "Stability"] },
-      { q: "Pick a travel destination:", a: ["Historical cities", "Remote mountains", "Vibrant beaches", "Cultural villages"] },
-      { q: "How do you handle stress?", a: ["Meditation or journaling", "Physical activity", "Talking with friends", "Structured planning"] },
-      { q: "Which describes your approach to deadlines?", a: ["Early bird", "Just-in-time", "Flexible timing", "Last-minute adrenaline"] },
-      { q: "Your preferred mode of learning:", a: ["Reading", "Hands-on experiments", "Watching tutorials", "Group discussions"] },
-      { q: "What appeals to you most in a project?", a: ["Complex problem-solving", "Artistic expression", "Leading roles", "Steady routines"] },
-      { q: "How do you set goals?", a: ["SMART objectives", "Dream big then refine", "Routine milestones", "Flexible targets"] },
-      // 16 MBTI + Psychometric
-      { q: "At social gatherings, you feel:", a: ["Energized and talkative", "Relaxed observing quietly", "Depends on my mood", "Prefer small group chats"] },
-      { q: "When making decisions, you rely more on:", a: ["Logical analysis", "Your feelings", "A mix of both", "Quick intuition"] },
-      { q: "You prefer to focus on:", a: ["Concrete details", "Big picture", "Both equally", "Neither"] },
-      { q: "When planning a trip, you:", a: ["Schedule every detail", "Go with the flow", "Outline major points", "Avoid planning"] },
-      { q: "You are drawn to:", a: ["Abstract ideas", "Practical applications", "Creative possibilities", "Proven methods"] },
-      { q: "In conversations, you often:", a: ["Lead the discussion", "Listen and reflect", "Balance speaking and listening", "Stay quiet"] },
-      { q: "Your workspace is:", a: ["Organized and tidy", "Casually arranged", "Constantly changing", "Minimalist"] },
-      { q: "When learning, you prefer:", a: ["Clear step-by-step instructions", "Exploratory learning", "Group brainstorming", "Solo study"] },
-      { q: "Under pressure, you:", a: ["Stay calm and structured", "Act on impulse", "Seek support", "Withdraw"] },
-      { q: "You trust:", a: ["Facts and data", "Personal values", "Combination", "Instincts"] },
-      { q: "Your communication style is:", a: ["Direct and to-the-point", "Empathetic and warm", "Neutral", "Varies with context"] },
-      { q: "You recharge by:", a: ["Socializing", "Alone time", "Moderate breaks", "Physical activity"] },
-      { q: "You appreciate art that is:", a: ["Realistic", "Conceptual", "Interactive", "Traditional"] },
-      { q: "When working on a project, you:", a: ["Follow a strict plan", "Adapt as needed", "Experiment freely", "Combine planning and spontaneity"] },
-      { q: "Which statement resonates most?", a: ["I need clear structure", "I seek novelty", "I value harmony", "I value efficiency"] },
-      { q: "In a crisis, you:", a: ["Analyze the facts", "Consider people's emotions", "Act quickly", "Seek help"] }
-    ];
-
-    // Timestamps (in seconds) for each question pause
-    const timestamps = [...Array(40)].map((_, i) => (i + 1) * 6);
-
-    // Parse pet from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const pet = urlParams.get('pet') || 'panda';
-
-    // Badge animations (1.json–13.json)
-    const badgeFiles = Array.from({ length: 13 }, (_, i) => `{{ url_for('static', filename='lottie/badges/${i+1}.json') }}`);
-
-    let currentQ = 0;
-    let badgeIndex = 0;
-
-    const video = document.getElementById('quizVideo');
-    const overlay = document.getElementById('questionOverlay');
-    const qText = document.getElementById('questionText');
-    const answersDiv = document.getElementById('answers');
-    const badgeContainer = document.getElementById('badgeContainer');
-    const progressBar = document.getElementById('progress');
-    const resultScreen = document.getElementById('resultScreen');
-    const finalBadge = document.getElementById('finalBadge');
-    const resultSummary = document.getElementById('resultSummary');
-    const restartBtn = document.getElementById('restartBtn');
-    const emailForm = document.getElementById('emailForm');
-
-    // Load first badge for result screen
-    lottie.loadAnimation({ container: finalBadge, renderer: 'svg', loop: false, autoplay: true, path: badgeFiles[badgeFiles.length - 1] });
-
-    video.addEventListener('timeupdate', () => {
-      if (currentQ < timestamps.length && video.currentTime >= timestamps[currentQ]) {
-        video.pause();
-        showQuestion(currentQ);
-      }
-    });
-
-    function showQuestion(index) {
-      // Update progress bar
-      gsap.to(progressBar, { width: `${((index) / questions.length) * 100}%`, duration: 0.5 });
-
-      // Display overlay
-      overlay.classList.remove('hidden');
-      gsap.from(overlay, { opacity: 0, y: 30, duration: 0.5 });
-
-      // Set question
-      qText.textContent = questions[index].q;
-      answersDiv.innerHTML = '';
-
-      questions[index].a.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'answer-btn';
-        btn.textContent = opt;
-        btn.addEventListener('click', () => handleAnswer(index, i));
-        answersDiv.appendChild(btn);
-      });
-    }
-
-    function handleAnswer(qIndex, ansIndex) {
-      overlay.classList.add('hidden');
-      showBadge();
-      currentQ++;
-      if (currentQ >= questions.length) {
-        setTimeout(showResults, 500);
-      } else {
-        video.play();
-      }
-    }
-
-    function showBadge() {
-      if (badgeIndex < badgeFiles.length) {
-        const badgeEl = document.createElement('div');
-        badgeEl.className = 'badge-item';
-        badgeContainer.appendChild(badgeEl);
-        lottie.loadAnimation({ container: badgeEl, renderer: 'svg', loop: false, autoplay: true, path: badgeFiles[badgeIndex] });
-        badgeIndex++;
-      }
-    }
-
-    function showResults() {
-      progressBar.style.width = '100%';
-      resultSummary.textContent = 'Congratulations! You’ve completed your world exploration quiz. Your unique profile is ready.';
-      resultScreen.classList.remove('hidden');
-      gsap.from(resultScreen, { scale: 0.8, opacity: 0, duration: 0.6, ease: 'back.out(1.7)' });
-    }
-
-    restartBtn.addEventListener('click', () => location.reload());
-
-    emailForm.addEventListener('submit', e => {
-      e.preventDefault();
-      // Submit email via AJAX or form submission
-      alert('Thanks! We will send your full report shortly.');
-    });
-  </script>
 </body>
 </html>

@@ -8,20 +8,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <!-- Main Stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <!-- Custom Cursor -->
-  <style>
-    body {
-      cursor: url('{{ url_for('static', filename='images/cursor.png') }}') 32 32, auto;
-    }
-  </style>
   <!-- GSAP for Animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
   <!-- Lottie for Animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js" defer></script>
+  <!-- Page Script -->
+  <script src="{{ url_for('static', filename='js/welcome.js') }}" defer></script>
 </head>
 <body>
   <!-- Background Image -->
-  <div class="background"></div>
+  <div class="background" style="background-image: url('https://zencareer.b-cdn.net/background.jpg');"></div>
+
+  <!-- Character Illustration -->
+  <div class="character-container">
+    <img src="https://zencareer.b-cdn.net/charachter.jpg" alt="Explorer Character" class="character-img">
+  </div>
+
+  <!-- Click Sound -->
+  <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3"></audio>
 
   <!-- Welcome Container -->
   <div class="welcome-container">
@@ -31,66 +35,20 @@
     <h2 class="select-title">Choose Your Travel Companion</h2>
     <div class="pet-selection">
       <div class="pet-card" data-pet="panda">
-        <div id="panda-lottie" class="pet-anim"></div>
+        <div id="panda-lottie" class="pet-anim" data-path="https://zencareer.b-cdn.net/panda.json"></div>
         <p>Panda</p>
       </div>
       <div class="pet-card" data-pet="penguin">
-        <div id="penguin-lottie" class="pet-anim"></div>
+        <div id="penguin-lottie" class="pet-anim" data-path="https://zencareer.b-cdn.net/penguin.json"></div>
         <p>Penguin</p>
       </div>
       <div class="pet-card" data-pet="puppy">
-        <div id="puppy-lottie" class="pet-anim"></div>
+        <div id="puppy-lottie" class="pet-anim" data-path="https://zencareer.b-cdn.net/puppy.json"></div>
         <p>Puppy</p>
       </div>
     </div>
 
     <button id="start-btn" class="start-btn" disabled>Start Your Journey</button>
   </div>
-
-  <!-- Inline Script: Lottie & Interaction Logic -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Fade in container
-      gsap.from('.welcome-container', { opacity: 0, y: 50, duration: 1 });
-
-      // Load Lottie animations
-      const pets = [
-        { id: 'panda-lottie', path: '{{ url_for('static', filename='lottie/panda.json') }}' },
-        { id: 'penguin-lottie', path: '{{ url_for('static', filename='lottie/penguin.json') }}' },
-        { id: 'puppy-lottie', path: '{{ url_for('static', filename='lottie/puppy.json') }}' }
-      ];
-      pets.forEach(pet => {
-        lottie.loadAnimation({
-          container: document.getElementById(pet.id),
-          renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          path: pet.path
-        });
-      });
-
-      // Selection Logic
-      let selectedPet = null;
-      const petCards = document.querySelectorAll('.pet-card');
-      const startBtn = document.getElementById('start-btn');
-
-      petCards.forEach(card => {
-        card.addEventListener('click', () => {
-          petCards.forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-          selectedPet = card.getAttribute('data-pet');
-          startBtn.disabled = false;
-        });
-      });
-
-      // Start Quiz
-      startBtn.addEventListener('click', () => {
-        if (selectedPet) {
-          window.location.href = `{{ url_for('quiz') }}?pet=${selectedPet}`;
-        }
-      });
-    });
-  </script>
 </body>
 </html>
-
