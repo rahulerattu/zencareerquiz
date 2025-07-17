@@ -9,7 +9,7 @@
 <body>
     <div class="quiz-container">
         <div class="video-container">
-            <video id="worldJourney" class="world-journey">
+            <video id="worldJourney" class="world-journey" muted>
                 <source src="https://zencareer.b-cdn.net/world_journey.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -40,7 +40,17 @@
         </div>
     </div>
     
+    <!-- Music Controls -->
+    <div class="music-controls">
+        <button id="musicToggle" class="music-btn" title="Toggle Background Music">
+            <span class="music-icon">🎵</span>
+        </button>
+    </div>
+    
     <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <audio id="ambientMusic" src="https://zencareer.b-cdn.net/ambient.mp3" preload="auto" loop>
+        Your browser does not support the audio element.
+    </audio>
     
     <script src="quiz.js"></script>
     <script id="questionsScript"></script>

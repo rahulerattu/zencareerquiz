@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Get user selections from session storage
     const userSelections = JSON.parse(sessionStorage.getItem('zenCareerSelections') || '{"language":"en","country":"global","pet":"panda"}');
+    const musicState = JSON.parse(sessionStorage.getItem('zenCareerMusicState') || '{"isPlaying":false,"currentTime":0}');
     
     // Elements
     const clickSound = document.getElementById('clickSound');
+    const ambientMusic = document.getElementById('ambientMusic');
+    const musicToggle = document.getElementById('musicToggle');
     const worldJourney = document.getElementById('worldJourney');
     const petImage = document.getElementById('petImage');
     const petThought = document.getElementById('petThought');
@@ -13,6 +16,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const locationIndicator = document.getElementById('locationIndicator');
     const locationTitle = document.getElementById('locationTitle');
     const questionsScript = document.getElementById('questionsScript');
+    
+    // Music control state
+    let isMusicPlaying = musicState.isPlaying;
+    
+    // Initialize ambient music continuity
+    const initializeMusic = () => {
+        ambientMusic.volume = 0.3;
+        ambientMusic.currentTime = musicState.currentTime || 0;
+        
+        if (isMusicPlaying) {
+            ambientMusic.play().then(() => {
+                musicToggle.classList.remove('muted');
+            }).catch(err => console.log('Music playback error:', err));
+        } else {
+            musicToggle.classList.add('muted');
+            musicToggle.querySelector('.music-icon').textContent = '🔇';
+        }
+    };
+    
+    // Toggle music
+    const toggleMusic = () => {
+        if (isMusicPlaying) {
+            ambientMusic.pause();
+            isMusicPlaying = false;
+            musicToggle.classList.add('muted');
+            musicToggle.querySelector('.music-icon').textContent = '🔇';
+        } else {
+            ambientMusic.play().then(() => {
+                isMusicPlaying = true;
+                musicToggle.classList.remove('muted');
+                musicToggle.querySelector('.music-icon').textContent = '🎵';
+            }).catch(err => console.log('Music playback error:', err));
+        }
+    };
+    
+    // Music toggle button event
+    musicToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMusic();
+    });
     
     // Set pet image based on selection
     petImage.src = `https://zencareer.b-cdn.net/${userSelections.pet}.png`;
@@ -48,6 +91,52 @@ document.addEventListener('DOMContentLoaded', () => {
         "Dubai Skyline, UAE"
     ];
     
+    // Motivational quotes for each location
+    const motivationalQuotes = {
+        'en': [
+            "Like Mount Fuji's majestic peak, your potential knows no bounds.",
+            "Build your career brick by brick, like the Great Wall of China.",
+            "Your journey is a monument to your dedication, like the Taj Mahal.",
+            "Carve your path through challenges, like the Grand Canyon was carved by time.",
+            "Reach new heights in your career, like the ancient city of Machu Picchu.",
+            "Dive deep into your passions, like exploring the Great Barrier Reef.",
+            "Build something eternal, like the timeless Pyramids of Giza.",
+            "Navigate your career with grace, like the canals of Venice.",
+            "Let your career shine bright, like the sunset over Santorini.",
+            "Your dreams can light up the darkness, like the Northern Lights.",
+            "Your achievements will thunder with power, like Victoria Falls.",
+            "Build your legacy with precision, like the temples of Angkor Wat.",
+            "Embrace the wild journey of your career, like the Serengeti migration.",
+            "Rise above challenges, like the fairy chimneys of Cappadocia.",
+            "Find beauty in every career turn, like the curves of Antelope Canyon.",
+            "Your power can move mountains, like the force of Niagara Falls.",
+            "Create your own paradise, like the beauty of Bora Bora.",
+            "Reflect on your growth, like the mirror of Uyuni Salt Flats.",
+            "Find peace in your purpose, like the temples of Kyoto.",
+            "Uncover hidden treasures in your career, like the secrets of Petra.",
+            "Navigate through opportunities, like the emerald waters of Halong Bay.",
+            "Stand strong against any storm, like the Cliffs of Moher.",
+            "Reach for the peaks, like the towers of Torres del Paine.",
+            "Find healing and renewal, like the Blue Lagoon's waters.",
+            "Rise above challenges, like Table Mountain over Cape Town.",
+            "Your career is an adventure, like exploring Banff National Park.",
+            "Create cascades of success, like the waterfalls of Plitvice Lakes.",
+            "Build pillars of strength, like the stone formations of Zhangjiajie.",
+            "Create a legacy of beauty, like the temples of Bagan.",
+            "Your vision can be crystal clear, like the Salar de Uyuni reflections.",
+            "Evolve and adapt, like the unique species of Galapagos Islands.",
+            "Find your perfect balance, like the harmony of Maldives Islands.",
+            "Build terraces of success, like the calcium pools of Pamukkale.",
+            "Embrace the wildness of opportunity, like Kruger National Park.",
+            "Sail towards your dreams, like the junks of Ha Long Bay.",
+            "Your passion can erupt with power, like the geysers of Yellowstone.",
+            "Grow and flourish, like the biodiversity of Amazon Rainforest.",
+            "Paint your career with vibrant colors, like the villages of Cinque Terre.",
+            "Your achievements will stand the test of time, like Stonehenge.",
+            "Reach for the sky, like the towering buildings of Dubai."
+        ]
+    };
+    
     let currentQuestionIndex = 0;
     let userAnswers = [];
     let questions = [];
@@ -63,7 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const progress = ((currentQuestionIndex + 1) / timestamps.length) * 100;
         progressBar.style.width = `${progress}%`;
         locationIndicator.textContent = `Question ${currentQuestionIndex + 1}/${timestamps.length}: ${locations[currentQuestionIndex]}`;
-        locationTitle.textContent = locations[currentQuestionIndex];
+        locationTitle.innerHTML = `
+            <div style="text-align: center;">
+                <h2>${locations[currentQuestionIndex]}</h2>
+                <p style="font-size: 1rem; margin-top: 0.5rem; font-style: italic; opacity: 0.9;">
+                    ${motivationalQuotes[userSelections.language] ? motivationalQuotes[userSelections.language][currentQuestionIndex] : motivationalQuotes['en'][currentQuestionIndex]}
+                </p>
+            </div>
+        `;
     };
     
     // Display current question
@@ -173,4 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         questions = event.detail;
         displayQuestion();
     });
+    
+    // Initialize music controls
+    initializeMusic();
 });

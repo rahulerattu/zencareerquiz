@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const clickSound = document.getElementById('clickSound');
+    const ambientMusic = document.getElementById('ambientMusic');
+    const musicToggle = document.getElementById('musicToggle');
     const languageSelection = document.querySelector('.language-selection');
     const petSelection = document.querySelector('.pet-selection');
     const journeyIntro = document.querySelector('.journey-intro');
@@ -11,6 +13,46 @@ document.addEventListener('DOMContentLoaded', () => {
         country: '',
         pet: ''
     };
+    
+    // Music control state
+    let isMusicPlaying = false;
+    
+    // Initialize ambient music
+    const initializeMusic = () => {
+        ambientMusic.volume = 0.3; // Set volume to 30%
+        
+        // Auto-play music when user interacts
+        document.addEventListener('click', () => {
+            if (!isMusicPlaying) {
+                ambientMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggle.classList.remove('muted');
+                }).catch(err => console.log('Music playback error:', err));
+            }
+        }, { once: true });
+    };
+    
+    // Toggle music
+    const toggleMusic = () => {
+        if (isMusicPlaying) {
+            ambientMusic.pause();
+            isMusicPlaying = false;
+            musicToggle.classList.add('muted');
+            musicToggle.querySelector('.music-icon').textContent = '🔇';
+        } else {
+            ambientMusic.play().then(() => {
+                isMusicPlaying = true;
+                musicToggle.classList.remove('muted');
+                musicToggle.querySelector('.music-icon').textContent = '🎵';
+            }).catch(err => console.log('Music playback error:', err));
+        }
+    };
+    
+    // Music toggle button event
+    musicToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMusic();
+    });
     
     // Play click sound and handle button clicks
     const playClickSound = () => {
@@ -70,7 +112,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save selections to session storage
         sessionStorage.setItem('zenCareerSelections', JSON.stringify(userSelections));
         
+        // Save music state
+        sessionStorage.setItem('zenCareerMusicState', JSON.stringify({
+            isPlaying: isMusicPlaying,
+            currentTime: ambientMusic.currentTime
+        }));
+        
         // Redirect to quiz page
         window.location.href = 'quiz.html';
     });
+    
+    // Initialize music controls
+    initializeMusic();
 });
