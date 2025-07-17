@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Choose Your Companion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Add Lottie player for JSON animations -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+</head>
+<body class="pet-selection-page">
+    <div class="container">
+        <header>
+            <h1 class="title">Choose Your Travel Companion</h1>
+            <p class="subtitle">This friendly companion will guide you through your career discovery journey</p>
+        </header>
+        
+        <section class="selection-area">
+            <div class="selection-box pet-selection">
+                <form action="{{ url_for('set_pet') }}" method="post" id="petForm">
+                    <div class="options-grid pet-grid">
+                        {% for pet in pets %}
+                        <div class="pet-option">
+                            <!-- Lottie animation container -->
+                            <div class="pet-animation-container">
+                                <lottie-player
+                                    src="https://zencareer.b-cdn.net/{{ pet }}.json"
+                                    background="transparent"
+                                    speed="1"
+                                    style="width: 150px; height: 150px;"
+                                    loop
+                                    autoplay>
+                                </lottie-player>
+                            </div>
+                            <button type="button" class="option-btn" 
+                                   onclick="selectPet('{{ pet }}')">{{ pet|capitalize }}</button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="pet" id="petInput">
+                </form>
+            </div>
+        </section>
+    </div>
+    
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    
+    <script>
+        const clickSound = document.getElementById('clickSound');
+        const petForm = document.getElementById('petForm');
+        const petInput = document.getElementById('petInput');
+        
+        function playClickSound() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(err => console.log('Audio playback error:', err));
+        }
+        
+        function selectPet(pet) {
+            playClickSound();
+            
+            petInput.value = pet;
+            
+            // Submit form
+            petForm.submit();
+        }
+    </script>
+</body>
+</html>

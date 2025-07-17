@@ -1,0 +1,90 @@
+[
+  {
+    "question": "When faced with a new problem, what's your first approach?",
+    "petThought": "How do you tackle challenges?",
+    "answers": [
+      "Break it down into smaller steps",
+      "Look for patterns from past experiences",
+      "Brainstorm creative solutions",
+      "Research what others have done",
+      "Collaborate with others to find solutions"
+    ]
+  },
+  {
+    "question": "What type of work environment do you thrive in?",
+    "petThought": "Your ideal workspace says a lot about you!",
+    "answers": [
+      "Quiet and structured with minimal distractions",
+      "Collaborative with lots of interaction",
+      "Flexible and constantly changing",
+      "Outdoors or connected to nature",
+      "Creative and aesthetically pleasing"
+    ]
+  },
+  {
+    "question": "How do you prefer to learn new skills?",
+    "petThought": "Everyone has their own learning style!",
+    "answers": [
+      "Reading books or articles",
+      "Watching video tutorials",
+      "Hands-on practice and experimentation",
+      "Taking structured courses",
+      "Learning from a mentor or teacher"
+    ]
+  },
+  {
+    "question": "When working on a group project, which role do you naturally take?",
+    "petThought": "Team dynamics reveal a lot about your working style!",
+    "answers": [
+      "Leader who organizes and delegates",
+      "Creative who generates ideas",
+      "Analyst who evaluates options critically",
+      "Mediator who ensures everyone is heard",
+      "Finisher who ensures everything is completed properly"
+    ]
+  },
+  {
+    "question": "What energizes you after a long day?",
+    "petThought": "How we recharge says a lot about us!",
+    "answers": [
+      "Quiet time alone to reflect",
+      "Socializing with friends",
+      "Physical activity or exercise",
+      "Creative pursuits like art or music",
+      "Learning something new"
+    ]
+  },
+  {
+    "question": "When making important decisions, you typically:",
+    "petThought": "Decision-making styles reveal our core values!",
+    "answers": [
+      "Analyze all the facts and data",
+      "Consider how it affects people involved",
+      "Go with your intuition and gut feeling",
+      "Consider all possible outcomes and consequences",
+      "Seek advice from people you trust"
+    ]
+  },
+  {
+    "question": "What aspect of a job is most important to you?",
+    "petThought": "Your priorities help define your ideal career!",
+    "answers": [
+      "Financial stability and good compensation",
+      "Making a positive impact on society",
+      "Continuous learning and growth opportunities",
+      "Work-life balance and flexibility",
+      "Recognition and advancement potential"
+    ]
+  },
+  {
+    "question": "How do you handle unexpected changes to your plans?",
+    "petThought": "Adaptability is key in today's world!",
+    "answers": [
+      "Quickly adapt and find new solutions",
+      "Take time to process before adjusting",
+      "Feel stressed but push through",
+      "Evaluate why the change happened",
+      "Look for ways to get back to the original plan"
+    ]
+  }
+]

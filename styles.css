@@ -1,0 +1,573 @@
+/* Global Styles */
+:root {
+    --primary-color: #5c6bc0;
+    --secondary-color: #8e99f3;
+    --accent-color: #26a69a;
+    --background-light: #f5f7ff;
+    --text-dark: #2c3e50;
+    --text-light: #f8f9fa;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background-color: var(--background-light);
+    min-height: 100vh;
+    background-image: url('https://zencareer.b-cdn.net/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.85);
+    z-index: -1;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.title {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Selection Area Styles */
+.selection-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selection-box {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 850px;
+    margin-bottom: 2rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.selection-box h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.selection-box p {
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+.options-grid {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.language-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.option-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.option-btn:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pet-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.pet-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pet-image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    border-radius: 50%;
+    padding: 5px;
+    background-color: white;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.pet-option:hover .pet-image {
+    transform: scale(1.05);
+}
+
+.journey-preview {
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    box-shadow: var(--shadow);
+}
+
+.journey-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.start-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 1rem;
+}
+
+.start-button:hover {
+    background-color: #1e8e82;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Quiz Page Styles */
+.quiz-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    overflow: hidden;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.world-journey {
+    width: 100%;
+    height: auto;
+}
+
+.quiz-content {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px 12px 0 0;
+    margin-top: -20px;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pet-container {
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.pet-image-quiz {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+}
+
+.question-bubble {
+    background-color: white;
+    border-radius: 20px;
+    padding: 15px 20px;
+    box-shadow: var(--shadow);
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.question-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 20px;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    transform: rotate(45deg);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    z-index: -1;
+}
+
+.question-container {
+    flex: 1;
+    padding: 0 2rem;
+}
+
+.question-text {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+}
+
+.answers-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.answer-option {
+    background-color: var(--background-light);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.answer-option:hover {
+    background-color: #e8eaff;
+    border-color: var(--secondary-color);
+}
+
+.progress-container {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.location-indicator {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* Results Page Styles */
+.results-container {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+    max-width: 900px;
+    margin: 3rem auto;
+}
+
+.results-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.results-title {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.career-recommendations {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 3rem;
+}
+
+.career-card {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    padding: 1.5rem;
+    width: 30%;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.career-card:hover {
+    transform: translateY(-5px);
+}
+
+.career-icon {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.career-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.career-match {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.personality-summary {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.traits-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 1rem 0;
+}
+
+.trait-tag {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.upgrade-container {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f8f8ff;
+    border-radius: 10px;
+    border: 1px dashed var(--primary-color);
+}
+
+.upgrade-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 1rem;
+}
+
+.upgrade-button:hover {
+    background-color: #1e8e82;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Payment Page Styles */
+.payment-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.payment-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.payment-content {
+    padding: 2rem;
+}
+
+.user-info-form {
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.payment-methods {
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+}
+
+.payment-methods h3 {
+    margin-bottom: 1.5rem;
+}
+
+.payment-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-option {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.payment-option:hover {
+    border-color: var(--primary-color);
+    background-color: #f9f9ff;
+}
+
+.payment-option img {
+    max-height: 40px;
+    margin-bottom: 0.5rem;
+}
+
+.country-specific {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+
+.qr-code-container {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.qr-code-placeholder {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+.submit-payment {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.submit-payment:hover {
+    background-color: #1e8e82;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .pet-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quiz-content {
+        flex-direction: column;
+    }
+    
+    .pet-container {
+        margin-bottom: 2rem;
+    }
+    
+    .career-recommendations {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .career-card {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .payment-options {
+        grid-template-columns: 1fr;
+    }
+}

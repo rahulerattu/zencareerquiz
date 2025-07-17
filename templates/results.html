@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Your Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Add Lottie player for JSON animations -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+</head>
+<body class="results-page">
+    <div class="container">
+        <div class="results-container">
+            <div class="results-header">
+                <h1 class="results-title">Your Career Guidance Results</h1>
+                <p class="subtitle">Based on your personality traits, interests, and strengths</p>
+            </div>
+            
+            <div class="pet-congratulations">
+                <div class="pet-animation-container">
+                    <lottie-player
+                        src="https://zencareer.b-cdn.net/{{ pet }}.json"
+                        background="transparent"
+                        speed="1"
+                        style="width: 120px; height: 120px;"
+                        loop
+                        autoplay>
+                    </lottie-player>
+                </div>
+                <div class="question-bubble">
+                    <p>Great job! I've analyzed your responses and found your top career matches!</p>
+                </div>
+            </div>
+            
+            <h2>Top Career Recommendations</h2>
+            <div class="career-recommendations">
+                {% for career in careers %}
+                <div class="career-card">
+                    <div class="career-icon">{{ career.icon }}</div>
+                    <h3 class="career-title">{{ career.title }}</h3>
+                    <p class="career-match">{{ career.match }}% Match</p>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="personality-summary">
+                <h2>Your Personality Profile</h2>
+                <p>You have a creative and analytical mind with strong problem-solving abilities. You thrive in environments that offer variety and intellectual challenges, while also allowing you to express your creativity.</p>
+                
+                <h3>Key Personality Traits</h3>
+                <div class="traits-container">
+                    {% for trait in traits %}
+                    <span class="trait-tag">{{ trait }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="upgrade-container">
+                <h2>Unlock Your Complete Career Analysis</h2>
+                <p>Get detailed insights including:</p>
+                <ul>
+                    <li>Year-by-year career progression roadmap</li>
+                    <li>Detailed compatibility analysis for 20+ career paths</li>
+                    <li>Personalized strengths and development areas</li>
+                    <li>Educational and certification recommendations</li>
+                </ul>
+                <a href="{{ url_for('payment') }}" class="upgrade-button" onclick="playClickSound()">Get Detailed Report</a>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    
+    <script>
+        const clickSound = document.getElementById('clickSound');
+        
+        function playClickSound() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(err => console.log('Audio playback error:', err));
+        }
+    </script>
+</body>
+</html>

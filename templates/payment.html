@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Get Detailed Report</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Add Lottie player for JSON animations -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+</head>
+<body class="payment-page">
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h1>Unlock Your Complete Career Analysis</h1>
+                <p>Get your personalized, in-depth career guidance report</p>
+                
+                <div class="pet-payment">
+                    <div class="pet-animation-container">
+                        <lottie-player
+                            src="https://zencareer.b-cdn.net/{{ pet }}.json"
+                            background="transparent"
+                            speed="1"
+                            style="width: 100px; height: 100px;"
+                            loop
+                            autoplay>
+                        </lottie-player>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-content">
+                <div class="user-info-form">
+                    <h2>Your Information</h2>
+                    <p>We'll send your detailed report to your email</p>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Your Age</label>
+                        <input type="number" id="age" class="form-control" placeholder="25" min="15" max="80" required>
+                    </div>
+                </div>
+                
+                <div class="payment-methods">
+                    <h3>Choose Payment Method</h3>
+                    
+                    <div class="payment-options">
+                        <div class="payment-option" data-method="card" onclick="selectPaymentMethod('card')">
+                            <img src="https://cdn.example.com/credit-card-icon.png" alt="Credit Card">
+                            <p>Credit/Debit Card</p>
+                        </div>
+                        
+                        <div class="payment-option" data-method="paypal" onclick="selectPaymentMethod('paypal')">
+                            <img src="https://cdn.example.com/paypal-icon.png" alt="PayPal">
+                            <p>PayPal</p>
+                        </div>
+                        
+                        <div class="payment-option" data-method="country-specific" onclick="selectPaymentMethod('country-specific')">
+                            <img id="countrySpecificImg" src="" alt="Country Specific">
+                            <p id="countrySpecificText">Local Payment</p>
+                        </div>
+                    </div>
+                    
+                    <div class="country-specific" id="countrySpecificSection" style="display: none;">
+                        <h3 id="countryPaymentTitle">Local Payment Methods</h3>
+                        <p id="countryPaymentDescription">Scan the QR code to complete your payment</p>
+                        
+                        <div class="qr-code-container">
+                            <div class="qr-code-placeholder" id="qrCodePlaceholder">
+                                QR Code Will Appear Here
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="paymentMethodInput" value="">
+                    
+                    <button class="submit-payment" id="submitPayment" onclick="processPayment()">Complete Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    
+    <script>
+        const clickSound = document.getElementById('clickSound');
+        const countrySpecificSection = document.getElementById('countrySpecificSection');
+        const countrySpecificImg = document.getElementById('countrySpecificImg');
+        const countrySpecificText = document.getElementById('countrySpecificText');
+        const countryPaymentTitle = document.getElementById('countryPaymentTitle');
+        const countryPaymentDescription = document.getElementById('countryPaymentDescription');
+        const qrCodePlaceholder = document.getElementById('qrCodePlaceholder');
+        const paymentMethodInput = document.getElementById('paymentMethodInput');
+        const emailInput = document.getElementById('email');
+        const ageInput = document.getElementById('age');
+        
+        // Play click sound
+        function playClickSound() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(err => console.log('Audio playback error:', err));
+        }
+        
+        // Setup country-specific payment options
+        function setupCountrySpecific() {
+            const country = "{{ country }}";
+            
+            switch(country) {
+                case 'india':
+                    countrySpecificImg.src = "https://cdn.example.com/upi-icon.png";
+                    countrySpecificText.textContent = "UPI / BHIM";
+                    countryPaymentTitle.textContent = "Pay via UPI";
+                    countryPaymentDescription.textContent = "Scan the QR code using any UPI app like Google Pay, PhonePe, or Paytm";
+                    break;
+                case 'thailand':
+                    countrySpecificImg.src = "https://cdn.example.com/promptpay-icon.png";
+                    countrySpecificText.textContent = "PromptPay";
+                    countryPaymentTitle.textContent = "Pay via PromptPay";
+                    countryPaymentDescription.textContent = "Scan the QR code using your banking app";
+                    break;
+                case 'vietnam':
+                    countrySpecificImg.src = "https://cdn.example.com/momo-icon.png";
+                    countrySpecificText.textContent = "MoMo";
+                    countryPaymentTitle.textContent = "Pay via MoMo";
+                    countryPaymentDescription.textContent = "Scan the QR code using MoMo app";
+                    break;
+                case 'cambodia':
+                    countrySpecificImg.src = "https://cdn.example.com/aba-icon.png";
+                    countrySpecificText.textContent = "ABA Pay";
+                    countryPaymentTitle.textContent = "Pay via ABA Pay";
+                    countryPaymentDescription.textContent = "Scan the QR code using ABA mobile app";
+                    break;
+                default:
+                    countrySpecificImg.src = "https://cdn.example.com/bank-transfer-icon.png";
+                    countrySpecificText.textContent = "Bank Transfer";
+                    countryPaymentTitle.textContent = "Pay via Bank Transfer";
+                    countryPaymentDescription.textContent = "Scan the QR code to complete your payment";
+            }
+        }
+        
+        // Select payment method
+        function selectPaymentMethod(method) {
+            playClickSound();
+            
+            // Remove selected class from all options
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked option
+            document.querySelector(`.payment-option[data-method="${method}"]`).classList.add('selected');
+            
+            // Show/hide country-specific section
+            if (method === 'country-specific') {
+                countrySpecificSection.style.display = 'block';
+            } else {
+                countrySpecificSection.style.display = 'none';
+            }
+            
+            // Store selected method
+            paymentMethodInput.value = method;
+        }
+        
+        // Process payment
+        function processPayment() {
+            playClickSound();
+            
+            // Simple validation
+            if (!emailInput.value) {
+                alert('Please enter your email address');
+                return;
+            }
+            
+            if (!ageInput.value) {
+                alert('Please enter your age');
+                return;
+            }
+            
+            if (!paymentMethodInput.value) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            // Send payment data to server
+            fetch("{{ url_for('process_payment') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'email': emailInput.value,
+                    'age': ageInput.value,
+                    'payment_method': paymentMethodInput.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = "{{ url_for('home') }}";
+                } else {
+                    alert('Payment failed: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while processing your payment');
+            });
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupCountrySpecific();
+        });
+    </script>
+</body>
+</html>

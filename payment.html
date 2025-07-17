@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Get Detailed Report</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="payment-page">
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h1>Unlock Your Complete Career Analysis</h1>
+                <p>Get your personalized, in-depth career guidance report</p>
+            </div>
+            
+            <div class="payment-content">
+                <div class="user-info-form">
+                    <h2>Your Information</h2>
+                    <p>We'll send your detailed report to your email</p>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Your Age</label>
+                        <input type="number" id="age" class="form-control" placeholder="25" min="15" max="80" required>
+                    </div>
+                </div>
+                
+                <div class="payment-methods">
+                    <h3>Choose Payment Method</h3>
+                    
+                    <div class="payment-options">
+                        <div class="payment-option" data-method="card">
+                            <img src="https://cdn.example.com/credit-card-icon.png" alt="Credit Card">
+                            <p>Credit/Debit Card</p>
+                        </div>
+                        
+                        <div class="payment-option" data-method="paypal">
+                            <img src="https://cdn.example.com/paypal-icon.png" alt="PayPal">
+                            <p>PayPal</p>
+                        </div>
+                        
+                        <div class="payment-option" data-method="country-specific">
+                            <img id="countrySpecificImg" src="" alt="Country Specific">
+                            <p id="countrySpecificText">Local Payment</p>
+                        </div>
+                    </div>
+                    
+                    <div class="country-specific" id="countrySpecific" style="display: none;">
+                        <h3 id="countryPaymentTitle">Local Payment Methods</h3>
+                        <p id="countryPaymentDescription">Scan the QR code to complete your payment</p>
+                        
+                        <div class="qr-code-container">
+                            <div class="qr-code-placeholder" id="qrCodePlaceholder">
+                                QR Code Will Appear Here
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="submit-payment" id="submitPayment">Complete Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    
+    <script src="payment.js"></script>
+</body>
+</html>

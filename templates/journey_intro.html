@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Begin Your Journey</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <!-- Add Lottie player for JSON animations -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+</head>
+<body class="journey-intro-page">
+    <div class="container">
+        <header>
+            <h1 class="title">Your Career Discovery Journey</h1>
+            <p class="subtitle">You're about to embark on a beautiful journey around the world while discovering your ideal career path</p>
+        </header>
+        
+        <section class="journey-intro-area">
+            <div class="selection-box journey-intro">
+                <div class="pet-welcome">
+                    <div class="pet-animation-container">
+                        <lottie-player
+                            src="https://zencareer.b-cdn.net/{{ pet }}.json"
+                            background="transparent"
+                            speed="1"
+                            style="width: 150px; height: 150px;"
+                            loop
+                            autoplay>
+                        </lottie-player>
+                    </div>
+                    <div class="question-bubble">
+                        <p>Hi there! I'm excited to be your guide on this journey of self-discovery!</p>
+                    </div>
+                </div>
+                
+                <div class="journey-preview">
+                    <img src="https://zencareer.b-cdn.net/background.jpg" alt="World Journey" class="journey-image">
+                    <p class="journey-description">
+                        We'll travel to 40 beautiful destinations around the world. At each stop, 
+                        I'll ask you a question to help understand your personality, preferences, and strengths.
+                    </p>
+                </div>
+                
+                <a href="{{ url_for('quiz') }}" class="start-button" onclick="playClickSound()">Begin Your Journey</a>
+            </div>
+        </section>
+    </div>
+    
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    
+    <script>
+        const clickSound = document.getElementById('clickSound');
+        
+        function playClickSound() {
+            clickSound.currentTime = 0;
+            clickSound.play().catch(err => console.log('Audio playback error:', err));
+        }
+    </script>
+</body>
+</html>

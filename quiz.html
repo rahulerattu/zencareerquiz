@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Career Discovery Journey</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="video-container">
+            <video id="worldJourney" class="world-journey">
+                <source src="https://zencareer.b-cdn.net/world_journey.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-overlay">
+                <h2 id="locationTitle">Mount Fuji, Japan</h2>
+            </div>
+        </div>
+        
+        <div class="quiz-content">
+            <div class="pet-container">
+                <img id="petImage" src="" alt="Your companion" class="pet-image-quiz">
+                <div class="question-bubble">
+                    <p id="petThought">I'm excited to help you discover your ideal career path!</p>
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <h2 class="question-text" id="questionText"></h2>
+                <div class="answers-container" id="answersContainer"></div>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress" id="progressBar" style="width: 0%"></div>
+                    </div>
+                    <p class="location-indicator" id="locationIndicator">Question 1/40: Mount Fuji, Japan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    
+    <script src="quiz.js"></script>
+    <script id="questionsScript"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Your Results</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="results-page">
+    <div class="container">
+        <div class="results-container">
+            <div class="results-header">
+                <h1 class="results-title">Your Career Guidance Results</h1>
+                <p class="subtitle">Based on your personality traits, interests, and strengths</p>
+            </div>
+            
+            <h2>Top Career Recommendations</h2>
+            <div class="career-recommendations" id="careerRecommendations">
+                <!-- Career cards will be added by JS -->
+            </div>
+            
+            <div class="personality-summary">
+                <h2>Your Personality Profile</h2>
+                <p id="personalitySummary">You have a creative and analytical mind with strong problem-solving abilities. You thrive in environments that offer variety and intellectual challenges, while also allowing you to express your creativity.</p>
+                
+                <h3>Key Personality Traits</h3>
+                <div class="traits-container" id="traitsContainer">
+                    <!-- Traits will be added by JS -->
+                </div>
+            </div>
+            
+            <div class="upgrade-container">
+                <h2>Unlock Your Complete Career Analysis</h2>
+                <p>Get detailed insights including:</p>
+                <ul>
+                    <li>Year-by-year career progression roadmap</li>
+                    <li>Detailed compatibility analysis for 20+ career paths</li>
+                    <li>Personalized strengths and development areas</li>
+                    <li>Educational and certification recommendations</li>
+                </ul>
+                <button class="upgrade-button" id="upgradeButton">Get Detailed Report</button>
+            </div>
+        </div>
+    </div>
+    
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    
+    <script src="results.js"></script>
+</body>
+</html>
