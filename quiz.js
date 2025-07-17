@@ -204,8 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update progress
     const updateProgress = () => {
         const progress = ((currentQuestionIndex + 1) / timestamps.length) * 100;
+        const t = translations[userSelections.language] || translations['en'];
+        
         progressBar.style.width = `${progress}%`;
-        locationIndicator.textContent = `Question ${currentQuestionIndex + 1}/${timestamps.length}: ${locations[currentQuestionIndex]}`;
+        locationIndicator.textContent = `${t.question} ${currentQuestionIndex + 1}/${timestamps.length}: ${locations[currentQuestionIndex]}`;
         locationTitle.innerHTML = `
             <div style="text-align: center;">
                 <h2>${locations[currentQuestionIndex]}</h2>
@@ -214,6 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </p>
             </div>
         `;
+        
+        // Update music toggle title
+        musicToggle.title = t.musicToggleTitle;
     };
     
     // Display current question

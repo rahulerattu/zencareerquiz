@@ -17,6 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Music control state
     let isMusicPlaying = false;
     
+    // Translation function
+    const updateTexts = (language) => {
+        const t = translations[language] || translations['en'];
+        
+        document.getElementById('welcomeTitle').textContent = t.welcomeTitle;
+        document.getElementById('welcomeSubtitle').textContent = t.welcomeSubtitle;
+        document.getElementById('chooseLanguageText').textContent = t.chooseLanguage;
+        document.getElementById('choosePetText').textContent = t.choosePet;
+        document.getElementById('petDescriptionText').textContent = t.petDescription;
+        document.getElementById('journeyTitleText').textContent = t.journeyTitle;
+        document.getElementById('journeyDescriptionText').textContent = t.journeyDescription;
+        document.getElementById('beginJourneyBtn').textContent = t.beginJourney;
+        musicToggle.title = t.musicToggleTitle;
+    };
+    
     // Initialize ambient music
     const initializeMusic = () => {
         ambientMusic.volume = 0.3; // Set volume to 30%
@@ -69,6 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Store selected language and country
             userSelections.language = button.getAttribute('data-language');
             userSelections.country = button.getAttribute('data-country');
+            
+            // Update UI text based on selected language
+            updateTexts(userSelections.language);
             
             // Highlight selected button
             languageButtons.forEach(btn => btn.classList.remove('selected'));
