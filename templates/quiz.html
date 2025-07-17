@@ -5,10 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenCareer - Career Discovery Journey</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Add Lottie player for JSON animations -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
 </head>
 <body>
+    <!-- Back Button -->
+    <button class="back-button" onclick="goBack()" title="Go back">
+        ←
+    </button>
+    
+    <!-- Music Controls -->
+    <div class="music-controls">
+        <button id="musicToggle" class="music-btn" title="Toggle Background Music">
+            <span class="music-icon">🎵</span>
+        </button>
+    </div>
+    
     <div class="quiz-container">
         <div class="video-container">
             <video id="worldJourney" class="world-journey">

@@ -370,5 +370,20 @@ def back_to_pet():
     session['country'] = country
     return redirect(url_for('select_pet'))
 
+@app.route('/test_payment')
+def test_payment():
+    """Test route to demonstrate payment system"""
+    # Create dummy session data for testing
+    session['language'] = 'en'
+    session['country'] = 'global'
+    session['pet'] = 'panda'
+    session['answers'] = [0, 1, 2, 0, 1] * 8  # 40 dummy answers
+    
+    # Generate test results
+    results = analyzer.analyze_responses(session['answers'])
+    session['results'] = results
+    
+    return redirect(url_for('payment'))
+
 if __name__ == '__main__':
     app.run(debug=True)

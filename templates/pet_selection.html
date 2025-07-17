@@ -5,10 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenCareer - Choose Your Companion</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Add Lottie player for JSON animations -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
 </head>
 <body class="pet-selection-page">
+    <!-- Back Button -->
+    <button class="back-button" onclick="goBack()" title="Go back">
+        ←
+    </button>
+    
+    <!-- Music Controls -->
+    <div class="music-controls">
+        <button id="musicToggle" class="music-btn" title="Toggle Background Music">
+            <span class="music-icon">🎵</span>
+        </button>
+    </div>
+    
     <div class="container">
         <header>
             <h1 class="title">Choose Your Travel Companion</h1>
@@ -21,17 +32,17 @@
                     <div class="options-grid pet-grid">
                         {% for pet in pets %}
                         <div class="pet-option">
-                            <!-- Lottie animation container without text label, using local file -->
                             <div class="pet-animation-container" onclick="selectPet('{{ pet }}')">
-                                <lottie-player
-                                    id="lottie-{{ pet }}"
-                                    src="{{ url_for('static', filename='lottie/' + pet + '.json') }}"
-                                    background="transparent"
-                                    speed="1"
-                                    style="width: 150px; height: 150px;"
-                                    loop
-                                    autoplay>
-                                </lottie-player>
+                                <div class="pet-placeholder">
+                                    <div class="pet-icon">
+                                        {% if pet == 'panda' %}🐼
+                                        {% elif pet == 'penguin' %}🐧
+                                        {% elif pet == 'puppy' %}🐶
+                                        {% else %}🐾
+                                        {% endif %}
+                                    </div>
+                                    <div class="pet-name">{{ pet.title() }}</div>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
@@ -42,12 +53,57 @@
         </section>
     </div>
     
+    <!-- Audio Elements -->
     <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <audio id="ambientMusic" src="https://zencareer.b-cdn.net/ambient.mp3" preload="auto" loop>
+        Your browser does not support the audio element.
+    </audio>
     
     <script>
         const clickSound = document.getElementById('clickSound');
+        const ambientMusic = document.getElementById('ambientMusic');
+        const musicToggle = document.getElementById('musicToggle');
         const petForm = document.getElementById('petForm');
         const petInput = document.getElementById('petInput');
+        let isMusicPlaying = false;
+        
+        // Initialize music continuity
+        function initializeMusic() {
+            ambientMusic.volume = 0.3;
+            const musicState = JSON.parse(sessionStorage.getItem('zenCareerMusicState') || '{"isPlaying":false}');
+            
+            if (musicState.isPlaying) {
+                ambientMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggle.classList.remove('muted');
+                }).catch(err => console.log('Music playback error:', err));
+            } else {
+                musicToggle.classList.add('muted');
+                musicToggle.querySelector('.music-icon').textContent = '🔇';
+            }
+        }
+        
+        // Toggle music
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                ambientMusic.pause();
+                isMusicPlaying = false;
+                musicToggle.classList.add('muted');
+                musicToggle.querySelector('.music-icon').textContent = '🔇';
+            } else {
+                ambientMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggle.classList.remove('muted');
+                    musicToggle.querySelector('.music-icon').textContent = '🎵';
+                }).catch(err => console.log('Music playback error:', err));
+            }
+            
+            // Save music state
+            sessionStorage.setItem('zenCareerMusicState', JSON.stringify({
+                isPlaying: isMusicPlaying,
+                currentTime: ambientMusic.currentTime
+            }));
+        }
         
         function playClickSound() {
             clickSound.currentTime = 0;
@@ -56,28 +112,20 @@
         
         function selectPet(pet) {
             playClickSound();
-            
             petInput.value = pet;
-            
-            // Submit form
             petForm.submit();
         }
-
-        // Force load Lottie animations properly
+        
+        function goBack() {
+            window.location.href = "{{ url_for('back_to_language') }}";
+        }
+        
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Get all lottie players
-            const players = document.querySelectorAll('lottie-player');
+            initializeMusic();
             
-            // For each player
-            players.forEach(player => {
-                // Load animation with proper error handling
-                player.addEventListener('error', function(e) {
-                    console.error('Lottie animation error:', e);
-                    // Try to reload
-                    const src = player.getAttribute('src');
-                    player.load(src);
-                });
-            });
+            // Add music toggle event listener
+            musicToggle.addEventListener('click', toggleMusic);
         });
     </script>
 </body>

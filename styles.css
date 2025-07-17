@@ -1129,3 +1129,43 @@ header {
         grid-template-columns: 1fr;
     }
 }
+
+/* Pet Selection Styles */
+.pet-placeholder {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f5f7ff 0%, #e8eaff 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.pet-placeholder:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border-color: var(--accent-color);
+}
+
+.pet-icon {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+}
+
+.pet-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-transform: capitalize;
+}
+
+.pet-animation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
