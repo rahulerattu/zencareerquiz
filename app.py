@@ -17,7 +17,12 @@ LANGUAGES = {
     'bn': 'india',
     'vi': 'vietnam',
     'th': 'thailand',
-    'km': 'cambodia'
+    'km': 'cambodia',
+    'zh': 'china',     # Mandarin
+    'ja': 'japan',     # Japanese
+    'es': 'spain',     # Spanish
+    'pt': 'brazil',    # Portuguese
+    'id': 'indonesia'  # Bahasa Indonesia
 }
 
 # Pet options - JSON animation files
@@ -35,8 +40,8 @@ TIMESTAMPS = [
 
 # Locations for each timestamp
 LOCATIONS = [
-    "Mount Fuji, Japan", "Great Wall, China", "Taj Mahal, India", 
-    "Grand Canyon, USA", "Machu Picchu, Peru", "Great Barrier Reef, Australia", 
+    "Mount Fuji, Japan", "Zen Garden, Japan", "Shaolin Temple, China", 
+    "Luang Prabang, Laos", "Taj Mahal, India", "Great Barrier Reef, Australia", 
     "Pyramids of Giza, Egypt", "Venice, Italy", "Santorini, Greece",
     "Northern Lights, Iceland", "Victoria Falls, Zambia/Zimbabwe", "Angkor Wat, Cambodia",
     "Serengeti, Tanzania", "Cappadocia, Turkey", "Antelope Canyon, USA",
@@ -49,6 +54,18 @@ LOCATIONS = [
     "Kruger National Park, South Africa", "Ha Long Bay, Vietnam", "Yellowstone, USA",
     "Amazon Rainforest, Brazil", "Cinque Terre, Italy", "Stonehenge, UK",
     "Dubai Skyline, UAE"
+]
+
+# Personality traits to be revealed every 5 questions
+PERSONALITY_TRAITS = [
+    "Analytical Thinker",
+    "Creative Problem Solver",
+    "Compassionate Leader",
+    "Detail-Oriented Specialist",
+    "Strategic Visionary",
+    "Adaptable Team Player",
+    "Innovative Pioneer",
+    "Meticulous Planner"
 ]
 
 @app.route('/')
@@ -106,7 +123,8 @@ def quiz():
         language=language, 
         pet=pet, 
         timestamps=TIMESTAMPS,
-        locations=LOCATIONS
+        locations=LOCATIONS,
+        personality_traits=PERSONALITY_TRAITS
     )
 
 @app.route('/get_questions')

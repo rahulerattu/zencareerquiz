@@ -1,0 +1,35 @@
+[
+  {
+    "question": "Cuando te enfrentas a un nuevo problema, ¿cuál es tu primer enfoque?",
+    "petThought": "¿Cómo afrontas los desafíos?",
+    "answers": [
+      "Dividirlo en pasos más pequeños",
+      "Buscar patrones de experiencias pasadas",
+      "Hacer una lluvia de ideas para soluciones creativas",
+      "Investigar lo que otros han hecho",
+      "Colaborar con otros para encontrar soluciones"
+    ]
+  },
+  {
+    "question": "¿En qué tipo de ambiente laboral prosperas?",
+    "petThought": "¡Tu espacio de trabajo ideal dice mucho sobre ti!",
+    "answers": [
+      "Tranquilo y estructurado con mínimas distracciones",
+      "Colaborativo con mucha interacción",
+      "Flexible y en constante cambio",
+      "Al aire libre o conectado con la naturaleza",
+      "Creativo y estéticamente agradable"
+    ]
+  },
+  {
+    "question": "¿Cómo prefieres aprender nuevas habilidades?",
+    "petThought": "¡Cada persona tiene su propio estilo de aprendizaje!",
+    "answers": [
+      "Leyendo libros o artículos",
+      "Viendo tutoriales en video",
+      "Práctica directa y experimentación",
+      "Tomando cursos estructurados",
+      "Aprendiendo de un mentor o profesor"
+    ]
+  }
+]

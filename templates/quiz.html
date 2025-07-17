@@ -20,6 +20,15 @@
             </div>
         </div>
         
+        <!-- Personality trait notification -->
+        <div id="traitNotification" class="trait-notification">
+            <div class="trait-icon">✨</div>
+            <div class="trait-message">
+                <h3>New Personality Trait Discovered!</h3>
+                <p id="traitText">Analytical Thinker</p>
+            </div>
+        </div>
+        
         <div class="quiz-content">
             <div class="pet-container">
                 <!-- Lottie animation instead of static image -->
@@ -66,6 +75,8 @@
             const progressBar = document.getElementById('progressBar');
             const locationIndicator = document.getElementById('locationIndicator');
             const locationTitle = document.getElementById('locationTitle');
+            const traitNotification = document.getElementById('traitNotification');
+            const traitText = document.getElementById('traitText');
             
             // Video timestamps for pausing
             const timestamps = {{ timestamps|tojson }};
@@ -73,9 +84,13 @@
             // Locations corresponding to timestamps
             const locations = {{ locations|tojson }};
             
+            // Personality traits to reveal
+            const personalityTraits = {{ personality_traits|tojson }};
+            
             let currentQuestionIndex = 0;
             let userAnswers = [];
             let questions = [];
+            let videoIsPlaying = false;
             
             // Play click sound
             const playClickSound = () => {
@@ -120,6 +135,24 @@
                 
                 // Update progress and location
                 updateProgress();
+                
+                // Check if we should show a trait notification (every 5 questions)
+                if ((currentQuestionIndex > 0) && (currentQuestionIndex % 5 === 0)) {
+                    // Show trait notification
+                    const traitIndex = Math.floor(currentQuestionIndex / 5) % personalityTraits.length;
+                    showTraitNotification(personalityTraits[traitIndex]);
+                }
+            };
+            
+            // Show personality trait notification
+            const showTraitNotification = (trait) => {
+                traitText.textContent = trait;
+                traitNotification.classList.add('show');
+                
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    traitNotification.classList.remove('show');
+                }, 3000);
             };
             
             // Handle answer selection
@@ -136,14 +169,22 @@
                 if (currentQuestionIndex < timestamps.length - 1) {
                     currentQuestionIndex++;
                     
-                    // Jump to next timestamp in video
-                    worldJourney.currentTime = timestamps[currentQuestionIndex];
-                    
-                    // Display next question
-                    displayQuestion();
+                    // Play video to next timestamp
+                    playVideoToNextTimestamp();
                 } else {
                     // Quiz completed, submit answers and redirect
                     submitAnswers();
+                }
+            };
+            
+            // Play video to next timestamp
+            const playVideoToNextTimestamp = () => {
+                if (currentQuestionIndex < timestamps.length) {
+                    // If video is paused, play it
+                    if (worldJourney.paused) {
+                        worldJourney.play().catch(err => console.log('Video playback error:', err));
+                        videoIsPlaying = true;
+                    }
                 }
             };
             
@@ -173,14 +214,28 @@
             worldJourney.addEventListener('loadedmetadata', () => {
                 // Start with the first location
                 worldJourney.currentTime = timestamps[0];
-                worldJourney.play().catch(err => console.log('Video playback error:', err));
+                // Don't autoplay initially - just pause at Mount Fuji
+                worldJourney.pause();
             });
             
             worldJourney.addEventListener('timeupdate', () => {
-                // Pause at timestamps
-                if (timestamps.includes(Math.floor(worldJourney.currentTime))) {
+                // Check if we've reached the next timestamp
+                if (videoIsPlaying && timestamps.includes(Math.floor(worldJourney.currentTime))) {
+                    // Pause at timestamp and display new question
                     worldJourney.pause();
+                    videoIsPlaying = false;
+                    displayQuestion();
                 }
+            });
+            
+            // Force load Lottie animations properly
+            const players = document.querySelectorAll('lottie-player');
+            players.forEach(player => {
+                const src = player.getAttribute('src');
+                player.setAttribute('src', '');
+                setTimeout(() => {
+                    player.setAttribute('src', src);
+                }, 100);
             });
             
             // Fetch questions from server

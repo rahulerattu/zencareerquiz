@@ -13,6 +13,8 @@
         <header>
             <h1 class="title">Your Career Discovery Journey</h1>
             <p class="subtitle">You're about to embark on a beautiful journey around the world while discovering your ideal career path</p>
+            <!-- Moved "Begin Journey" button to the top -->
+            <a href="{{ url_for('quiz') }}" class="start-button" onclick="playClickSound()">Begin Your Journey</a>
         </header>
         
         <section class="journey-intro-area">
@@ -34,14 +36,9 @@
                 </div>
                 
                 <div class="journey-preview">
-                    <img src="https://zencareer.b-cdn.net/background.jpg" alt="World Journey" class="journey-image">
-                    <p class="journey-description">
-                        We'll travel to 40 beautiful destinations around the world. At each stop, 
-                        I'll ask you a question to help understand your personality, preferences, and strengths.
-                    </p>
+                    <!-- Using character.jpg instead of background.jpg -->
+                    <img src="https://zencareer.b-cdn.net/charachter.jpg" alt="World Journey" class="journey-image">
                 </div>
-                
-                <a href="{{ url_for('quiz') }}" class="start-button" onclick="playClickSound()">Begin Your Journey</a>
             </div>
         </section>
     </div>
@@ -55,6 +52,22 @@
             clickSound.currentTime = 0;
             clickSound.play().catch(err => console.log('Audio playback error:', err));
         }
+
+        // Force load Lottie animations properly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all lottie players
+            const players = document.querySelectorAll('lottie-player');
+            
+            // For each player
+            players.forEach(player => {
+                // Force reload by resetting the source
+                const src = player.getAttribute('src');
+                player.setAttribute('src', '');
+                setTimeout(() => {
+                    player.setAttribute('src', src);
+                }, 100);
+            });
+        });
     </script>
 </body>
 </html>

@@ -18,36 +18,73 @@
                 <h2>Choose Your Language</h2>
                 <form action="{{ url_for('select_language') }}" method="post" id="languageForm">
                     <div class="options-grid language-grid">
-                        {% for code, country in languages.items() %}
-                            <button type="button" class="option-btn" 
-                                    data-language="{{ code }}" 
-                                    data-country="{{ country }}"
-                                    onclick="selectLanguage('{{ code }}', '{{ country }}')">
-                                {% if code == 'en' %}
-                                    English
-                                {% elif code == 'hi' %}
-                                    हिंदी (Hindi)
-                                {% elif code == 'ml' %}
-                                    മലയാളം (Malayalam)
-                                {% elif code == 'ta' %}
-                                    தமிழ் (Tamil)
-                                {% elif code == 'te' %}
-                                    తెలుగు (Telugu)
-                                {% elif code == 'kn' %}
-                                    ಕನ್ನಡ (Kannada)
-                                {% elif code == 'or' %}
-                                    ଓଡ଼ିଆ (Oriya)
-                                {% elif code == 'bn' %}
-                                    বাংলা (Bengali)
-                                {% elif code == 'vi' %}
-                                    Tiếng Việt (Vietnamese)
-                                {% elif code == 'th' %}
-                                    ไทย (Thai)
-                                {% elif code == 'km' %}
-                                    ខ្មែរ (Khmer)
-                                {% endif %}
-                            </button>
-                        {% endfor %}
+                        <!-- Original languages -->
+                        <button type="button" class="option-btn" 
+                                data-language="en" 
+                                data-country="global"
+                                onclick="selectLanguage('en', 'global')">English</button>
+                        <button type="button" class="option-btn" 
+                                data-language="hi" 
+                                data-country="india"
+                                onclick="selectLanguage('hi', 'india')">हिंदी (Hindi)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="ml" 
+                                data-country="india"
+                                onclick="selectLanguage('ml', 'india')">മലയാളം (Malayalam)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="ta" 
+                                data-country="india"
+                                onclick="selectLanguage('ta', 'india')">தமிழ் (Tamil)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="te" 
+                                data-country="india"
+                                onclick="selectLanguage('te', 'india')">తెలుగు (Telugu)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="kn" 
+                                data-country="india"
+                                onclick="selectLanguage('kn', 'india')">ಕನ್ನಡ (Kannada)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="or" 
+                                data-country="india"
+                                onclick="selectLanguage('or', 'india')">ଓଡ଼ିଆ (Oriya)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="bn" 
+                                data-country="india"
+                                onclick="selectLanguage('bn', 'india')">বাংলা (Bengali)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="vi" 
+                                data-country="vietnam"
+                                onclick="selectLanguage('vi', 'vietnam')">Tiếng Việt (Vietnamese)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="th" 
+                                data-country="thailand"
+                                onclick="selectLanguage('th', 'thailand')">ไทย (Thai)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="km" 
+                                data-country="cambodia"
+                                onclick="selectLanguage('km', 'cambodia')">ខ្មែរ (Khmer)</button>
+                        
+                        <!-- New languages -->
+                        <button type="button" class="option-btn" 
+                                data-language="zh" 
+                                data-country="china"
+                                onclick="selectLanguage('zh', 'china')">中文 (Mandarin)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="ja" 
+                                data-country="japan"
+                                onclick="selectLanguage('ja', 'japan')">日本語 (Japanese)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="es" 
+                                data-country="spain"
+                                onclick="selectLanguage('es', 'spain')">Español (Spanish)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="pt" 
+                                data-country="brazil"
+                                onclick="selectLanguage('pt', 'brazil')">Português (Portuguese)</button>
+                        <button type="button" class="option-btn" 
+                                data-language="id" 
+                                data-country="indonesia"
+                                onclick="selectLanguage('id', 'indonesia')">Bahasa Indonesia</button>
                     </div>
                     <input type="hidden" name="language" id="languageInput">
                     <input type="hidden" name="country" id="countryInput">

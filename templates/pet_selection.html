@@ -21,8 +21,8 @@
                     <div class="options-grid pet-grid">
                         {% for pet in pets %}
                         <div class="pet-option">
-                            <!-- Lottie animation container -->
-                            <div class="pet-animation-container">
+                            <!-- Lottie animation container without text label -->
+                            <div class="pet-animation-container" onclick="selectPet('{{ pet }}')">
                                 <lottie-player
                                     src="https://zencareer.b-cdn.net/{{ pet }}.json"
                                     background="transparent"
@@ -32,8 +32,6 @@
                                     autoplay>
                                 </lottie-player>
                             </div>
-                            <button type="button" class="option-btn" 
-                                   onclick="selectPet('{{ pet }}')">{{ pet|capitalize }}</button>
                         </div>
                         {% endfor %}
                     </div>
@@ -63,6 +61,22 @@
             // Submit form
             petForm.submit();
         }
+
+        // Force load Lottie animations properly
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all lottie players
+            const players = document.querySelectorAll('lottie-player');
+            
+            // For each player
+            players.forEach(player => {
+                // Force reload by resetting the source
+                const src = player.getAttribute('src');
+                player.setAttribute('src', '');
+                setTimeout(() => {
+                    player.setAttribute('src', src);
+                }, 100);
+            });
+        });
     </script>
 </body>
 </html>
