@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Choose Your Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://zencareer.b-cdn.net/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .description {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .pets-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .pet-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            width: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .pet-card:hover {
+            transform: translateY(-10px);
+            background-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        .pet-card.selected {
+            background-color: rgba(255, 255, 255, 0.3);
+            border: 3px solid white;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        .pet-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .pet-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .pet-description {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            height: 60px;
+            overflow: hidden;
+        }
+        .start-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+        .start-button:hover {
+            background-color: #3e8e41;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .character-preview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .character-preview.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .character-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            max-width: 500px;
+        }
+        .character-image {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            background-color: white; /* Added to ensure white background with image */
+            padding: 20px; /* Added padding around image */
+        }
+        .close-preview {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            color: black;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .audio-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(200%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="petSelectionTitle">Choose Your Guide</h1>
+        <div class="description" id="petSelectionDescription">
+            Select a companion to guide you through your career discovery journey.
+            Each guide has unique insights to offer as they accompany you.
+        </div>
+        
+        <div class="pets-container">
+            <div class="pet-card" data-pet="panda">
+                <div class="shimmer"></div>
+                <img src="https://zencareer.b-cdn.net/panda.jpg" alt="Panda" class="pet-image">
+                <div class="pet-name" id="pandaName">Panda</div>
+                <div class="pet-description" id="pandaDescription">Wisdom and balance. Choose the panda for a thoughtful, balanced approach to discovering your path.</div>
+            </div>
+            
+            <div class="pet-card" data-pet="penguin">
+                <div class="shimmer"></div>
+                <img src="https://zencareer.b-cdn.net/penguin.jpg" alt="Penguin" class="pet-image">
+                <div class="pet-name" id="penguinName">Penguin</div>
+                <div class="pet-description" id="penguinDescription">Adaptability and determination. The penguin helps you navigate challenges with persistence and grace.</div>
+            </div>
+            
+            <div class="pet-card" data-pet="puppy">
+                <div class="shimmer"></div>
+                <img src="https://zencareer.b-cdn.net/puppy.jpg" alt="Puppy" class="pet-image">
+                <div class="pet-name" id="puppyName">Puppy</div>
+                <div class="pet-description" id="puppyDescription">Enthusiasm and loyalty. The puppy brings energy and excitement to your journey of self-discovery.</div>
+            </div>
+        </div>
+        
+        <button id="startButton" class="start-button">Begin Journey</button>
+    </div>
+    
+    <div class="character-preview" id="characterPreview">
+        <div class="character-container">
+            <img src="https://zencareer.b-cdn.net/charachter.jpg" alt="Character Preview" class="character-image">
+            <div class="close-preview" id="closePreview">×</div>
+        </div>
+    </div>
+    
+    <div class="audio-controls" id="audioControls">
+        <svg class="audio-icon" id="audioIcon" viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+    </div>
+    
+    <audio id="backgroundMusic" loop>
+        <source src="/static/audio/ambience.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound">
+        <source src="https://zencareer.b-cdn.net/click.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Language localization
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+            loadTranslations(selectedLanguage);
+            
+            // Continue background music playback
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            backgroundMusic.volume = 0.5;
+            backgroundMusic.play().catch(error => {
+                console.log("Auto-play prevented:", error);
+            });
+            
+            // Audio control functionality
+            const audioControls = document.getElementById('audioControls');
+            const audioIcon = document.getElementById('audioIcon');
+            let isPlaying = true;
+            
+            audioControls.addEventListener('click', function() {
+                if (isPlaying) {
+                    backgroundMusic.pause();
+                    audioIcon.innerHTML = '<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+                } else {
+                    backgroundMusic.play();
+                    audioIcon.innerHTML = '<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+                }
+                isPlaying = !isPlaying;
+            });
+            
+            // Click sound for interactive elements
+            const clickSound = document.getElementById('clickSound');
+            
+            // Pet selection functionality
+            const petCards = document.querySelectorAll('.pet-card');
+            const startButton = document.getElementById('startButton');
+            let selectedPet = null;
+            
+            petCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    clickSound.currentTime = 0;
+                    clickSound.play();
+                    
+                    // Deselect all cards
+                    petCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Select current card
+                    this.classList.add('selected');
+                    selectedPet = this.getAttribute('data-pet');
+                    
+                    // Show start button
+                    startButton.style.display = 'inline-block';
+                    
+                    // Show character preview
+                    document.getElementById('characterPreview').classList.add('show');
+                });
+            });
+            
+            // Close character preview
+            document.getElementById('closePreview').addEventListener('click', function() {
+                clickSound.currentTime = 0;
+                clickSound.play();
+                document.getElementById('characterPreview').classList.remove('show');
+            });
+            
+            // Start journey button
+            startButton.addEventListener('click', function() {
+                clickSound.currentTime = 0;
+                clickSound.play();
+                
+                if (selectedPet) {
+                    localStorage.setItem('selectedPet', selectedPet);
+                    
+                    // Load pet data
+                    fetch(`https://zencareer.b-cdn.net/${selectedPet}.json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            localStorage.setItem('petData', JSON.stringify(data));
+                            window.location.href = 'quiz.html';
+                        })
+                        .catch(error => {
+                            console.error('Error loading pet data:', error);
+                            // Navigate anyway
+                            window.location.href = 'quiz.html';
+                        });
+                }
+            });
+            
+            function loadTranslations(language) {
+                // This would typically load from a separate translations file
+                // For now, using a simple object with translations
+                const translations = {
+                    'en': {
+                        'petSelectionTitle': 'Choose Your Guide',
+                        'petSelectionDescription': 'Select a companion to guide you through your career discovery journey. Each guide has unique insights to offer as they accompany you.',
+                        'pandaName': 'Panda',
+                        'pandaDescription': 'Wisdom and balance. Choose the panda for a thoughtful, balanced approach to discovering your path.',
+                        'penguinName': 'Penguin',
+                        'penguinDescription': 'Adaptability and determination. The penguin helps you navigate challenges with persistence and grace.',
+                        'puppyName': 'Puppy',
+                        'puppyDescription': 'Enthusiasm and loyalty. The puppy brings energy and excitement to your journey of self-discovery.',
+                        'startButton': 'Begin Journey'
+                    },
+                    'hi': {
+                        'petSelectionTitle': 'अपना मार्गदर्शक चुनें',
+                        'petSelectionDescription': 'अपनी करियर खोज यात्रा के लिए एक साथी चुनें। प्रत्येक मार्गदर्शक आपके साथ अनूठी अंतर्दृष्टि प्रदान करता है।',
+                        'pandaName': 'पांडा',
+                        'pandaDescription': 'ज्ञान और संतुलन। अपने मार्ग की खोज के लिए एक विचारशील, संतुलित दृष्टिकोण के लिए पांडा चुनें।',
+                        'penguinName': 'पेंगुइन',
+                        'penguinDescription': 'अनुकूलन क्षमता और दृढ़ संकल्प। पेंगुइन आपको दृढ़ता और सहजता के साथ चुनौतियों का सामना करने में मदद करता है।',
+                        'puppyName': 'पिल्ला',
+                        'puppyDescription': 'उत्साह और निष्ठा। पिल्ला आपकी आत्म-खोज की यात्रा में ऊर्जा और उत्साह लाता है।',
+                        'startButton': 'यात्रा शुरू करें'
+                    }
+                    // Add more languages as needed
+                };
+                
+                // Apply translations or fallback to English
+                const currentTranslations = translations[language] || translations['en'];
+                
+                // Update text elements
+                Object.keys(currentTranslations).forEach(key => {
+                    if (document.getElementById(key)) {
+                        document.getElementById(key).textContent = currentTranslations[key];
+                    }
+                });
+                
+                // Update button text
+                if (currentTranslations['startButton']) {
+                    startButton.textContent = currentTranslations['startButton'];
+                }
+            }
+        });
+    </script>
+</body>
+</html>
