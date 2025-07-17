@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const clickSound = document.getElementById('clickSound');
+    const ambientMusic = document.getElementById('ambientMusic');
+    const musicToggle = document.getElementById('musicToggle');
     const languageSelection = document.querySelector('.language-selection');
     const petSelection = document.querySelector('.pet-selection');
     const journeyIntro = document.querySelector('.journey-intro');
@@ -11,6 +13,61 @@ document.addEventListener('DOMContentLoaded', () => {
         country: '',
         pet: ''
     };
+    
+    // Music control state
+    let isMusicPlaying = false;
+    
+    // Translation function
+    const updateTexts = (language) => {
+        const t = translations[language] || translations['en'];
+        
+        document.getElementById('welcomeTitle').textContent = t.welcomeTitle;
+        document.getElementById('welcomeSubtitle').textContent = t.welcomeSubtitle;
+        document.getElementById('chooseLanguageText').textContent = t.chooseLanguage;
+        document.getElementById('choosePetText').textContent = t.choosePet;
+        document.getElementById('petDescriptionText').textContent = t.petDescription;
+        document.getElementById('journeyTitleText').textContent = t.journeyTitle;
+        document.getElementById('journeyDescriptionText').textContent = t.journeyDescription;
+        document.getElementById('beginJourneyBtn').textContent = t.beginJourney;
+        musicToggle.title = t.musicToggleTitle;
+    };
+    
+    // Initialize ambient music
+    const initializeMusic = () => {
+        ambientMusic.volume = 0.3; // Set volume to 30%
+        
+        // Auto-play music when user interacts
+        document.addEventListener('click', () => {
+            if (!isMusicPlaying) {
+                ambientMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggle.classList.remove('muted');
+                }).catch(err => console.log('Music playback error:', err));
+            }
+        }, { once: true });
+    };
+    
+    // Toggle music
+    const toggleMusic = () => {
+        if (isMusicPlaying) {
+            ambientMusic.pause();
+            isMusicPlaying = false;
+            musicToggle.classList.add('muted');
+            musicToggle.querySelector('.music-icon').textContent = '🔇';
+        } else {
+            ambientMusic.play().then(() => {
+                isMusicPlaying = true;
+                musicToggle.classList.remove('muted');
+                musicToggle.querySelector('.music-icon').textContent = '🎵';
+            }).catch(err => console.log('Music playback error:', err));
+        }
+    };
+    
+    // Music toggle button event
+    musicToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMusic();
+    });
     
     // Play click sound and handle button clicks
     const playClickSound = () => {
@@ -27,6 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Store selected language and country
             userSelections.language = button.getAttribute('data-language');
             userSelections.country = button.getAttribute('data-country');
+            
+            // Update UI text based on selected language
+            updateTexts(userSelections.language);
             
             // Highlight selected button
             languageButtons.forEach(btn => btn.classList.remove('selected'));
@@ -70,7 +130,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Save selections to session storage
         sessionStorage.setItem('zenCareerSelections', JSON.stringify(userSelections));
         
+        // Save music state
+        sessionStorage.setItem('zenCareerMusicState', JSON.stringify({
+            isPlaying: isMusicPlaying,
+            currentTime: ambientMusic.currentTime
+        }));
+        
         // Redirect to quiz page
         window.location.href = 'quiz.html';
     });
+    
+    // Initialize music controls
+    initializeMusic();
 });

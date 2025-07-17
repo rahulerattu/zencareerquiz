@@ -223,10 +223,11 @@ header {
     display: flex;
     justify-content: space-between;
     padding: 2rem;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 12px 12px 0 0;
     margin-top: -20px;
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .pet-container {
@@ -244,7 +245,7 @@ header {
 }
 
 .question-bubble {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9);
     border-radius: 20px;
     padding: 15px 20px;
     box-shadow: var(--shadow);
@@ -259,7 +260,7 @@ header {
     left: 20px;
     width: 20px;
     height: 20px;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9);
     transform: rotate(45deg);
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
     z-index: -1;
@@ -570,4 +571,44 @@ header {
     .payment-options {
         grid-template-columns: 1fr;
     }
+}
+
+/* Music Controls */
+.music-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.music-btn {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: var(--transition);
+}
+
+.music-btn:hover {
+    background-color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+}
+
+.music-btn.muted {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+.music-btn.muted .music-icon {
+    opacity: 0.5;
+}
+
+.music-icon {
+    font-size: 1.5rem;
+    transition: var(--transition);
 }

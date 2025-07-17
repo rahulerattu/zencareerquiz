@@ -22,9 +22,32 @@ const questions = [
             "സൃഷ്ടിപരവും സൗന്ദര്യാത്മകവുമായ"
         ]
     },
-    // More questions would go here - 38 more to match our timestamps
-    // For brevity, I'm including just 2 sample questions
+    {
+        question: "നിങ്ങൾ പുതിയ കഴിവുകൾ പഠിക്കാൻ എങ്ങനെയാണ് ഇഷ്ടപ്പെടുന്നത്?",
+        petThought: "ഓരോരുത്തർക്കും അവരുടേതായ പഠന രീതിയുണ്ട്!",
+        answers: [
+            "പുസ്തകങ്ങളോ ലേഖനങ്ങളോ വായിച്ച്",
+            "വീഡിയോ ട്യൂട്ടോറിയലുകൾ കണ്ട്",
+            "പ്രായോഗിക പരിശീലനത്തിലൂടെയും പരീക്ഷണങ്ങളിലൂടെയും",
+            "മാർഗദർശകരിൽ നിന്നോ വിദഗ്ധരിൽ നിന്നോ പഠിച്ച്",
+            "ക്രമീകരിച്ച കോഴ്സുകളോ ക്ലാസുകളോ എടുത്ത്"
+        ]
+    }
 ];
 
+// Generate full 40 questions by cycling through the base set
+const fullQuestions = [];
+for (let i = 0; i < 40; i++) {
+    const baseIndex = i % questions.length;
+    const question = JSON.parse(JSON.stringify(questions[baseIndex])); // Deep copy
+    
+    if (i >= questions.length) {
+        const variation = Math.floor(i / questions.length) + 1;
+        question.question = question.question + ` (ഭാഗം ${variation})`;
+    }
+    
+    fullQuestions.push(question);
+}
+
 // Dispatch event to let quiz.js know questions are loaded
-window.dispatchEvent(new CustomEvent('questionsLoaded', { detail: questions }));
+window.dispatchEvent(new CustomEvent('questionsLoaded', { detail: fullQuestions }));

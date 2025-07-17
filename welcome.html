@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenCareer - Career Guidance Journey</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="translations.js"></script>
 </head>
 <body class="welcome-page">
     <div class="container">
         <header>
-            <h1 class="title">Welcome to ZenCareer</h1>
-            <p class="subtitle">Discover Your Perfect Career Path Through a Journey of Self-Discovery</p>
+            <h1 class="title" id="welcomeTitle">Welcome to ZenCareer</h1>
+            <p class="subtitle" id="welcomeSubtitle">Discover Your Perfect Career Path Through a Journey of Self-Discovery</p>
         </header>
         
         <section class="selection-area">
             <div class="selection-box language-selection">
-                <h2>Choose Your Language</h2>
+                <h2 id="chooseLanguageText">Choose Your Language</h2>
                 <div class="options-grid language-grid">
                     <button class="option-btn" data-language="en" data-country="global">English</button>
                     <button class="option-btn" data-language="hi" data-country="india">हिंदी (Hindi)</button>
@@ -32,8 +33,8 @@
             </div>
             
             <div class="selection-box pet-selection" style="display: none;">
-                <h2>Choose Your Travel Companion</h2>
-                <p>This friendly companion will guide you through your career discovery journey</p>
+                <h2 id="choosePetText">Choose Your Travel Companion</h2>
+                <p id="petDescriptionText">This friendly companion will guide you through your career discovery journey</p>
                 <div class="options-grid pet-grid">
                     <div class="pet-option">
                         <img src="https://zencareer.b-cdn.net/panda.png" alt="Panda" class="pet-image">
@@ -51,17 +52,27 @@
             </div>
             
             <div class="selection-box journey-intro" style="display: none;">
-                <h2>Your Career Discovery Journey</h2>
-                <p>You're about to embark on a beautiful journey around the world while discovering your ideal career path</p>
+                <h2 id="journeyTitleText">Your Career Discovery Journey</h2>
+                <p id="journeyDescriptionText">You're about to embark on a beautiful journey around the world while discovering your ideal career path</p>
                 <div class="journey-preview">
                     <img src="https://zencareer.b-cdn.net/background.jpg" alt="World Journey" class="journey-image">
                 </div>
-                <button class="start-button">Begin Your Journey</button>
+                <button class="start-button" id="beginJourneyBtn">Begin Your Journey</button>
             </div>
         </section>
     </div>
     
+    <!-- Music Controls -->
+    <div class="music-controls">
+        <button id="musicToggle" class="music-btn" title="Toggle Background Music">
+            <span class="music-icon">🎵</span>
+        </button>
+    </div>
+    
     <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <audio id="ambientMusic" src="https://zencareer.b-cdn.net/ambient.mp3" preload="auto" loop>
+        Your browser does not support the audio element.
+    </audio>
     
     <script src="welcome.js"></script>
 </body>
