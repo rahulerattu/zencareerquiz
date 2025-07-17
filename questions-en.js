@@ -1,30 +1,40 @@
-// English questions
+// English questions for the ZenCareer quiz
 const questions = [
     {
-        question: "When faced with a new problem, what's your first approach?",
-        petThought: "How do you tackle challenges?",
-        answers: [
-            "Break it down into smaller steps",
-            "Look for patterns from past experiences",
-            "Brainstorm creative solutions",
-            "Research what others have done",
-            "Collaborate with others to find solutions"
-        ]
+        id: 1,
+        text: "When faced with a new challenge, I usually:",
+        options: [
+            "Research thoroughly before starting",
+            "Jump right in and learn along the way",
+            "Ask others for advice first",
+            "Plan a step-by-step approach",
+            "Assess the risks and rewards before deciding"
+        ],
+        location: 1 // Mount Fuji
     },
     {
-        question: "What type of work environment do you thrive in?",
-        petThought: "Your ideal workspace says a lot about you!",
-        answers: [
-            "Quiet and structured with minimal distractions",
-            "Collaborative with lots of interaction",
-            "Flexible and constantly changing",
-            "Outdoors or connected to nature",
-            "Creative and aesthetically pleasing"
-        ]
+        id: 2,
+        text: "In a team project, I typically take on the role of:",
+        options: [
+            "Leader who directs the team",
+            "Creative idea generator",
+            "Detail-oriented implementer",
+            "Mediator who resolves conflicts",
+            "Researcher who gathers information"
+        ],
+        location: 2 // Great Wall
     },
-    // More questions would go here - 38 more to match our timestamps
-    // For brevity, I'm including just 2 sample questions
+    {
+        id: 3,
+        text: "My ideal work environment would be:",
+        options: [
+            "Structured with clear expectations",
+            "Flexible and always changing",
+            "Collaborative with lots of teamwork",
+            "Independent with autonomy",
+            "Balanced between teamwork and individual tasks"
+        ],
+        location: 3 // Taj Mahal
+    },
+    // Continue for all 40 questions
 ];
-
-// Dispatch event to let quiz.js know questions are loaded
-window.dispatchEvent(new CustomEvent('questionsLoaded', { detail: questions }));

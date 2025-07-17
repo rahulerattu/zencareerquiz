@@ -1,76 +1,137 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const clickSound = document.getElementById('clickSound');
-    const languageSelection = document.querySelector('.language-selection');
-    const petSelection = document.querySelector('.pet-selection');
-    const journeyIntro = document.querySelector('.journey-intro');
-    const startButton = document.querySelector('.start-button');
+document.addEventListener('DOMContentLoaded', function() {
+    // Audio elements
+    const clickSound = document.getElementById('click-sound');
+    const backgroundMusic = document.getElementById('background-music');
+    const toggleMusicBtn = document.getElementById('toggle-music');
     
-    // Store user selections
-    const userSelections = {
-        language: '',
-        country: '',
-        pet: ''
-    };
+    // Global audio state management
+    let musicPlaying = false;
     
-    // Play click sound and handle button clicks
-    const playClickSound = () => {
-        clickSound.currentTime = 0;
-        clickSound.play().catch(err => console.log('Audio playback error:', err));
-    };
+    // Initialize audio settings from local storage
+    function initializeAudio() {
+        const savedMusicState = localStorage.getItem('zencareer-music');
+        musicPlaying = savedMusicState === 'playing';
+        
+        if (musicPlaying) {
+            backgroundMusic.volume = 0.3; // Set to 30% volume
+            playBackgroundMusic();
+            toggleMusicBtn.textContent = '🔇';
+        } else {
+            toggleMusicBtn.textContent = '🎵';
+        }
+    }
     
-    // Handle language selection
-    const languageButtons = document.querySelectorAll('.language-selection .option-btn');
-    languageButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            playClickSound();
-            
-            // Store selected language and country
-            userSelections.language = button.getAttribute('data-language');
-            userSelections.country = button.getAttribute('data-country');
-            
-            // Highlight selected button
-            languageButtons.forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            
-            // Transition to pet selection
-            languageSelection.style.display = 'none';
-            petSelection.style.display = 'block';
-            
-            // Smooth scroll to pet selection
-            petSelection.scrollIntoView({ behavior: 'smooth' });
-        });
-    });
-    
-    // Handle pet selection
-    const petButtons = document.querySelectorAll('.pet-selection .option-btn');
-    petButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            playClickSound();
-            
-            // Store selected pet
-            userSelections.pet = button.getAttribute('data-pet');
-            
-            // Highlight selected button
-            petButtons.forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            
-            // Transition to journey intro
-            petSelection.style.display = 'none';
-            journeyIntro.style.display = 'block';
-            
-            // Smooth scroll to journey intro
-            journeyIntro.scrollIntoView({ behavior: 'smooth' });
-        });
-    });
-    
-    // Handle start journey button
-    startButton.addEventListener('click', () => {
+    // Toggle background music
+    toggleMusicBtn.addEventListener('click', function() {
         playClickSound();
         
-        // Save selections to session storage
-        sessionStorage.setItem('zenCareerSelections', JSON.stringify(userSelections));
+        if (musicPlaying) {
+            pauseBackgroundMusic();
+            toggleMusicBtn.textContent = '🎵';
+            localStorage.setItem('zencareer-music', 'paused');
+        } else {
+            playBackgroundMusic();
+            toggleMusicBtn.textContent = '🔇';
+            localStorage.setItem('zencareer-music', 'playing');
+        }
+        
+        musicPlaying = !musicPlaying;
+    });
+    
+    // Play click sound
+    function playClickSound() {
+        clickSound.currentTime = 0;
+        clickSound.play();
+    }
+    
+    // Play background music
+    function playBackgroundMusic() {
+        backgroundMusic.volume = 0.3; // Set to 30% volume
+        backgroundMusic.play();
+    }
+    
+    // Pause background music
+    function pauseBackgroundMusic() {
+        backgroundMusic.pause();
+    }
+    
+    // Language selection
+    const languageBtns = document.querySelectorAll('.language-btn');
+    languageBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            playClickSound();
+            
+            // Remove active class from all language buttons
+            languageBtns.forEach(b => b.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Save selected language
+            const selectedLang = this.getAttribute('data-lang');
+            localStorage.setItem('zencareer-language', selectedLang);
+            changeLanguage(selectedLang);
+            
+            // Show pet selection
+            document.getElementById('pet-selection').style.display = 'block';
+            
+            // Scroll to pet selection
+            document.getElementById('pet-selection').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    });
+    
+    // Pet selection
+    const petCards = document.querySelectorAll('.pet-card');
+    petCards.forEach(card => {
+        card.addEventListener('click', function() {
+            playClickSound();
+            
+            // Remove active class from all pet cards
+            petCards.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked card
+            this.classList.add('active');
+            
+            // Save selected pet
+            const selectedPet = this.getAttribute('data-pet');
+            localStorage.setItem('zencareer-pet', selectedPet);
+            
+            // Show country selection
+            document.getElementById('country-selection').style.display = 'block';
+            
+            // Scroll to country selection
+            document.getElementById('country-selection').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    });
+    
+    // Start quiz button
+    const startQuizBtn = document.getElementById('start-quiz');
+    startQuizBtn.addEventListener('click', function() {
+        playClickSound();
+        
+        // Check if language and pet are selected
+        const selectedLang = localStorage.getItem('zencareer-language');
+        const selectedPet = localStorage.getItem('zencareer-pet');
+        
+        if (!selectedLang || !selectedPet) {
+            alert('Please select a language and a guide before starting the quiz.');
+            return;
+        }
+        
+        // Save selected country
+        const selectedCountry = document.getElementById('country-dropdown').value;
+        localStorage.setItem('zencareer-country', selectedCountry);
         
         // Redirect to quiz page
         window.location.href = 'quiz.html';
     });
+    
+    // Initialize audio
+    initializeAudio();
 });

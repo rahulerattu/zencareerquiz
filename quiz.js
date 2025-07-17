@@ -1,26 +1,31 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Get user selections from session storage
-    const userSelections = JSON.parse(sessionStorage.getItem('zenCareerSelections') || '{"language":"en","country":"global","pet":"panda"}');
+document.addEventListener('DOMContentLoaded', function() {
+    // Get saved preferences
+    const selectedLang = localStorage.getItem('zencareer-language') || 'en';
+    const selectedPet = localStorage.getItem('zencareer-pet') || 'panda';
     
-    // Elements
-    const clickSound = document.getElementById('clickSound');
-    const worldJourney = document.getElementById('worldJourney');
-    const petImage = document.getElementById('petImage');
-    const petThought = document.getElementById('petThought');
-    const questionText = document.getElementById('questionText');
-    const answersContainer = document.getElementById('answersContainer');
-    const progressBar = document.getElementById('progressBar');
-    const locationIndicator = document.getElementById('locationIndicator');
-    const locationTitle = document.getElementById('locationTitle');
-    const questionsScript = document.getElementById('questionsScript');
+    // Audio elements
+    const clickSound = document.getElementById('click-sound');
+    const backgroundMusic = document.getElementById('background-music');
+    const toggleMusicBtn = document.getElementById('toggle-music');
     
-    // Set pet image based on selection
-    petImage.src = `https://zencareer.b-cdn.net/${userSelections.pet}.png`;
+    // Video element
+    const backgroundVideo = document.getElementById('background-video');
     
-    // Load questions based on selected language
-    questionsScript.src = `questions-${userSelections.language}.js`;
+    // Quiz elements
+    const progressFill = document.querySelector('.progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const locationTitle = document.getElementById('current-location');
+    const motivationalQuote = document.getElementById('motivational-quote');
+    const petImage = document.getElementById('pet-image');
+    const questionText = document.getElementById('question-text');
+    const answersContainer = document.querySelector('.answers-container');
     
-    // Video timestamps for pausing
+    // Quiz state
+    let currentQuestionIndex = 0;
+    let totalQuestions = 40;
+    let userAnswers = [];
+    let questions = [];
+    let musicPlaying = false;
     const timestamps = [
         6, 12, 18, 24, 30, 36, 42, 48, 54,
         60, 66, 72, 78, 84, 90, 96, 102, 108,
@@ -30,147 +35,159 @@ document.addEventListener('DOMContentLoaded', () => {
         234, 240
     ];
     
-    // Locations corresponding to timestamps
-    const locations = [
-        "Mount Fuji, Japan", "Great Wall, China", "Taj Mahal, India", 
-        "Grand Canyon, USA", "Machu Picchu, Peru", "Great Barrier Reef, Australia", 
-        "Pyramids of Giza, Egypt", "Venice, Italy", "Santorini, Greece",
-        "Northern Lights, Iceland", "Victoria Falls, Zambia/Zimbabwe", "Angkor Wat, Cambodia",
-        "Serengeti, Tanzania", "Cappadocia, Turkey", "Antelope Canyon, USA",
-        "Niagara Falls, Canada/USA", "Bora Bora, French Polynesia", "Uyuni Salt Flats, Bolivia",
-        "Kyoto, Japan", "Petra, Jordan", "Halong Bay, Vietnam",
-        "Cliffs of Moher, Ireland", "Torres del Paine, Chile", "Blue Lagoon, Iceland",
-        "Table Mountain, South Africa", "Banff National Park, Canada", "Plitvice Lakes, Croatia",
-        "Zhangjiajie, China", "Bagan, Myanmar", "Salar de Uyuni, Bolivia",
-        "Galapagos Islands, Ecuador", "Maldives Islands", "Pamukkale, Turkey",
-        "Kruger National Park, South Africa", "Ha Long Bay, Vietnam", "Yellowstone, USA",
-        "Amazon Rainforest, Brazil", "Cinque Terre, Italy", "Stonehenge, UK",
-        "Dubai Skyline, UAE"
-    ];
+    // Load pet image
+    petImage.src = `https://zencareer.b-cdn.net/${selectedPet}.png`;
     
-    let currentQuestionIndex = 0;
-    let userAnswers = [];
-    let questions = [];
+    // Initialize audio settings from local storage
+    function initializeAudio() {
+        const savedMusicState = localStorage.getItem('zencareer-music');
+        musicPlaying = savedMusicState === 'playing';
+        
+        if (musicPlaying) {
+            backgroundMusic.volume = 0.3; // Set to 30% volume
+            playBackgroundMusic();
+            toggleMusicBtn.textContent = '🔇';
+        } else {
+            toggleMusicBtn.textContent = '🎵';
+        }
+    }
+    
+    // Toggle background music
+    toggleMusicBtn.addEventListener('click', function() {
+        playClickSound();
+        
+        if (musicPlaying) {
+            pauseBackgroundMusic();
+            toggleMusicBtn.textContent = '🎵';
+            localStorage.setItem('zencareer-music', 'paused');
+        } else {
+            playBackgroundMusic();
+            toggleMusicBtn.textContent = '🔇';
+            localStorage.setItem('zencareer-music', 'playing');
+        }
+        
+        musicPlaying = !musicPlaying;
+    });
     
     // Play click sound
-    const playClickSound = () => {
+    function playClickSound() {
         clickSound.currentTime = 0;
-        clickSound.play().catch(err => console.log('Audio playback error:', err));
-    };
+        clickSound.play();
+    }
     
-    // Update progress
-    const updateProgress = () => {
-        const progress = ((currentQuestionIndex + 1) / timestamps.length) * 100;
-        progressBar.style.width = `${progress}%`;
-        locationIndicator.textContent = `Question ${currentQuestionIndex + 1}/${timestamps.length}: ${locations[currentQuestionIndex]}`;
-        locationTitle.textContent = locations[currentQuestionIndex];
-    };
+    // Play background music
+    function playBackgroundMusic() {
+        backgroundMusic.volume = 0.3; // Set to 30% volume
+        backgroundMusic.play();
+    }
     
-    // Display current question
-    const displayQuestion = () => {
-        const question = questions[currentQuestionIndex];
+    // Pause background music
+    function pauseBackgroundMusic() {
+        backgroundMusic.pause();
+    }
+    
+    // Load questions based on selected language
+    function loadQuestions() {
+        // Create script element to load language-specific questions
+        const script = document.createElement('script');
+        script.src = `questions-${selectedLang}.js`;
+        script.onload = function() {
+            // Questions are now loaded in the global 'questions' variable
+            startQuiz();
+        };
+        script.onerror = function() {
+            // Fallback to English if the selected language file is not available
+            const fallbackScript = document.createElement('script');
+            fallbackScript.src = 'questions-en.js';
+            fallbackScript.onload = function() {
+                startQuiz();
+            };
+            document.head.appendChild(fallbackScript);
+        };
+        document.head.appendChild(script);
+    }
+    
+    // Initialize the quiz
+    function startQuiz() {
+        // Set up video event listeners
+        backgroundVideo.addEventListener('timeupdate', checkVideoTime);
         
-        // Update pet thought
-        petThought.textContent = question.petThought || "What do you think about this?";
+        // Start the video
+        backgroundVideo.play();
         
-        // Display question
-        questionText.textContent = question.question;
+        // Display first question
+        showQuestion(0);
+    }
+    
+    // Show current question
+    function showQuestion(index) {
+        const question = questions[index];
+        
+        // Update progress
+        progressFill.style.width = `${((index + 1) / totalQuestions) * 100}%`;
+        progressText.textContent = `${translations[selectedLang].question} ${index + 1}/${totalQuestions}`;
+        
+        // Update location information
+        const location = getLocationByTimestamp(timestamps[index]);
+        locationTitle.textContent = location.name[selectedLang] || location.name.en;
+        motivationalQuote.textContent = location.quote[selectedLang] || location.quote.en;
+        
+        // Set question text
+        questionText.textContent = question.text;
         
         // Clear previous answers
         answersContainer.innerHTML = '';
         
         // Add answer options
-        question.answers.forEach((answer, index) => {
-            const answerElement = document.createElement('div');
-            answerElement.classList.add('answer-option');
-            answerElement.textContent = answer;
-            answerElement.addEventListener('click', () => selectAnswer(index));
-            answersContainer.appendChild(answerElement);
+        question.options.forEach((option, optIndex) => {
+            const answerBtn = document.createElement('div');
+            answerBtn.className = 'answer-option';
+            answerBtn.textContent = option;
+            answerBtn.addEventListener('click', () => selectAnswer(optIndex));
+            answersContainer.appendChild(answerBtn);
         });
-        
-        // Update progress and location
-        updateProgress();
-    };
+    }
     
     // Handle answer selection
-    const selectAnswer = (answerIndex) => {
+    function selectAnswer(optionIndex) {
         playClickSound();
         
-        // Save answer
-        userAnswers.push({
-            questionIndex: currentQuestionIndex,
-            answerIndex: answerIndex
-        });
+        // Save user's answer
+        userAnswers[currentQuestionIndex] = optionIndex;
         
-        // Move to next question or finish
-        if (currentQuestionIndex < timestamps.length - 1) {
-            currentQuestionIndex++;
+        // Move to next question
+        currentQuestionIndex++;
+        
+        if (currentQuestionIndex < totalQuestions) {
+            // Show next question
+            showQuestion(currentQuestionIndex);
             
-            // Jump to next timestamp in video
-            worldJourney.currentTime = timestamps[currentQuestionIndex];
-            
-            // Display next question
-            displayQuestion();
+            // Seek video to next timestamp
+            backgroundVideo.currentTime = timestamps[currentQuestionIndex];
         } else {
-            // Quiz completed, calculate results and redirect
-            calculateResults();
+            // Quiz completed - save results and redirect to results page
+            saveResults();
             window.location.href = 'results.html';
         }
-    };
+    }
     
-    // Calculate and save results
-    const calculateResults = () => {
-        // In a real implementation, we would have a more sophisticated
-        // algorithm to analyze answers and determine career matches.
-        // For now, we'll just save the user's answers.
+    // Check video time to ensure synchronization with questions
+    function checkVideoTime() {
+        // Ensure video stays at the current timestamp for the question
+        const currentTimestamp = timestamps[currentQuestionIndex];
         
-        // Example simple calculation
-        const result = {
-            userSelections: userSelections,
-            userAnswers: userAnswers,
-            topCareers: [
-                {
-                    title: "Software Developer",
-                    match: 92,
-                    icon: "💻"
-                },
-                {
-                    title: "Data Scientist",
-                    match: 88,
-                    icon: "📊"
-                },
-                {
-                    title: "UX Designer",
-                    match: 84,
-                    icon: "🎨"
-                }
-            ],
-            traits: [
-                "Analytical", "Creative", "Detail-oriented", "Problem-solver", "Adaptable"
-            ]
-        };
-        
-        // Save results to session storage
-        sessionStorage.setItem('zenCareerResults', JSON.stringify(result));
-    };
-    
-    // Video controls
-    worldJourney.addEventListener('loadedmetadata', () => {
-        // Start with the first location
-        worldJourney.currentTime = timestamps[0];
-        worldJourney.play().catch(err => console.log('Video playback error:', err));
-    });
-    
-    worldJourney.addEventListener('timeupdate', () => {
-        // Pause at timestamps
-        if (timestamps.includes(Math.floor(worldJourney.currentTime))) {
-            worldJourney.pause();
+        // If video time drifts more than 0.5 seconds from the timestamp, reset it
+        if (Math.abs(backgroundVideo.currentTime - currentTimestamp) > 0.5) {
+            backgroundVideo.currentTime = currentTimestamp;
         }
-    });
+    }
     
-    // Wait for questions to load
-    window.addEventListener('questionsLoaded', (event) => {
-        questions = event.detail;
-        displayQuestion();
-    });
+    // Save quiz results
+    function saveResults() {
+        localStorage.setItem('zencareer-answers', JSON.stringify(userAnswers));
+    }
+    
+    // Initialize
+    initializeAudio();
+    loadQuestions();
 });

@@ -3,66 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenCareer - Career Guidance Journey</title>
+    <title>ZenCareer - Welcome</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="welcome-page">
-    <div class="container">
-        <header>
-            <h1 class="title">Welcome to ZenCareer</h1>
-            <p class="subtitle">Discover Your Perfect Career Path Through a Journey of Self-Discovery</p>
-        </header>
+    <div class="welcome-container">
+        <h1 id="welcome-title">Welcome to ZenCareer Quiz</h1>
         
-        <section class="selection-area">
-            <div class="selection-box language-selection">
-                <h2>Choose Your Language</h2>
-                <div class="options-grid language-grid">
-                    <button class="option-btn" data-language="en" data-country="global">English</button>
-                    <button class="option-btn" data-language="hi" data-country="india">हिंदी (Hindi)</button>
-                    <button class="option-btn" data-language="ml" data-country="india">മലയാളം (Malayalam)</button>
-                    <button class="option-btn" data-language="ta" data-country="india">தமிழ் (Tamil)</button>
-                    <button class="option-btn" data-language="te" data-country="india">తెలుగు (Telugu)</button>
-                    <button class="option-btn" data-language="kn" data-country="india">ಕನ್ನಡ (Kannada)</button>
-                    <button class="option-btn" data-language="or" data-country="india">ଓଡ଼ିଆ (Oriya)</button>
-                    <button class="option-btn" data-language="bn" data-country="india">বাংলা (Bengali)</button>
-                    <button class="option-btn" data-language="vi" data-country="vietnam">Tiếng Việt (Vietnamese)</button>
-                    <button class="option-btn" data-language="th" data-country="thailand">ไทย (Thai)</button>
-                    <button class="option-btn" data-language="km" data-country="cambodia">ខ្មែរ (Khmer)</button>
+        <div class="section-container">
+            <h2 id="language-selection-title">Choose Your Language</h2>
+            <div class="language-grid">
+                <button class="language-btn" data-lang="en">English</button>
+                <button class="language-btn" data-lang="hi">हिन्दी (Hindi)</button>
+                <button class="language-btn" data-lang="ml">മലയാളം (Malayalam)</button>
+                <button class="language-btn" data-lang="ta">தமிழ் (Tamil)</button>
+                <button class="language-btn" data-lang="te">తెలుగు (Telugu)</button>
+                <button class="language-btn" data-lang="kn">ಕನ್ನಡ (Kannada)</button>
+                <button class="language-btn" data-lang="or">ଓଡ଼ିଆ (Odia)</button>
+                <button class="language-btn" data-lang="bn">বাংলা (Bengali)</button>
+                <button class="language-btn" data-lang="vi">Tiếng Việt (Vietnamese)</button>
+                <button class="language-btn" data-lang="th">ไทย (Thai)</button>
+                <button class="language-btn" data-lang="km">ខ្មែរ (Khmer)</button>
+            </div>
+        </div>
+
+        <div class="section-container" id="pet-selection" style="display: none;">
+            <h2 id="pet-selection-title">Choose Your Guide</h2>
+            <div class="pet-grid">
+                <div class="pet-card" data-pet="panda">
+                    <img src="https://zencareer.b-cdn.net/panda.png" alt="Panda" class="pet-image">
+                    <h3>Panda</h3>
+                </div>
+                <div class="pet-card" data-pet="penguin">
+                    <img src="https://zencareer.b-cdn.net/penguin.png" alt="Penguin" class="pet-image">
+                    <h3>Penguin</h3>
+                </div>
+                <div class="pet-card" data-pet="puppy">
+                    <img src="https://zencareer.b-cdn.net/puppy.png" alt="Puppy" class="pet-image">
+                    <h3>Puppy</h3>
                 </div>
             </div>
-            
-            <div class="selection-box pet-selection" style="display: none;">
-                <h2>Choose Your Travel Companion</h2>
-                <p>This friendly companion will guide you through your career discovery journey</p>
-                <div class="options-grid pet-grid">
-                    <div class="pet-option">
-                        <img src="https://zencareer.b-cdn.net/panda.png" alt="Panda" class="pet-image">
-                        <button class="option-btn" data-pet="panda">Panda</button>
-                    </div>
-                    <div class="pet-option">
-                        <img src="https://zencareer.b-cdn.net/penguin.png" alt="Penguin" class="pet-image">
-                        <button class="option-btn" data-pet="penguin">Penguin</button>
-                    </div>
-                    <div class="pet-option">
-                        <img src="https://zencareer.b-cdn.net/puppy.png" alt="Puppy" class="pet-image">
-                        <button class="option-btn" data-pet="puppy">Puppy</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="selection-box journey-intro" style="display: none;">
-                <h2>Your Career Discovery Journey</h2>
-                <p>You're about to embark on a beautiful journey around the world while discovering your ideal career path</p>
-                <div class="journey-preview">
-                    <img src="https://zencareer.b-cdn.net/background.jpg" alt="World Journey" class="journey-image">
-                </div>
-                <button class="start-button">Begin Your Journey</button>
-            </div>
-        </section>
+        </div>
+
+        <div class="section-container" id="country-selection" style="display: none;">
+            <h2 id="country-selection-title">Select Your Country</h2>
+            <select id="country-dropdown">
+                <option value="IN">India</option>
+                <option value="US">United States</option>
+                <option value="VN">Vietnam</option>
+                <option value="TH">Thailand</option>
+                <option value="KH">Cambodia</option>
+                <option value="OTHER">Other Countries</option>
+            </select>
+            <button id="start-quiz" class="primary-btn">Start Quiz</button>
+        </div>
+        
+        <div class="audio-controls">
+            <button id="toggle-music" class="icon-btn">🎵</button>
+            <audio id="background-music" loop>
+                <source src="https://zencareer.b-cdn.net/ambient.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="click-sound">
+                <source src="https://zencareer.b-cdn.net/click.mp3" type="audio/mpeg">
+            </audio>
+        </div>
     </div>
-    
-    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
-    
+
+    <script src="translations.js"></script>
     <script src="welcome.js"></script>
 </body>
 </html>

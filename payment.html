@@ -3,72 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenCareer - Get Detailed Report</title>
+    <title>ZenCareer - Complete Your Purchase</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="payment-page">
-    <div class="container">
-        <div class="payment-container">
-            <div class="payment-header">
-                <h1>Unlock Your Complete Career Analysis</h1>
-                <p>Get your personalized, in-depth career guidance report</p>
+    <div class="payment-container">
+        <h1 id="payment-title">Complete Your Purchase</h1>
+        
+        <div class="payment-summary">
+            <h2>ZenCareer Professional Report</h2>
+            <p class="report-description">Comprehensive career analysis with personalized progression plan</p>
+            <div class="price-display">
+                <span id="currency-symbol">$</span>
+                <span id="price-amount">19.99</span>
+            </div>
+        </div>
+        
+        <div class="payment-options">
+            <div class="payment-tabs">
+                <button class="payment-tab active" data-tab="credit-card">Credit Card</button>
+                <button class="payment-tab" data-tab="paypal">PayPal</button>
+                <button class="payment-tab" data-tab="local-methods">Local Payment</button>
             </div>
             
-            <div class="payment-content">
-                <div class="user-info-form">
-                    <h2>Your Information</h2>
-                    <p>We'll send your detailed report to your email</p>
-                    
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+            <div class="payment-tab-content" id="credit-card-tab">
+                <!-- Credit card form - would normally include Stripe integration -->
+                <div class="form-group">
+                    <label for="card-number">Card Number</label>
+                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456">
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="expiry">Expiration Date</label>
+                        <input type="text" id="expiry" placeholder="MM/YY">
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="age">Your Age</label>
-                        <input type="number" id="age" class="form-control" placeholder="25" min="15" max="80" required>
+                    <div class="form-group half">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" placeholder="123">
                     </div>
                 </div>
-                
-                <div class="payment-methods">
-                    <h3>Choose Payment Method</h3>
-                    
-                    <div class="payment-options">
-                        <div class="payment-option" data-method="card">
-                            <img src="https://cdn.example.com/credit-card-icon.png" alt="Credit Card">
-                            <p>Credit/Debit Card</p>
-                        </div>
-                        
-                        <div class="payment-option" data-method="paypal">
-                            <img src="https://cdn.example.com/paypal-icon.png" alt="PayPal">
-                            <p>PayPal</p>
-                        </div>
-                        
-                        <div class="payment-option" data-method="country-specific">
-                            <img id="countrySpecificImg" src="" alt="Country Specific">
-                            <p id="countrySpecificText">Local Payment</p>
-                        </div>
+                <div class="form-group">
+                    <label for="name-on-card">Name on Card</label>
+                    <input type="text" id="name-on-card" placeholder="John Doe">
+                </div>
+                <button id="pay-with-card" class="primary-btn">Pay Now</button>
+            </div>
+            
+            <div class="payment-tab-content hidden" id="paypal-tab">
+                <p>Click the button below to pay with PayPal</p>
+                <button id="paypal-button" class="paypal-btn">Pay with PayPal</button>
+            </div>
+            
+            <div class="payment-tab-content hidden" id="local-methods-tab">
+                <div id="local-payment-container">
+                    <!-- Country-specific payment methods will be loaded here -->
+                    <div class="qr-code-container">
+                        <h3 id="scan-to-pay">Scan to Pay</h3>
+                        <img id="payment-qr" src="" alt="Payment QR Code">
+                        <p id="payment-instructions">After payment, your report will be emailed to you.</p>
                     </div>
-                    
-                    <div class="country-specific" id="countrySpecific" style="display: none;">
-                        <h3 id="countryPaymentTitle">Local Payment Methods</h3>
-                        <p id="countryPaymentDescription">Scan the QR code to complete your payment</p>
-                        
-                        <div class="qr-code-container">
-                            <div class="qr-code-placeholder" id="qrCodePlaceholder">
-                                QR Code Will Appear Here
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button class="submit-payment" id="submitPayment">Complete Payment</button>
                 </div>
             </div>
         </div>
+        
+        <div class="audio-controls">
+            <button id="toggle-music" class="icon-btn">🎵</button>
+        </div>
     </div>
     
-    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
-    
+    <script src="translations.js"></script>
     <script src="payment.js"></script>
 </body>
 </html>
