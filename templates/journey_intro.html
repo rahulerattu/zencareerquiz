@@ -22,7 +22,7 @@
                 <div class="pet-welcome">
                     <div class="pet-animation-container">
                         <lottie-player
-                            src="https://zencareer.b-cdn.net/{{ pet }}.json"
+                            src="{{ url_for('static', filename='lottie/' + pet + '.json') }}"
                             background="transparent"
                             speed="1"
                             style="width: 150px; height: 150px;"
@@ -60,12 +60,13 @@
             
             // For each player
             players.forEach(player => {
-                // Force reload by resetting the source
-                const src = player.getAttribute('src');
-                player.setAttribute('src', '');
-                setTimeout(() => {
-                    player.setAttribute('src', src);
-                }, 100);
+                // Load animation with proper error handling
+                player.addEventListener('error', function(e) {
+                    console.error('Lottie animation error:', e);
+                    // Try to reload
+                    const src = player.getAttribute('src');
+                    player.load(src);
+                });
             });
         });
     </script>

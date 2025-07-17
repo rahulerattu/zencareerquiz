@@ -16,7 +16,7 @@
                 Your browser does not support the video tag.
             </video>
             <div class="video-overlay">
-                <h2 id="locationTitle">Mount Fuji, Japan</h2>
+                <h2 id="locationTitle">Mount Fuji</h2>
             </div>
         </div>
         
@@ -29,13 +29,20 @@
             </div>
         </div>
         
+        <!-- Location quote popup -->
+        <div id="quotePopup" class="quote-popup">
+            <div class="quote-content">
+                <p id="quoteText"></p>
+            </div>
+        </div>
+        
         <div class="quiz-content">
             <div class="pet-container">
                 <!-- Lottie animation instead of static image -->
                 <div class="pet-animation-container">
                     <lottie-player
                         id="petAnimation"
-                        src="https://zencareer.b-cdn.net/{{ pet }}.json"
+                        src="{{ url_for('static', filename='lottie/' + pet + '.json') }}"
                         background="transparent"
                         speed="1"
                         style="width: 180px; height: 180px;"
@@ -56,7 +63,7 @@
                     <div class="progress-bar">
                         <div class="progress" id="progressBar" style="width: 0%"></div>
                     </div>
-                    <p class="location-indicator" id="locationIndicator">Question 1/40: Mount Fuji, Japan</p>
+                    <p class="location-indicator" id="locationIndicator">Question 1/40: Mount Fuji</p>
                 </div>
             </div>
         </div>
@@ -77,12 +84,17 @@
             const locationTitle = document.getElementById('locationTitle');
             const traitNotification = document.getElementById('traitNotification');
             const traitText = document.getElementById('traitText');
+            const quotePopup = document.getElementById('quotePopup');
+            const quoteText = document.getElementById('quoteText');
             
             // Video timestamps for pausing
             const timestamps = {{ timestamps|tojson }};
             
             // Locations corresponding to timestamps
             const locations = {{ locations|tojson }};
+            
+            // Quotes for each location
+            const quotes = {{ quotes|tojson }};
             
             // Personality traits to reveal
             const personalityTraits = {{ personality_traits|tojson }};
@@ -91,6 +103,7 @@
             let userAnswers = [];
             let questions = [];
             let videoIsPlaying = false;
+            let earnedTraits = new Set(); // Keep track of earned traits
             
             // Play click sound
             const playClickSound = () => {
@@ -104,6 +117,22 @@
                 progressBar.style.width = `${progress}%`;
                 locationIndicator.textContent = `Question ${currentQuestionIndex + 1}/${timestamps.length}: ${locations[currentQuestionIndex]}`;
                 locationTitle.textContent = locations[currentQuestionIndex];
+                
+                // Show location quote
+                showLocationQuote(currentQuestionIndex);
+            };
+            
+            // Show location quote
+            const showLocationQuote = (index) => {
+                if (index < quotes.length) {
+                    quoteText.textContent = quotes[index];
+                    quotePopup.classList.add('show');
+                    
+                    // Hide after 5 seconds
+                    setTimeout(() => {
+                        quotePopup.classList.remove('show');
+                    }, 5000);
+                }
             };
             
             // Display current question
@@ -140,7 +169,13 @@
                 if ((currentQuestionIndex > 0) && (currentQuestionIndex % 5 === 0)) {
                     // Show trait notification
                     const traitIndex = Math.floor(currentQuestionIndex / 5) % personalityTraits.length;
-                    showTraitNotification(personalityTraits[traitIndex]);
+                    const trait = personalityTraits[traitIndex];
+                    
+                    // Add to earned traits
+                    earnedTraits.add(trait);
+                    
+                    // Show notification
+                    showTraitNotification(trait);
                 }
             };
             
@@ -162,7 +197,8 @@
                 // Save answer
                 userAnswers.push({
                     questionIndex: currentQuestionIndex,
-                    answerIndex: answerIndex
+                    answerIndex: answerIndex,
+                    location: locations[currentQuestionIndex]
                 });
                 
                 // Move to next question or finish
@@ -195,7 +231,10 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ answers: userAnswers }),
+                    body: JSON.stringify({ 
+                        answers: userAnswers,
+                        earnedTraits: Array.from(earnedTraits)
+                    }),
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -216,11 +255,15 @@
                 worldJourney.currentTime = timestamps[0];
                 // Don't autoplay initially - just pause at Mount Fuji
                 worldJourney.pause();
+                displayQuestion();
             });
             
             worldJourney.addEventListener('timeupdate', () => {
                 // Check if we've reached the next timestamp
-                if (videoIsPlaying && timestamps.includes(Math.floor(worldJourney.currentTime))) {
+                const currentTime = Math.floor(worldJourney.currentTime);
+                const nextTimestampIndex = timestamps.indexOf(currentTime);
+                
+                if (videoIsPlaying && nextTimestampIndex !== -1 && nextTimestampIndex === currentQuestionIndex) {
                     // Pause at timestamp and display new question
                     worldJourney.pause();
                     videoIsPlaying = false;
@@ -231,11 +274,12 @@
             // Force load Lottie animations properly
             const players = document.querySelectorAll('lottie-player');
             players.forEach(player => {
-                const src = player.getAttribute('src');
-                player.setAttribute('src', '');
-                setTimeout(() => {
-                    player.setAttribute('src', src);
-                }, 100);
+                player.addEventListener('error', function(e) {
+                    console.error('Lottie animation error:', e);
+                    // Try to reload
+                    const src = player.getAttribute('src');
+                    player.load(src);
+                });
             });
             
             // Fetch questions from server
@@ -243,7 +287,7 @@
                 .then(response => response.json())
                 .then(data => {
                     questions = data;
-                    displayQuestion();
+                    displayQuestion(); // Now displays the first question when loaded
                 })
                 .catch(error => {
                     console.error('Error fetching questions:', error);
