@@ -1,35 +1,442 @@
 [
   {
-    "question": "Cuando te enfrentas a un nuevo problema, ¿cuál es tu primer enfoque?",
-    "petThought": "¿Cómo afrontas los desafíos?",
+    "question": "When faced with a new problem, what's your first approach?",
+    "petThought": "How do you tackle challenges?",
     "answers": [
-      "Dividirlo en pasos más pequeños",
-      "Buscar patrones de experiencias pasadas",
-      "Hacer una lluvia de ideas para soluciones creativas",
-      "Investigar lo que otros han hecho",
-      "Colaborar con otros para encontrar soluciones"
+      "Break it down into smaller steps",
+      "Look for patterns from past experiences",
+      "Brainstorm creative solutions",
+      "Research what others have done",
+      "Collaborate with others to find solutions"
     ]
   },
   {
-    "question": "¿En qué tipo de ambiente laboral prosperas?",
-    "petThought": "¡Tu espacio de trabajo ideal dice mucho sobre ti!",
+    "question": "What type of work environment do you thrive in?",
+    "petThought": "Your ideal workspace says a lot about you!",
     "answers": [
-      "Tranquilo y estructurado con mínimas distracciones",
-      "Colaborativo con mucha interacción",
-      "Flexible y en constante cambio",
-      "Al aire libre o conectado con la naturaleza",
-      "Creativo y estéticamente agradable"
+      "Quiet and structured with minimal distractions",
+      "Collaborative with lots of interaction",
+      "Flexible and constantly changing",
+      "Outdoors or connected to nature",
+      "Creative and aesthetically pleasing"
     ]
   },
   {
-    "question": "¿Cómo prefieres aprender nuevas habilidades?",
-    "petThought": "¡Cada persona tiene su propio estilo de aprendizaje!",
+    "question": "How do you prefer to make important decisions?",
+    "petThought": "Decision-making reveals your inner wisdom!",
     "answers": [
-      "Leyendo libros o artículos",
-      "Viendo tutoriales en video",
-      "Práctica directa y experimentación",
-      "Tomando cursos estructurados",
-      "Aprendiendo de un mentor o profesor"
+      "Rely on logic and data analysis",
+      "Trust my intuition and feelings",
+      "Seek advice from trusted mentors",
+      "Consider the impact on others",
+      "Take time to reflect deeply"
+    ]
+  },
+  {
+    "question": "What motivates you most in your work?",
+    "petThought": "What drives your passion?",
+    "answers": [
+      "Achieving specific goals and targets",
+      "Making a positive impact on others",
+      "Learning and growing personally",
+      "Being recognized for excellence",
+      "Having autonomy and freedom"
+    ]
+  },
+  {
+    "question": "How do you handle stress and pressure?",
+    "petThought": "Resilience is a superpower!",
+    "answers": [
+      "Stay calm and focus on solutions",
+      "Take breaks and practice self-care",
+      "Talk to others for support",
+      "Create detailed plans to manage tasks",
+      "Channel energy into productive action"
+    ]
+  },
+  {
+    "question": "In a team project, what role do you naturally take?",
+    "petThought": "Teams reveal our natural strengths!",
+    "answers": [
+      "The organizer who keeps everyone on track",
+      "The creative visionary with big ideas",
+      "The mediator who ensures harmony",
+      "The detail-oriented executor",
+      "The motivator who inspires others"
+    ]
+  },
+  {
+    "question": "How do you approach learning new skills?",
+    "petThought": "Learning styles show how we grow!",
+    "answers": [
+      "Through hands-on practice and experimentation",
+      "By reading and researching thoroughly",
+      "Through discussion and collaboration",
+      "By watching and observing others",
+      "Through trial and error"
+    ]
+  },
+  {
+    "question": "What do you value most in your relationships?",
+    "petThought": "Relationships reflect our core values!",
+    "answers": [
+      "Honesty and direct communication",
+      "Emotional support and understanding",
+      "Shared interests and activities",
+      "Mutual respect and trust",
+      "Fun and spontaneous moments"
+    ]
+  },
+  {
+    "question": "How do you prefer to spend your free time?",
+    "petThought": "Leisure time shows what energizes you!",
+    "answers": [
+      "Reading or learning something new",
+      "Spending time with family and friends",
+      "Pursuing creative hobbies",
+      "Outdoor activities and sports",
+      "Relaxing and recharging alone"
+    ]
+  },
+  {
+    "question": "What type of feedback helps you improve most?",
+    "petThought": "Growth comes from good feedback!",
+    "answers": [
+      "Specific, detailed constructive criticism",
+      "Positive reinforcement and encouragement",
+      "Suggestions for alternative approaches",
+      "Examples of excellence to model",
+      "Self-reflection and personal insights"
+    ]
+  },
+  {
+    "question": "When starting a new project, what's your priority?",
+    "petThought": "How do you begin your journey?",
+    "answers": [
+      "Understanding the end goal clearly",
+      "Identifying available resources",
+      "Building team consensus",
+      "Creating a detailed timeline",
+      "Exploring innovative possibilities"
+    ]
+  },
+  {
+    "question": "How do you define success for yourself?",
+    "petThought": "Success means different things to everyone!",
+    "answers": [
+      "Achieving measurable results",
+      "Making a meaningful contribution",
+      "Continuous personal growth",
+      "Financial security and stability",
+      "Work-life balance and happiness"
+    ]
+  },
+  {
+    "question": "What's your approach to managing time?",
+    "petThought": "Time is our most precious resource!",
+    "answers": [
+      "Detailed schedules and to-do lists",
+      "Flexible planning with room for spontaneity",
+      "Prioritizing based on impact",
+      "Going with the flow",
+      "Batching similar tasks together"
+    ]
+  },
+  {
+    "question": "How do you handle conflicts at work?",
+    "petThought": "Conflict resolution reveals character!",
+    "answers": [
+      "Address issues directly and immediately",
+      "Seek to understand all perspectives",
+      "Find compromise solutions",
+      "Avoid confrontation when possible",
+      "Involve a neutral mediator"
+    ]
+  },
+  {
+    "question": "What energizes you most about work?",
+    "petThought": "What makes your heart sing?",
+    "answers": [
+      "Solving complex problems",
+      "Helping others succeed",
+      "Creating something new",
+      "Building systems and processes",
+      "Leading and inspiring teams"
+    ]
+  },
+  {
+    "question": "How do you stay motivated during challenging times?",
+    "petThought": "Inner strength comes from within!",
+    "answers": [
+      "Focus on long-term vision",
+      "Break challenges into smaller wins",
+      "Seek support from others",
+      "Remember past successes",
+      "Practice mindfulness and self-care"
+    ]
+  },
+  {
+    "question": "What's your ideal way to communicate ideas?",
+    "petThought": "Communication is an art form!",
+    "answers": [
+      "Clear, structured presentations",
+      "One-on-one conversations",
+      "Visual diagrams and models",
+      "Written reports and documents",
+      "Interactive discussions and brainstorming"
+    ]
+  },
+  {
+    "question": "How do you approach risk in your career?",
+    "petThought": "Risk and reward go hand in hand!",
+    "answers": [
+      "Carefully analyze before taking calculated risks",
+      "Trust instincts and take bold leaps",
+      "Seek security and stability",
+      "Take small steps and test the waters",
+      "Collaborate with others to share risk"
+    ]
+  },
+  {
+    "question": "What type of recognition motivates you most?",
+    "petThought": "Recognition feeds the soul!",
+    "answers": [
+      "Public acknowledgment of achievements",
+      "Personal thank you from someone impacted",
+      "Opportunities for growth and advancement",
+      "Financial rewards and bonuses",
+      "Autonomy and increased responsibility"
+    ]
+  },
+  {
+    "question": "How do you prefer to gather information?",
+    "petThought": "Knowledge is power when used wisely!",
+    "answers": [
+      "Research from multiple reliable sources",
+      "Ask questions to experts and mentors",
+      "Learn through direct experience",
+      "Observe patterns and trends",
+      "Collaborate and discuss with peers"
+    ]
+  },
+  {
+    "question": "What's your attitude toward change?",
+    "petThought": "Change is the only constant in life!",
+    "answers": [
+      "Embrace it as an opportunity to grow",
+      "Adapt quickly and help others adjust",
+      "Plan carefully to minimize disruption",
+      "Prefer stability but accept when necessary",
+      "See it as a chance for innovation"
+    ]
+  },
+  {
+    "question": "How do you build trust with colleagues?",
+    "petThought": "Trust is the foundation of teamwork!",
+    "answers": [
+      "Consistent reliability and follow-through",
+      "Open, honest communication",
+      "Showing genuine care for their wellbeing",
+      "Demonstrating competence and expertise",
+      "Being vulnerable and authentic"
+    ]
+  },
+  {
+    "question": "What's your approach to innovation?",
+    "petThought": "Innovation drives progress!",
+    "answers": [
+      "Systematic experimentation and testing",
+      "Creative brainstorming and ideation",
+      "Building on existing solutions",
+      "Collaborative co-creation",
+      "Disruptive thinking and bold ideas"
+    ]
+  },
+  {
+    "question": "How do you ensure quality in your work?",
+    "petThought": "Excellence is in the details!",
+    "answers": [
+      "Multiple reviews and checklists",
+      "Continuous improvement processes",
+      "Getting feedback from others",
+      "Following established standards",
+      "Personal pride and commitment"
+    ]
+  },
+  {
+    "question": "What drives your career decisions?",
+    "petThought": "Your path reflects your values!",
+    "answers": [
+      "Opportunities for skill development",
+      "Alignment with personal values",
+      "Financial considerations",
+      "Work-life balance",
+      "Potential for impact and influence"
+    ]
+  },
+  {
+    "question": "How do you contribute to team creativity?",
+    "petThought": "Creativity multiplies when shared!",
+    "answers": [
+      "Bring analytical thinking to ideas",
+      "Generate original concepts",
+      "Build on others' suggestions",
+      "Provide constructive feedback",
+      "Create safe spaces for expression"
+    ]
+  },
+  {
+    "question": "What's your leadership style?",
+    "petThought": "Leadership comes in many forms!",
+    "answers": [
+      "Lead by example and demonstration",
+      "Inspire and motivate others",
+      "Facilitate collaboration and consensus",
+      "Provide clear direction and structure",
+      "Empower others to take ownership"
+    ]
+  },
+  {
+    "question": "How do you measure progress?",
+    "petThought": "Progress tracking shows commitment!",
+    "answers": [
+      "Specific metrics and KPIs",
+      "Feedback from stakeholders",
+      "Personal satisfaction and growth",
+      "Achievement of milestones",
+      "Continuous learning indicators"
+    ]
+  },
+  {
+    "question": "What's your response to failure?",
+    "petThought": "Failure is a teacher in disguise!",
+    "answers": [
+      "Analyze what went wrong to learn",
+      "Focus on bouncing back quickly",
+      "Seek support and guidance",
+      "Reframe as a learning opportunity",
+      "Use it to build resilience"
+    ]
+  },
+  {
+    "question": "How do you influence others?",
+    "petThought": "Influence is about creating positive impact!",
+    "answers": [
+      "Present logical arguments and data",
+      "Share compelling stories and vision",
+      "Build relationships and trust",
+      "Demonstrate results and competence",
+      "Listen and find common ground"
+    ]
+  },
+  {
+    "question": "What's your approach to professional development?",
+    "petThought": "Growth never stops!",
+    "answers": [
+      "Formal training and certifications",
+      "Learning from mentors and role models",
+      "Experimenting with new approaches",
+      "Seeking challenging assignments",
+      "Networking and knowledge sharing"
+    ]
+  },
+  {
+    "question": "How do you maintain work standards?",
+    "petThought": "Standards reflect our commitment!",
+    "answers": [
+      "Create detailed processes and checklists",
+      "Regular quality reviews",
+      "Peer collaboration and feedback",
+      "Continuous learning and improvement",
+      "Personal accountability systems"
+    ]
+  },
+  {
+    "question": "What motivates you to excel?",
+    "petThought": "Excellence is a journey, not a destination!",
+    "answers": [
+      "Personal satisfaction from mastery",
+      "Impact on others and society",
+      "Professional recognition",
+      "Financial success",
+      "Continuous challenge and growth"
+    ]
+  },
+  {
+    "question": "How do you express your creativity?",
+    "petThought": "Creativity is your unique signature!",
+    "answers": [
+      "Through problem-solving innovations",
+      "In artistic and design work",
+      "By connecting different ideas",
+      "Through storytelling and communication",
+      "In organizing and structuring"
+    ]
+  },
+  {
+    "question": "What's your approach to mentoring others?",
+    "petThought": "Teaching others enriches us all!",
+    "answers": [
+      "Provide structured guidance and feedback",
+      "Share experiences and stories",
+      "Listen and ask thoughtful questions",
+      "Create opportunities for practice",
+      "Model the behavior you want to see"
+    ]
+  },
+  {
+    "question": "How do you envision your future career?",
+    "petThought": "The future belongs to those who dream!",
+    "answers": [
+      "Continuous growth and expertise building",
+      "Leadership and strategic influence",
+      "Making a significant social impact",
+      "Achieving financial independence",
+      "Maintaining flexibility and balance"
+    ]
+  },
+  {
+    "question": "What legacy do you want to leave?",
+    "petThought": "Legacy is about lasting impact!",
+    "answers": [
+      "Knowledge and innovations that endure",
+      "People whose lives I've positively influenced",
+      "Organizations and systems I've improved",
+      "Creative works that inspire others",
+      "A model of integrity and excellence"
+    ]
+  },
+  {
+    "question": "How do you contribute to team success?",
+    "petThought": "Teams achieve what individuals cannot!",
+    "answers": [
+      "Bring expertise and analytical thinking",
+      "Facilitate communication and collaboration",
+      "Provide encouragement and motivation",
+      "Ensure attention to detail and quality",
+      "Drive innovation and creative solutions"
+    ]
+  },
+  {
+    "question": "What's your philosophy about work-life integration?",
+    "petThought": "Balance is the key to sustainable success!",
+    "answers": [
+      "Clear boundaries between work and personal time",
+      "Flexible integration based on priorities",
+      "Work that aligns with personal values",
+      "Efficiency at work to maximize personal time",
+      "Continuous adjustment based on life phases"
+    ]
+  },
+  {
+    "question": "How do you ensure continuous improvement?",
+    "petThought": "Improvement is a lifelong commitment!",
+    "answers": [
+      "Regular self-assessment and reflection",
+      "Seeking feedback from others",
+      "Setting progressively challenging goals",
+      "Learning from mistakes and failures",
+      "Staying curious and open to new ideas"
     ]
   }
 ]

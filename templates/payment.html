@@ -3,17 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenCareer - Get Detailed Report</title>
+    <title>ZenCareer - Unlock Your Potential</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Add Lottie player for JSON animations -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="{{ url_for('static', filename='js/translations.js') }}"></script>
 </head>
 <body class="payment-page">
+    <!-- Back Button -->
+    <button class="back-button" onclick="window.history.back()" title="Go back">
+        ←
+    </button>
+    
+    <!-- Music Controls -->
+    <div class="music-controls">
+        <button id="musicToggle" class="music-btn" title="Toggle Background Music">
+            <span class="music-icon">🎵</span>
+        </button>
+    </div>
+    
     <div class="container">
         <div class="payment-container">
+            <!-- Header Section -->
             <div class="payment-header">
-                <h1>Unlock Your Complete Career Analysis</h1>
-                <p>Get your personalized, in-depth career guidance report</p>
+                <h1 id="paymentTitle">Choose Your Journey Package</h1>
+                <p id="paymentSubtitle">Support our mission and unlock comprehensive career insights</p>
                 
                 <div class="pet-payment">
                     <div class="pet-animation-container">
@@ -21,7 +34,7 @@
                             src="https://zencareer.b-cdn.net/{{ pet }}.json"
                             background="transparent"
                             speed="1"
-                            style="width: 100px; height: 100px;"
+                            style="width: 120px; height: 120px;"
                             loop
                             autoplay>
                         </lottie-player>
@@ -29,54 +42,149 @@
                 </div>
             </div>
             
-            <div class="payment-content">
-                <div class="user-info-form">
-                    <h2>Your Information</h2>
-                    <p>We'll send your detailed report to your email</p>
-                    
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+            <!-- Basic Results Preview -->
+            <div class="basic-results-preview">
+                <h2 id="basicResultsTitle">Your Basic Personality Insights</h2>
+                <div class="basic-insights">
+                    <div class="insight-item">
+                        <strong>MBTI Type:</strong> {{ basic_results.mbti.type if basic_results.mbti else 'Calculating...' }}
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="age">Your Age</label>
-                        <input type="number" id="age" class="form-control" placeholder="25" min="15" max="80" required>
+                    <div class="insight-item">
+                        <strong>Dominant Guna:</strong> {{ basic_results.gunas.dominant.title() if basic_results.gunas else 'Analyzing...' }}
+                    </div>
+                    <div class="insight-item">
+                        <strong>Top Traits:</strong> 
+                        {% if basic_results.personality_traits %}
+                            {{ basic_results.personality_traits[:3] | join(', ') }}
+                        {% else %}
+                            Processing...
+                        {% endif %}
                     </div>
                 </div>
+            </div>
+            
+            <!-- Pricing Tiers -->
+            <div class="pricing-tiers">
+                <h2 id="chooseTierTitle">Choose Your Support Level</h2>
+                <p id="tierDescription">Each tier includes amazing gifts tailored to your personality!</p>
                 
-                <div class="payment-methods">
-                    <h3>Choose Payment Method</h3>
+                <div class="tiers-grid">
+                    <!-- Skip Tier -->
+                    <div class="tier-card skip-tier" data-tier="skip">
+                        <div class="tier-header">
+                            <h3 id="skipTierTitle">Continue Free</h3>
+                            <div class="tier-price">$0</div>
+                        </div>
+                        <div class="tier-benefits">
+                            <ul>
+                                <li id="skipBenefit1">Basic personality analysis</li>
+                                <li id="skipBenefit2">Top 3 career matches</li>
+                                <li id="skipBenefit3">Core insights only</li>
+                            </ul>
+                        </div>
+                        <button class="tier-button" onclick="selectTier('skip')" id="skipButton">Continue Free</button>
+                    </div>
+                    
+                    <!-- $10 Tier -->
+                    <div class="tier-card supporter-tier" data-tier="10">
+                        <div class="tier-header">
+                            <h3 id="supporterTierTitle">Supporter Package</h3>
+                            <div class="tier-price">$10</div>
+                        </div>
+                        <div class="tier-benefits">
+                            <ul>
+                                <li id="supporter1">Complete personality analysis</li>
+                                <li id="supporter2">10 personalized e-book recommendations</li>
+                                <li id="supporter3">Custom music playlist for your type</li>
+                                <li id="supporter4">Detailed career guidance (20 matches)</li>
+                                <li id="supporter5">Ikigai & Gunas deep dive</li>
+                            </ul>
+                        </div>
+                        <button class="tier-button recommended" onclick="selectTier('10')" id="supporterButton">Choose Supporter</button>
+                    </div>
+                    
+                    <!-- $100 Tier -->
+                    <div class="tier-card advocate-tier" data-tier="100">
+                        <div class="tier-header">
+                            <h3 id="advocateTierTitle">Advocate Package</h3>
+                            <div class="tier-price">$100</div>
+                            <div class="most-popular">Most Popular</div>
+                        </div>
+                        <div class="tier-benefits">
+                            <ul>
+                                <li id="advocate1">Everything in Supporter Package</li>
+                                <li id="advocate2">Premium self-growth gift bundle</li>
+                                <li id="advocate3">Personalized meditation guide</li>
+                                <li id="advocate4">Custom affirmation cards</li>
+                                <li id="advocate5">Exclusive personality workbook</li>
+                                <li id="advocate6">Monthly personality insights (6 months)</li>
+                                <li id="advocate7">Priority email support</li>
+                            </ul>
+                        </div>
+                        <button class="tier-button popular" onclick="selectTier('100')" id="advocateButton">Choose Advocate</button>
+                    </div>
+                    
+                    <!-- $1000 Tier -->
+                    <div class="tier-card patron-tier" data-tier="1000">
+                        <div class="tier-header">
+                            <h3 id="patronTierTitle">Patron Package</h3>
+                            <div class="tier-price">$1000</div>
+                            <div class="premium-badge">Ultimate</div>
+                        </div>
+                        <div class="tier-benefits">
+                            <ul>
+                                <li id="patron1">Everything in Advocate Package</li>
+                                <li id="patron2">1-on-1 career coaching session (60 min)</li>
+                                <li id="patron3">Custom career roadmap design</li>
+                                <li id="patron4">Exclusive mastermind group access</li>
+                                <li id="patron5">Premium physical gift package</li>
+                                <li id="patron6">Lifetime platform access</li>
+                                <li id="patron7">Annual personality updates</li>
+                                <li id="patron8">Direct founder access</li>
+                            </ul>
+                        </div>
+                        <button class="tier-button premium" onclick="selectTier('1000')" id="patronButton">Choose Patron</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Information Form -->
+            <div class="user-info-form" id="userInfoForm" style="display: none;">
+                <h2 id="yourInfoTitle">Your Information</h2>
+                <p id="infoDescription">We'll email your personalized gifts within 24 hours</p>
+                
+                <div class="form-group">
+                    <label for="email" id="emailLabel">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age" id="ageLabel">Your Age</label>
+                    <input type="number" id="age" class="form-control" placeholder="25" min="15" max="80" required>
+                </div>
+                
+                <div class="payment-methods" id="paymentMethods">
+                    <h3 id="paymentMethodTitle">Choose Payment Method</h3>
                     
                     <div class="payment-options">
                         <div class="payment-option" data-method="card" onclick="selectPaymentMethod('card')">
-                            <img src="https://cdn.example.com/credit-card-icon.png" alt="Credit Card">
-                            <p>Credit/Debit Card</p>
+                            <div class="payment-icon">💳</div>
+                            <p id="cardText">Credit/Debit Card</p>
                         </div>
                         
                         <div class="payment-option" data-method="paypal" onclick="selectPaymentMethod('paypal')">
-                            <img src="https://cdn.example.com/paypal-icon.png" alt="PayPal">
-                            <p>PayPal</p>
+                            <div class="payment-icon">📱</div>
+                            <p id="paypalText">PayPal</p>
                         </div>
                         
                         <div class="payment-option" data-method="country-specific" onclick="selectPaymentMethod('country-specific')">
-                            <img id="countrySpecificImg" src="" alt="Country Specific">
+                            <div class="payment-icon" id="countryIcon">🏪</div>
                             <p id="countrySpecificText">Local Payment</p>
                         </div>
                     </div>
                     
-                    <div class="country-specific" id="countrySpecificSection" style="display: none;">
-                        <h3 id="countryPaymentTitle">Local Payment Methods</h3>
-                        <p id="countryPaymentDescription">Scan the QR code to complete your payment</p>
-                        
-                        <div class="qr-code-container">
-                            <div class="qr-code-placeholder" id="qrCodePlaceholder">
-                                QR Code Will Appear Here
-                            </div>
-                        </div>
-                    </div>
-                    
                     <input type="hidden" id="paymentMethodInput" value="">
+                    <input type="hidden" id="selectedTier" value="">
                     
                     <button class="submit-payment" id="submitPayment" onclick="processPayment()">Complete Payment</button>
                 </div>
@@ -84,19 +192,59 @@
         </div>
     </div>
     
+    <!-- Audio Elements -->
     <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <audio id="ambientMusic" src="https://zencareer.b-cdn.net/ambient.mp3" preload="auto" loop>
+        Your browser does not support the audio element.
+    </audio>
     
     <script>
+        // Initialize variables
         const clickSound = document.getElementById('clickSound');
-        const countrySpecificSection = document.getElementById('countrySpecificSection');
-        const countrySpecificImg = document.getElementById('countrySpecificImg');
-        const countrySpecificText = document.getElementById('countrySpecificText');
-        const countryPaymentTitle = document.getElementById('countryPaymentTitle');
-        const countryPaymentDescription = document.getElementById('countryPaymentDescription');
-        const qrCodePlaceholder = document.getElementById('qrCodePlaceholder');
-        const paymentMethodInput = document.getElementById('paymentMethodInput');
-        const emailInput = document.getElementById('email');
-        const ageInput = document.getElementById('age');
+        const ambientMusic = document.getElementById('ambientMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        const userInfoForm = document.getElementById('userInfoForm');
+        const paymentMethods = document.getElementById('paymentMethods');
+        let isMusicPlaying = false;
+        let selectedTierValue = '';
+        
+        // Initialize music
+        function initializeMusic() {
+            ambientMusic.volume = 0.3;
+            const musicState = JSON.parse(sessionStorage.getItem('zenCareerMusicState') || '{"isPlaying":false}');
+            
+            if (musicState.isPlaying) {
+                ambientMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggle.classList.remove('muted');
+                }).catch(err => console.log('Music playback error:', err));
+            } else {
+                musicToggle.classList.add('muted');
+                musicToggle.querySelector('.music-icon').textContent = '🔇';
+            }
+        }
+        
+        // Toggle music
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                ambientMusic.pause();
+                isMusicPlaying = false;
+                musicToggle.classList.add('muted');
+                musicToggle.querySelector('.music-icon').textContent = '🔇';
+            } else {
+                ambientMusic.play().then(() => {
+                    isMusicPlaying = true;
+                    musicToggle.classList.remove('muted');
+                    musicToggle.querySelector('.music-icon').textContent = '🎵';
+                }).catch(err => console.log('Music playback error:', err));
+            }
+            
+            // Save music state
+            sessionStorage.setItem('zenCareerMusicState', JSON.stringify({
+                isPlaying: isMusicPlaying,
+                currentTime: ambientMusic.currentTime
+            }));
+        }
         
         // Play click sound
         function playClickSound() {
@@ -104,40 +252,27 @@
             clickSound.play().catch(err => console.log('Audio playback error:', err));
         }
         
-        // Setup country-specific payment options
-        function setupCountrySpecific() {
-            const country = "{{ country }}";
+        // Select tier
+        function selectTier(tier) {
+            playClickSound();
+            selectedTierValue = tier;
             
-            switch(country) {
-                case 'india':
-                    countrySpecificImg.src = "https://cdn.example.com/upi-icon.png";
-                    countrySpecificText.textContent = "UPI / BHIM";
-                    countryPaymentTitle.textContent = "Pay via UPI";
-                    countryPaymentDescription.textContent = "Scan the QR code using any UPI app like Google Pay, PhonePe, or Paytm";
-                    break;
-                case 'thailand':
-                    countrySpecificImg.src = "https://cdn.example.com/promptpay-icon.png";
-                    countrySpecificText.textContent = "PromptPay";
-                    countryPaymentTitle.textContent = "Pay via PromptPay";
-                    countryPaymentDescription.textContent = "Scan the QR code using your banking app";
-                    break;
-                case 'vietnam':
-                    countrySpecificImg.src = "https://cdn.example.com/momo-icon.png";
-                    countrySpecificText.textContent = "MoMo";
-                    countryPaymentTitle.textContent = "Pay via MoMo";
-                    countryPaymentDescription.textContent = "Scan the QR code using MoMo app";
-                    break;
-                case 'cambodia':
-                    countrySpecificImg.src = "https://cdn.example.com/aba-icon.png";
-                    countrySpecificText.textContent = "ABA Pay";
-                    countryPaymentTitle.textContent = "Pay via ABA Pay";
-                    countryPaymentDescription.textContent = "Scan the QR code using ABA mobile app";
-                    break;
-                default:
-                    countrySpecificImg.src = "https://cdn.example.com/bank-transfer-icon.png";
-                    countrySpecificText.textContent = "Bank Transfer";
-                    countryPaymentTitle.textContent = "Pay via Bank Transfer";
-                    countryPaymentDescription.textContent = "Scan the QR code to complete your payment";
+            // Remove selection from all tiers
+            document.querySelectorAll('.tier-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to chosen tier
+            document.querySelector(`[data-tier="${tier}"]`).classList.add('selected');
+            
+            if (tier === 'skip') {
+                // Proceed directly to results for free tier
+                proceedToResults('skip');
+            } else {
+                // Show user info form for paid tiers
+                document.getElementById('selectedTier').value = tier;
+                userInfoForm.style.display = 'block';
+                userInfoForm.scrollIntoView({ behavior: 'smooth' });
             }
         }
         
@@ -145,62 +280,57 @@
         function selectPaymentMethod(method) {
             playClickSound();
             
-            // Remove selected class from all options
             document.querySelectorAll('.payment-option').forEach(option => {
                 option.classList.remove('selected');
             });
             
-            // Add selected class to clicked option
-            document.querySelector(`.payment-option[data-method="${method}"]`).classList.add('selected');
-            
-            // Show/hide country-specific section
-            if (method === 'country-specific') {
-                countrySpecificSection.style.display = 'block';
-            } else {
-                countrySpecificSection.style.display = 'none';
-            }
-            
-            // Store selected method
-            paymentMethodInput.value = method;
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+            document.getElementById('paymentMethodInput').value = method;
         }
         
         // Process payment
         function processPayment() {
             playClickSound();
             
-            // Simple validation
-            if (!emailInput.value) {
+            const email = document.getElementById('email').value;
+            const age = document.getElementById('age').value;
+            const paymentMethod = document.getElementById('paymentMethodInput').value;
+            const tier = document.getElementById('selectedTier').value;
+            
+            // Validation
+            if (!email) {
                 alert('Please enter your email address');
                 return;
             }
             
-            if (!ageInput.value) {
+            if (!age) {
                 alert('Please enter your age');
                 return;
             }
             
-            if (!paymentMethodInput.value) {
+            if (!paymentMethod) {
                 alert('Please select a payment method');
                 return;
             }
             
-            // Send payment data to server
+            // Send to server
             fetch("{{ url_for('process_payment') }}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams({
-                    'email': emailInput.value,
-                    'age': ageInput.value,
-                    'payment_method': paymentMethodInput.value
+                    'email': email,
+                    'age': age,
+                    'payment_method': paymentMethod,
+                    'payment_tier': tier
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     alert(data.message);
-                    window.location.href = "{{ url_for('home') }}";
+                    window.location.href = data.redirect;
                 } else {
                     alert('Payment failed: ' + data.error);
                 }
@@ -211,9 +341,69 @@
             });
         }
         
-        // Initialize
+        // Proceed to results for free tier
+        function proceedToResults(tier) {
+            fetch("{{ url_for('process_payment') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'email': '',
+                    'age': '',
+                    'payment_method': '',
+                    'payment_tier': tier
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        // Setup country-specific payment
+        function setupCountrySpecific() {
+            const country = "{{ country }}";
+            const countryIcon = document.getElementById('countryIcon');
+            const countryText = document.getElementById('countrySpecificText');
+            
+            switch(country) {
+                case 'india':
+                    countryIcon.textContent = '📱';
+                    countryText.textContent = 'UPI / BHIM';
+                    break;
+                case 'thailand':
+                    countryIcon.textContent = '🏦';
+                    countryText.textContent = 'PromptPay';
+                    break;
+                case 'vietnam':
+                    countryIcon.textContent = '💳';
+                    countryText.textContent = 'MoMo';
+                    break;
+                case 'cambodia':
+                    countryIcon.textContent = '🏪';
+                    countryText.textContent = 'ABA Pay';
+                    break;
+                default:
+                    countryIcon.textContent = '🏦';
+                    countryText.textContent = 'Bank Transfer';
+            }
+        }
+        
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
+            initializeMusic();
             setupCountrySpecific();
+            
+            // Add music toggle event listener
+            musicToggle.addEventListener('click', toggleMusic);
         });
     </script>
 </body>

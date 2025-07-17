@@ -2,9 +2,14 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 import os
 import json
 import random
+from backend_storage import ResponseStorage, PersonalityAnalyzer
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "defaultsecret")
+
+# Initialize backend storage
+storage = ResponseStorage()
+analyzer = PersonalityAnalyzer()
 
 # Available languages and their country associations
 LANGUAGES = {
@@ -51,48 +56,48 @@ LOCATIONS = [
     "Western Ghats", "Mount Kilimanjaro", "South Pole"
 ]
 
-# Inspirational quotes for each location
+# Inspirational quotes for each location - Enhanced with profound meanings
 LOCATION_QUOTES = [
-    "Climb to your own summit of achievement. - Mount Fuji",
-    "In the silence between thoughts, wisdom emerges. - Zen Garden",
-    "Discipline is the bridge between goals and accomplishment. - Shaolin Temple",
-    "Life flows like a gentle river; navigate with mindfulness. - Luang Prabang",
-    "From great heights come great insights. - Tawang",
-    "Life and death are but two faces of the same coin. - Varanasi",
-    "Human unity transcends all boundaries. - Auroville",
-    "The path to enlightenment is layered with experiences. - Borobudur",
-    "What you build in life will tell your story long after you're gone. - Angkor Wat",
-    "Greatness comes not from size but from intention. - Leishan Buddha",
-    "Each person is unique, yet we stand together in purpose. - Terracotta Warriors",
-    "The greatest barriers are often the ones we build ourselves. - Great Wall of China",
-    "True beauty emerges from both form and function. - Himeji Castle",
-    "Even when rooted in place, keep your vision on the horizon. - Moai Statues",
-    "The higher you climb, the more you can see. - Machu Picchu",
-    "Knowledge is the sacred alignment of heaven and earth. - Chichen Itza",
-    "What we build with intention can echo through millennia. - Stonehenge",
-    "Dreams can become reality with vision and determination. - Neuschwanstein Castle",
-    "Democracy begins with respect for individual wisdom. - Acropolis",
-    "Humanity's oldest stories still have much to teach us. - Göbekli Tepe",
-    "Carve your path with persistence, and it will endure. - Petra",
-    "Extraordinary achievements require extraordinary vision. - Pyramids of Khufu",
-    "Nature creates the most beautiful harmony from diversity. - Plitvice Lakes",
-    "Even in darkness, there are lights to guide you. - Aurora Observatory",
-    "The deepest waters hold the oldest wisdom. - Lake Baikal",
-    "In nature's grandeur, find your place and purpose. - Banff National Park",
-    "Power comes from going with the flow, not against it. - Niagara Falls",
-    "Beneath the surface lies untapped potential. - Yellowstone",
-    "Time carves masterpieces from persistence. - Grand Canyon",
-    "In the diversity of life, find the interconnectedness of all. - Amazon Rainforest",
-    "Boundaries are merely where transformation begins. - Iguazu Falls",
-    "What appears empty can reflect your greatest truths. - Salar de Uyuni",
-    "Adaptation is the key to evolution. - Galapagos Islands",
-    "From fire comes transformation and new beginnings. - Volcano Islands Hawaii",
-    "The heart of a continent holds ancient wisdom. - Uluru",
-    "In the interconnected ecosystem of life, every role matters. - Great Barrier Reef",
-    "Thousands of islands, one sea – separate yet connected. - Ha Long Bay",
-    "Biodiversity creates resilience and strength. - Western Ghats",
-    "Every summit has a different perspective. - Mount Kilimanjaro",
-    "At the end of the world, you find the beginning of yourself. - South Pole"
+    "Like Mount Fuji stands eternal, your potential rises above all obstacles. - Mount Fuji",
+    "In the silence between thoughts, wisdom emerges. Find your inner peace. - Zen Garden", 
+    "Discipline forged in ancient halls shapes the masters of tomorrow. - Shaolin Temple",
+    "Life flows like the sacred Mekong; navigate with mindfulness and grace. - Luang Prabang",
+    "From the heights of the Himalayas, see beyond the clouds of doubt. - Tawang",
+    "Where birth and death dance together, find the eternal rhythm of existence. - Varanasi",
+    "Human unity transcends all boundaries when hearts align with purpose. - Auroville",
+    "Each stone placed with intention builds monuments that outlast empires. - Borobudur",
+    "What you build with passion will echo through centuries untold. - Angkor Wat",
+    "True greatness comes not from size but from the depth of compassion. - Leishan Buddha",
+    "Each warrior is unique, yet they stand together in eternal purpose. - Terracotta Warriors",
+    "The greatest barriers we face are often the ones we build within ourselves. - Great Wall of China",
+    "Beauty emerges when form and function dance in perfect harmony. - Himeji Castle",
+    "Even when rooted in place, keep your vision fixed on distant horizons. - Moai Statues",
+    "The higher you climb, the clearer your purpose becomes. - Machu Picchu",
+    "Ancient wisdom aligns the sacred geometry of earth and sky. - Chichen Itza",
+    "What we build with sacred intention echoes through millennia. - Stonehenge",
+    "Dreams become reality when vision meets unwavering determination. - Neuschwanstein Castle",
+    "Democracy flourishes when individual wisdom contributes to collective good. - Acropolis",
+    "Humanity's oldest stories still teach the newest souls. - Göbekli Tepe",
+    "Persistence carves pathways that endure beyond the carver. - Petra",
+    "Extraordinary vision creates monuments that defy time itself. - Pyramids of Khufu",
+    "Nature weaves the most beautiful tapestries from diverse threads. - Plitvice Lakes",
+    "Even in the darkest nights, celestial lights guide the way. - Aurora Observatory",
+    "The deepest waters hold the purest wisdom of ages. - Lake Baikal",
+    "In nature's grandeur, discover your unique place and purpose. - Banff National Park",
+    "True power flows with grace, not against the current. - Niagara Falls",
+    "Beneath the surface lies potential waiting to transform the world. - Yellowstone",
+    "Time and persistence carve masterpieces from solid rock. - Grand Canyon",
+    "In the symphony of life, every voice adds essential harmony. - Amazon Rainforest",
+    "Where worlds meet, transformation begins and possibilities multiply. - Iguazu Falls",
+    "In apparent emptiness, infinite possibilities reflect your potential. - Salar de Uyuni",
+    "Evolution favors those who adapt while staying true to their essence. - Galapagos Islands",
+    "From fire comes transformation; from chaos comes new creation. - Volcano Islands Hawaii",
+    "The heart of continents pulses with ancient wisdom and timeless truth. - Uluru",
+    "In life's interconnected web, every role creates essential balance. - Great Barrier Reef",
+    "Thousands of islands, one sea - separate yet eternally connected. - Ha Long Bay",
+    "Biodiversity creates resilience; uniqueness creates strength. - Western Ghats",
+    "Every summit offers a different perspective on the same truth. - Mount Kilimanjaro",
+    "At the world's end, you discover the beginning of yourself. - South Pole"
 ]
 
 # Personality traits (8 unique badges)
@@ -233,97 +238,137 @@ def submit_answers():
             answers_data = request.get_json()
         else:
             answers_data = request.form.to_dict()
+        
+        # Prepare user data for storage
+        user_data = {
+            'language': session.get('language', 'en'),
+            'country': session.get('country', 'global'),
+            'pet': session.get('pet', 'panda'),
+            'answers': answers_data.get('answers', []),
+            'timestamp': answers_data.get('timestamp'),
+            'email': answers_data.get('email', '')
+        }
+        
+        # Store response and get analysis
+        session_id, results = storage.store_response(user_data)
+        
         session['answers'] = answers_data
-        results = generate_results(answers_data)
         session['results'] = results
-        return jsonify({'success': True, 'redirect': url_for('results')})
+        session['session_id'] = session_id
+        
+        return jsonify({'success': True, 'redirect': url_for('payment')})
     return jsonify({'success': False, 'error': 'Invalid request'})
 
 def generate_results(answers_data):
+    """Generate comprehensive results using the personality analyzer"""
     user_answers = answers_data.get('answers', [])
-    earned_traits = random.sample(PERSONALITY_TRAITS, 8)
-    mbti_type = random.choice(list(MBTI_TYPES.keys()))
-    mbti_description = MBTI_TYPES[mbti_type]
-    sattva = random.randint(20, 80)
-    rajas = random.randint(10, 100 - sattva - 10)
-    tamas = 100 - sattva - rajas
-    ikigai = {
-        "passion": random.randint(60, 95),
-        "mission": random.randint(60, 95),
-        "profession": random.randint(60, 95),
-        "vocation": random.randint(60, 95),
-        "balance": random.randint(70, 90)
-    }
-    psychometric_scores = {
-        "Analyzing": random.randint(55, 95),
-        "Exploring": random.randint(55, 95),
-        "Networking": random.randint(55, 95),
-        "Collaborating": random.randint(55, 95),
-        "Results-Driven": random.randint(55, 95),
-        "Quality-Focused": random.randint(55, 95),
-        "Leadership": random.randint(55, 95),
-        "Resilience": random.randint(55, 95),
-        "Adaptability": random.randint(55, 95),
-        "Innovation": random.randint(55, 95)
-    }
-    career_matches = random.sample(CAREER_OPTIONS, min(20, len(CAREER_OPTIONS)))
-    for career in career_matches:
-        career["match"] = random.randint(75, 98)
-    career_matches.sort(key=lambda x: x["match"], reverse=True)
-    return {
-        "personality_traits": earned_traits,
-        "mbti": {
-            "type": mbti_type,
-            "description": mbti_description
-        },
-        "gunas": {
-            "sattva": sattva,
-            "rajas": rajas,
-            "tamas": tamas,
-            "dominant": max(("sattva", sattva), ("rajas", rajas), ("tamas", tamas), key=lambda x: x[1])[0]
-        },
-        "ikigai": ikigai,
-        "psychometric": psychometric_scores,
-        "careers": career_matches[:20]
-    }
+    
+    # Use the comprehensive personality analyzer
+    results = analyzer.analyze_responses(user_answers)
+    
+    return results
 
 @app.route('/results')
 def results():
     if 'answers' not in session or 'results' not in session:
         return redirect(url_for('quiz'))
+    
     results = session.get('results', {})
     pet = session.get('pet', 'panda')
+    language = session.get('language', 'en')
+    payment_tier = session.get('payment_tier', 'skip')
+    user_email = session.get('user_email', '')
+    
+    # Determine what level of results to show based on payment tier
+    show_comprehensive = payment_tier in ['10', '100', '1000']
+    
     return render_template(
         'results.html',
+        language=language,
         pet=pet,
-        traits=results['personality_traits'],
-        mbti=results['mbti'],
-        gunas=results['gunas'],
-        ikigai=results['ikigai'],
-        psychometric=results['psychometric'],
-        careers=results['careers'][:3],
-        all_careers=results['careers']
+        traits=results.get('personality_traits', []),
+        mbti=results.get('mbti', {}),
+        gunas=results.get('gunas', {}),
+        ikigai=results.get('ikigai', {}),
+        psychometric=results.get('psychometric', {}),
+        careers=results.get('careers', [])[:3] if not show_comprehensive else results.get('careers', [])[:10],
+        all_careers=results.get('careers', []),
+        payment_tier=payment_tier,
+        show_comprehensive=show_comprehensive,
+        user_email=user_email
     )
 
 @app.route('/payment')
 def payment():
     if 'results' not in session:
-        return redirect(url_for('results'))
+        return redirect(url_for('quiz'))
+    
+    language = session.get('language', 'en')
     country = session.get('country', 'global')
     pet = session.get('pet', 'panda')
-    return render_template('payment.html', country=country, pet=pet)
+    results = session.get('results', {})
+    
+    return render_template('payment.html', 
+                         language=language,
+                         country=country, 
+                         pet=pet,
+                         basic_results=results)
 
 @app.route('/process_payment', methods=['POST'])
 def process_payment():
     if request.method == 'POST':
         email = request.form.get('email', '')
         age = request.form.get('age', '')
+        payment_tier = request.form.get('payment_tier', 'skip')
         payment_method = request.form.get('payment_method', '')
-        return jsonify({
-            'success': True, 
-            'message': 'Payment processed successfully! Your detailed report will be sent to your email shortly.'
-        })
+        
+        # Store payment information
+        if 'session_id' in session:
+            user_data = storage.get_response(session['session_id'])
+            if user_data:
+                user_data['payment_info'] = {
+                    'email': email,
+                    'age': age,
+                    'tier': payment_tier,
+                    'method': payment_method
+                }
+                user_data['user_email'] = email
+        
+        # Set payment tier in session for results page
+        session['payment_tier'] = payment_tier
+        session['user_email'] = email
+        
+        if payment_tier == 'skip':
+            return jsonify({
+                'success': True, 
+                'redirect': url_for('results'),
+                'message': 'Proceeding to basic results'
+            })
+        else:
+            return jsonify({
+                'success': True, 
+                'redirect': url_for('results'),
+                'message': f'Payment processed! Your ${payment_tier} gift bundle will be emailed to you within 24 hours.'
+            })
     return jsonify({'success': False, 'error': 'Invalid request'})
+
+@app.route('/back_to_language')
+def back_to_language():
+    """Allow users to go back and change language"""
+    # Clear session data
+    session.clear()
+    return redirect(url_for('home'))
+
+@app.route('/back_to_pet')
+def back_to_pet():
+    """Allow users to go back and change pet"""
+    # Keep language but clear pet selection
+    language = session.get('language', 'en')
+    country = session.get('country', 'global')
+    session.clear()
+    session['language'] = language
+    session['country'] = country
+    return redirect(url_for('select_pet'))
 
 if __name__ == '__main__':
     app.run(debug=True)
