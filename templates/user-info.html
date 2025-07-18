@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Tell Us About Yourself</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <div class="content-wrapper">
+        <div class="container" id="userInfoContainer">
+            <img id="petImage" src="https://zencareer.b-cdn.net/{{ pet }}.jpg" alt="Your Guide" class="pet-guide-image" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 20px; display: block; border: 3px solid white; box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);">
+            
+            <h1 class="main-title" id="pageTitle">Almost There!</h1>
+            <p class="subtitle" id="formDescription">
+                Great job completing the assessment! To prepare your personalized career insights,
+                please provide the following information:
+            </p>
+            
+            <form id="userInfoForm">
+                <div class="form-group" id="emailGroup">
+                    <label for="email" id="emailLabel">Email Address</label>
+                    <input type="email" id="email" required placeholder="your.email@example.com">
+                </div>
+                
+                <div class="form-group" id="ageGroup">
+                    <label for="age" id="ageLabel">Age</label>
+                    <input type="number" id="age" required min="14" max="100" placeholder="Enter your age">
+                </div>
+                
+                <div class="form-group" id="countryGroup">
+                    <label for="country" id="countryLabel">Country</label>
+                    <select id="country" required>
+                        <option value="" disabled selected>Select your country</option>
+                        <option value="India">India</option>
+                        <option value="Vietnam">Vietnam</option>
+                        <option value="Thailand">Thailand</option>
+                        <option value="Cambodia">Cambodia</option>
+                        <option value="USA">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="Australia">Australia</option>
+                        <option value="Canada">Canada</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="cta-button" id="submitButton">View My Results</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Audio Controls -->
+    <div class="audio-controls" id="audioControls" data-playing="{{ audio_playing|lower }}">
+        <svg class="audio-icon" id="soundOnIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}block{% else %}none{% endif %};">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <svg class="audio-icon" id="soundOffIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}none{% else %}block{% endif %};">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+    </div>
+    
+    <!-- Audio Elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="{{ url_for('static', filename='audio/ambience.mp3') }}" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound">
+        <source src="https://zencareer.b-cdn.net/click.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Background confetti animation -->
+    <div id="confetti-container"></div>
+    
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/audio-manager.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // GSAP Initial Setup
+            gsap.set("#userInfoContainer", { opacity: 0, y: 30 });
+            gsap.set("#petImage", { scale: 0, opacity: 0 });
+            gsap.set("#pageTitle", { opacity: 0, y: -20 });
+            gsap.set("#formDescription", { opacity: 0 });
+            gsap.set("#emailGroup", { opacity: 0, x: -20 });
+            gsap.set("#ageGroup", { opacity: 0, x: -20 });
+            gsap.set("#countryGroup", { opacity: 0, x: -20 });
+            gsap.set("#submitButton", { opacity: 0, y: 20 });
+            
+            // Animate in with sequence
+            const tl = gsap.timeline();
+            
+            tl.to("#userInfoContainer", {
+                opacity: 1, 
+                y: 0, 
+                duration: 0.8, 
+                ease: "power2.out"
+              })
+              .to("#petImage", {
+                scale: 1,
+                opacity: 1,
+                duration: 0.8,
+                ease: "back.out(1.7)"
+              }, "-=0.4")
+              .to("#pageTitle", {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "back.out(1.7)"
+              }, "-=0.6")
+              .to("#formDescription", {
+                opacity: 1,
+                duration: 0.8
+              }, "-=0.6")
+              .to(["#emailGroup", "#ageGroup", "#countryGroup"], {
+                opacity: 1,
+                x: 0,
+                duration: 0.6,
+                stagger: 0.15
+              }, "-=0.4")
+              .to("#submitButton", {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "back.out(1.7)"
+              }, "-=0.2");
+            
+            // Create confetti with GSAP
+            function createConfetti() {
+                const confettiContainer = document.getElementById('confetti-container');
+                const colors = ['#ff9566', '#4a6cd1', '#21d0c0', '#ff61a6', '#ffcc5c', '#7986cb'];
+                
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    // Random color
+                    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.backgroundColor = randomColor;
+                    
+                    // Random size
+                    const size = Math.random() * 10 + 6;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    
+                    // Random position
+                    confetti.style.left = `${Math.random() * 100}vw`;
+                    
+                    confettiContainer.appendChild(confetti);
+                    
+                    // Animate with GSAP
+                    gsap.fromTo(confetti, 
+                        { 
+                            y: -20, 
+                            rotation: 0,
+                            opacity: 1 
+                        },
+                        { 
+                            y: window.innerHeight + 100, 
+                            rotation: Math.random() * 360,
+                            opacity: 0,
+                            duration: Math.random() * 3 + 3,
+                            delay: Math.random() * 5,
+                            repeat: -1,
+                            ease: "none"
+                        }
+                    );
+                }
+            }
+            
+            createConfetti();
+            
+            // Form submission
+            const userInfoForm = document.getElementById('userInfoForm');
+            
+            userInfoForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                window.playClick();
+                
+                const email = document.getElementById('email').value;
+                const age = document.getElementById('age').value;
+                const country = document.getElementById('country').value;
+                
+                if (!email || !age || !country) {
+                    // Shake the form if validation fails
+                    gsap.to("#userInfoContainer", {
+                        x: -10, 
+                        duration: 0.1, 
+                        repeat: 5, 
+                        yoyo: true
+                    });
+                    return;
+                }
+                
+                // Animate button to show processing
+                const submitBtn = document.getElementById('submitButton');
+                const originalText = submitBtn.textContent;
+                
+                gsap.to(submitBtn, {
+                    scale: 0.95,
+                    backgroundColor: "#3e8e41",
+                    duration: 0.2
+                });
+                
+                submitBtn.textContent = "Processing...";
+                
+                // Submit to server
+                fetch('/api/submit-user-info', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email,
+                        age,
+                        country
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Successful submission animation
+                    gsap.to("#userInfoContainer", {
+                        opacity: 0,
+                        y: -50,
+                        duration: 0.8,
+                        ease: "power2.in",
+                        onComplete: () => {
+                            if (data.redirect) {
+                                window.location.href = data.redirect;
+                            }
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error submitting user info:', error);
+                    
+                    // Reset button on error
+                    gsap.to(submitBtn, {
+                        scale: 1,
+                        backgroundColor: "#4CAF50",
+                        duration: 0.2
+                    });
+                    submitBtn.textContent = originalText;
+                    
+                    alert('There was an error submitting your information. Please try again.');
+                });
+            });
+            
+            // Load translations based on language
+            const lang = "{{ lang }}";
+            loadTranslations(lang);
+            
+            function loadTranslations(languageCode) {
+                // This would ideally load from a server endpoint
+                const translations = {
+                    'en': {
+                        'formDescription': 'Great job completing the assessment! To prepare your personalized career insights, please provide the following information:',
+                        'emailLabel': 'Email Address',
+                        'ageLabel': 'Age',
+                        'countryLabel': 'Country',
+                        'submitButton': 'View My Results'
+                    },
+                    'hi': {
+                        'formDescription': 'आपने आकलन पूरा कर लिया है! अपने व्यक्तिगत कैरियर अंतर्दृष्टि तैयार करने के लिए, कृपया निम्न जानकारी प्रदान करें:',
+                        'emailLabel': 'ईमेल पता',
+                        'ageLabel': 'उम्र',
+                        'countryLabel': 'देश',
+                        'submitButton': 'मेरे परिणाम देखें'
+                    }
+                    // Add more translations as needed
+                };
+                
+                const trans = translations[languageCode] || translations['en'];
+                
+                // Update UI elements
+                document.getElementById('formDescription').textContent = trans.formDescription;
+                document.getElementById('emailLabel').textContent = trans.emailLabel;
+                document.getElementById('ageLabel').textContent = trans.ageLabel;
+                document.getElementById('countryLabel').textContent = trans.countryLabel;
+                document.getElementById('submitButton').textContent = trans.submitButton;
+            }
+        });
+    </script>
+</body>
+</html>

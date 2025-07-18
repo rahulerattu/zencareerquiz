@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Choose Your Guide</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+</head>
+<body>
+    <div class="content-wrapper">
+        <div class="container" id="petContainer">
+            <h1 class="main-title" id="title-text">Choose Your Guide</h1>
+            <p class="subtitle" id="subtitle-text">Select a companion for your journey. Each one offers a unique perspective.</p>
+            
+            <div class="pet-cards-container" id="petCardsContainer">
+                <div class="pet-card" data-pet="panda">
+                    <div class="shimmer-effect"></div>
+                    <div class="pet-image-wrapper">
+                        <img src="https://zencareer.b-cdn.net/panda.jpg" alt="Panda">
+                    </div>
+                    <h3 class="pet-name" id="panda-name">The Wise Panda</h3>
+                    <p class="pet-description" id="panda-desc">Balanced and thoughtful, the panda offers wisdom from ancient traditions to help guide your career decisions.</p>
+                </div>
+                
+                <div class="pet-card" data-pet="penguin">
+                    <div class="shimmer-effect"></div>
+                    <div class="pet-image-wrapper">
+                        <img src="https://zencareer.b-cdn.net/penguin.jpg" alt="Penguin">
+                    </div>
+                    <h3 class="pet-name" id="penguin-name">The Resilient Penguin</h3>
+                    <p class="pet-description" id="penguin-desc">Adaptable and persistent, the penguin brings determination and a practical approach to career challenges.</p>
+                </div>
+                
+                <div class="pet-card" data-pet="puppy">
+                    <div class="shimmer-effect"></div>
+                    <div class="pet-image-wrapper">
+                        <img src="https://zencareer.b-cdn.net/puppy.jpg" alt="Puppy">
+                    </div>
+                    <h3 class="pet-name" id="puppy-name">The Enthusiastic Puppy</h3>
+                    <p class="pet-description" id="puppy-desc">Energetic and optimistic, the puppy brings excitement and fresh perspectives to your career exploration.</p>
+                </div>
+            </div>
+            
+            <button class="cta-button" id="begin-button" style="display: none;">Begin Journey</button>
+        </div>
+    </div>
+    
+    <!-- Character Preview Modal -->
+    <div class="character-preview-modal" id="characterModal">
+        <div class="modal-content">
+            <img src="https://zencareer.b-cdn.net/charachter.jpg" alt="Character Preview" class="character-image">
+            <div class="modal-text">
+                <h2>Your Journey Awaits!</h2>
+                <p>Are you ready to explore the world and discover your ideal career path?</p>
+            </div>
+            <button class="cta-button" id="startJourneyBtn">Let's Go!</button>
+            <div class="close-modal" id="closeModal">×</div>
+        </div>
+    </div>
+    
+    <!-- Audio controls -->
+    <div class="audio-controls" id="audioControls" data-playing="{{ audio_playing|lower }}">
+        <svg class="audio-icon" id="soundOnIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}block{% else %}none{% endif %};">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <svg class="audio-icon" id="soundOffIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}none{% else %}block{% endif %};">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+    </div>
+    
+    <!-- Audio elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="{{ url_for('static', filename='audio/ambience.mp3') }}" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound">
+        <source src="https://zencareer.b-cdn.net/click.mp3" type="audio/mpeg">
+    </audio>
+    
+    <style>
+        /* Character Preview Modal Styles */
+        .character-preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, rgba(33, 40, 80, 0.95), rgba(20, 20, 40, 0.95));
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 90%;
+            width: 600px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .character-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-text h2 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .modal-text p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 25px;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+    </style>
+    
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/audio-manager.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const lang = "{{ lang }}";
+            let selectedPet = null;
+            
+            // GSAP Animations for entrance
+            gsap.set("#petContainer", { opacity: 0, y: 30 });
+            gsap.set("#title-text", { opacity: 0, y: -20 });
+            gsap.set("#subtitle-text", { opacity: 0 });
+            gsap.set(".pet-card", { opacity: 0, y: 30, scale: 0.9 });
+            
+            const tl = gsap.timeline();
+            
+            tl.to("#petContainer", { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
+              .to("#title-text", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" })
+              .to("#subtitle-text", { opacity: 1, duration: 0.8 }, "-=0.4")
+              .to(".pet-card", { 
+                  opacity: 1, 
+                  y: 0, 
+                  scale: 1, 
+                  duration: 0.8, 
+                  stagger: 0.15,
+                  ease: "back.out(1.7)" 
+              }, "-=0.4");
+              
+            // Add hover animation to pet cards
+            const petCards = document.querySelectorAll('.pet-card');
+            
+            petCards.forEach(card => {
+                card.addEventListener("mouseenter", function() {
+                    gsap.to(this, {
+                        y: -10,
+                        boxShadow: "0 15px 30px rgba(0, 0, 0, 0.4)",
+                        duration: 0.3
+                    });
+                });
+                
+                card.addEventListener("mouseleave", function() {
+                    gsap.to(this, {
+                        y: 0,
+                        boxShadow: "0 5px 15px rgba(0, 0, 0, 0.2)",
+                        duration: 0.3
+                    });
+                });
+            });
+            
+            // Load translations based on language
+            loadTranslations(lang);
+            
+            // Pet card selection
+            const beginButton = document.getElementById('begin-button');
+            
+            petCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Play click sound
+                    window.playClick();
+                    
+                    // Clear previous selection
+                    petCards.forEach(c => {
+                        c.classList.remove('selected');
+                        gsap.to(c, {
+                            borderColor: "rgba(255, 255, 255, 0.1)",
+                            duration: 0.3
+                        });
+                    });
+                    
+                    // Mark this card as selected with animation
+                    this.classList.add('selected');
+                    gsap.to(this, {
+                        borderColor: "#21d0c0",
+                        boxShadow: "0 0 20px rgba(33, 208, 192, 0.5)",
+                        duration: 0.5
+                    });
+                    
+                    // Save the selection
+                    selectedPet = this.getAttribute('data-pet');
+                    sessionStorage.setItem('selectedPet', selectedPet);
+                    
+                    // Show begin button with animation
+                    if (beginButton.style.display === 'none') {
+                        beginButton.style.display = 'inline-block';
+                        gsap.from(beginButton, {
+                            opacity: 0, 
+                            y: 20, 
+                            scale: 0.8,
+                            duration: 0.5,
+                            ease: "back.out(1.7)"
+                        });
+                    }
+                });
+            });
+            
+            // Begin button action
+            const characterModal = document.getElementById('characterModal');
+            
+            beginButton.addEventListener('click', function() {
+                // Play click sound
+                window.playClick();
+                
+                if (selectedPet) {
+                    // Animate out the container
+                    gsap.to("#petContainer", {
+                        opacity: 0,
+                        y: -30,
+                        duration: 0.6
+                    });
+                    
+                    // Show character modal with animation
+                    characterModal.style.visibility = 'visible';
+                    gsap.to(characterModal, {
+                        opacity: 1,
+                        duration: 0.5
+                    });
+                    
+                    // Animate modal content
+                    gsap.from('.modal-content', {
+                        y: 50,
+                        scale: 0.8,
+                        opacity: 0,
+                        duration: 0.8,
+                        ease: "back.out(1.7)"
+                    });
+                }
+            });
+            
+            // Close modal button
+            const closeModal = document.getElementById('closeModal');
+            closeModal.addEventListener('click', function() {
+                window.playClick();
+                
+                // Animate out modal
+                gsap.to(characterModal, {
+                    opacity: 0,
+                    duration: 0.3,
+                    onComplete: () => {
+                        characterModal.style.visibility = 'hidden';
+                        // Bring back the pet selection
+                        gsap.to("#petContainer", {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.6
+                        });
+                    }
+                });
+            });
+            
+            // Start journey button in modal
+            const startJourneyBtn = document.getElementById('startJourneyBtn');
+            startJourneyBtn.addEventListener('click', function() {
+                window.playClick();
+                
+                // Animate out modal
+                gsap.to(characterModal, {
+                    opacity: 0,
+                    duration: 0.5,
+                    onComplete: () => {
+                        // Redirect to quiz
+                        window.location.href = `/quiz?pet=${selectedPet}`;
+                    }
+                });
+            });
+            
+            // Translation function
+            function loadTranslations(languageCode) {
+                // This would ideally load from a server endpoint in production
+                // For now, we'll use a simple object with translations
+                const translations = {
+                    'en': {
+                        'title': 'Choose Your Guide',
+                        'subtitle': 'Select a companion for your journey. Each one offers a unique perspective.',
+                        'panda': 'The Wise Panda',
+                        'pandaDesc': 'Balanced and thoughtful, the panda offers wisdom from ancient traditions to help guide your career decisions.',
+                        'penguin': 'The Resilient Penguin',
+                        'penguinDesc': 'Adaptable and persistent, the penguin brings determination and a practical approach to career challenges.',
+                        'puppy': 'The Enthusiastic Puppy',
+                        'puppyDesc': 'Energetic and optimistic, the puppy brings excitement and fresh perspectives to your career exploration.',
+                        'begin': 'Begin Journey'
+                    },
+                    'hi': {
+                        'title': 'अपना मार्गदर्शक चुनें',
+                        'subtitle': 'अपनी यात्रा के लिए एक साथी चुनें। हर एक अनूठा दृष्टिकोण प्रदान करता है।',
+                        'panda': 'ज्ञानी पांडा',
+                        'pandaDesc': 'संतुलित और विचारशील, पांडा प्राचीन परंपराओं से ज्ञान प्रदान करता है जो आपके करियर के फैसलों में मदद करेगा।',
+                        'penguin': 'दृढ़ पेंगुइन',
+                        'penguinDesc': 'अनुकूलनशील और दृढ़, पेंगुइन करियर की चुनौतियों के लिए दृढ़ संकल्प और व्यावहारिक दृष्टिकोण लाता है।',
+                        'puppy': 'उत्साही पिल्ला',
+                        'puppyDesc': 'ऊर्जावान और आशावादी, पिल्ला आपके करियर की खोज में उत्साह और नए दृष्टिकोण लाता है।',
+                        'begin': 'यात्रा शुरू करें'
+                    }
+                    // Add more translations as needed
+                };
+                
+                // Get translations for the selected language or fall back to English
+                const trans = translations[languageCode] || translations['en'];
+                
+                // Update UI text
+                document.getElementById('title-text').textContent = trans.title;
+                document.getElementById('subtitle-text').textContent = trans.subtitle;
+                document.getElementById('panda-name').textContent = trans.panda;
+                document.getElementById('panda-desc').textContent = trans.pandaDesc;
+                document.getElementById('penguin-name').textContent = trans.penguin;
+                document.getElementById('penguin-desc').textContent = trans.penguinDesc;
+                document.getElementById('puppy-name').textContent = trans.puppy;
+                document.getElementById('puppy-desc').textContent = trans.puppyDesc;
+                document.getElementById('begin-button').textContent = trans.begin;
+            }
+        });
+    </script>
+</body>
+</html>

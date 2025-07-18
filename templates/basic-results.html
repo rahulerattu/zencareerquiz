@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Your Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <div class="content-wrapper">
+        <div class="container" id="resultsContainer">
+            <h1 class="main-title" id="resultsTitle">Your Career Guidance Results</h1>
+            
+            <!-- Pet congratulation -->
+            <div class="pet-and-question-container" id="petMessage">
+                <div class="pet-display">
+                    <img src="https://zencareer.b-cdn.net/{{ pet }}.jpg" alt="Your Guide" class="pet-guide-image">
+                </div>
+                <div class="question-bubble">
+                    <p class="question-text">Congratulations! Based on your answers, I have identified your top career matches. Here are your results!</p>
+                </div>
+            </div>
+            
+            <!-- Top 3 Career Recommendations -->
+            <h2 id="careerTitle" style="text-align:center; margin-bottom: 20px; color: white;">Top 3 Career Recommendations</h2>
+            <div class="career-cards-container" id="careerCards" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px;">
+                <!-- Career card 1 -->
+                <div class="career-card" id="career1" style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; width: 220px; text-align: center;">
+                    <h3 class="career-title" style="color: white; font-size: 1.4rem; margin-bottom: 10px;">Data Scientist</h3>
+                    <div class="career-match" style="font-size: 1.8rem; color: #

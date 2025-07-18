@@ -10,6 +10,31 @@ app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_PERMANENT"] = True
 Session(app)
 
+# Define timestamps for video pauses
+VIDEO_TIMESTAMPS = [
+    6, 12, 18, 24, 30, 36, 42, 48, 54, 
+    60, 66, 72, 78, 84, 90, 96, 102, 108,
+    114, 120, 126, 132, 138, 144, 150,
+    156, 162, 168, 174, 180, 186,
+    192, 198, 204, 210, 216, 222, 228,
+    234, 240
+]
+
+# Language options
+LANGUAGES = {
+    'en': {'name': 'English', 'country': 'Global'},
+    'hi': {'name': 'हिन्दी (Hindi)', 'country': 'India'},
+    'ml': {'name': 'മലയാളം (Malayalam)', 'country': 'India'},
+    'ta': {'name': 'தமிழ் (Tamil)', 'country': 'India'},
+    'te': {'name': 'తెలుగు (Telugu)', 'country': 'India'},
+    'kn': {'name': 'ಕನ್ನಡ (Kannada)', 'country': 'India'},
+    'or': {'name': 'ଓଡ଼ିଆ (Oriya)', 'country': 'India'},
+    'bn': {'name': 'বাংলা (Bengali)', 'country': 'India'},
+    'vi': {'name': 'Tiếng Việt (Vietnamese)', 'country': 'Vietnam'},
+    'th': {'name': 'ไทย (Thai)', 'country': 'Thailand'},
+    'km': {'name': 'ខ្មែរ (Khmer)', 'country': 'Cambodia'}
+}
+
 # Load data functions
 def load_json_data(filename):
     """Load JSON data from the data directory."""
@@ -19,6 +44,17 @@ def load_json_data(filename):
     except (IOError, json.JSONDecodeError) as e:
         print(f"Error loading {filename}: {e}")
         return None
+
+def load_pet_data(pet_name):
+    """Load pet data from CDN."""
+    # In a real app, you might cache this data
+    try:
+        import requests
+        response = requests.get(f"https://zencareer.b-cdn.net/{pet_name}.json")
+        return response.json()
+    except Exception as e:
+        print(f"Error loading pet data for {pet_name}: {e}")
+        return {}
 
 def load_locations():
     """Load location data with timestamps and quotes."""
@@ -42,38 +78,30 @@ def load_personality_traits():
 # Routes
 @app.route('/')
 def welcome():
-    """Serve the welcome/language selection page and initialize the audio."""
-    # Set up continuous background audio in session
+    """Serve the welcome/language selection page."""
+    # Initialize audio state in session
     if 'audio_playing' not in session:
         session['audio_playing'] = True
     
-    return render_template('welcome.html', audio_playing=session['audio_playing'])
+    return render_template(
+        'welcome.html', 
+        languages=LANGUAGES,
+        audio_playing=session['audio_playing']
+    )
 
 @app.route('/pet-selection')
 def pet_selection():
     """Pet guide selection page."""
     lang = request.args.get('lang', 'en')
     session['language'] = lang
+    country = LANGUAGES.get(lang, {}).get('country', 'Global')
+    session['country'] = country
     
-    # Translations for pet selection page
-    translations = {
-        'en': {
-            'title': 'Choose Your Guide',
-            'subtitle': 'Select a companion for your journey. Each one offers a unique perspective.',
-            'panda_name': 'The Wise Panda',
-            'penguin_name': 'The Resilient Penguin',
-            'puppy_name': 'The Enthusiastic Puppy',
-            'begin_button': 'Begin Journey'
-        },
-        # Add other language translations here
-    }
-    
-    # Use the selected language or fall back to English
-    page_text = translations.get(lang, translations['en'])
-    
+    # Translations for pet selection page based on language
     return render_template(
         'pet-selection.html',
-        text=page_text,
+        lang=lang,
+        country=country,
         audio_playing=session.get('audio_playing', True)
     )
 
@@ -92,45 +120,70 @@ def quiz():
     # Get questions matching the language
     questions = load_questions(lang)
     
-    # Match questions to video timestamps
-    # If we have more timestamps than questions, we'll use a subset of timestamps
-    # If we have more questions than timestamps, we'll repeat timestamps
-    timestamps = [loc["timestamp"] for loc in locations]
+    # Load pet data from CDN
+    pet_data = load_pet_data(pet)
     
     return render_template(
         'quiz.html',
         pet=pet,
+        pet_data=json.dumps(pet_data),
         questions=json.dumps(questions),
         locations=json.dumps(locations),
-        timestamps=json.dumps(timestamps),
+        timestamps=json.dumps(VIDEO_TIMESTAMPS),
         audio_playing=session.get('audio_playing', True)
     )
 
 @app.route('/user-info')
 def user_info():
     """User information collection page."""
+    lang = session.get('language', 'en')
+    pet = session.get('pet', 'panda')
+    
     return render_template(
         'user-info.html',
-        audio_playing=session.get('audio_playing', True)
-    )
-
-@app.route('/payment')
-def payment():
-    """Payment and premium offer page."""
-    # Get country from request to customize payment options
-    country = request.args.get('country', '')
-    return render_template(
-        'payment.html',
-        country=country,
+        lang=lang,
+        pet=pet,
         audio_playing=session.get('audio_playing', True)
     )
 
 @app.route('/basic-results')
 def basic_results():
     """Basic (free) results page."""
-    # In a real app, we'd process the answers here
+    lang = session.get('language', 'en')
+    pet = session.get('pet', 'panda')
+    
+    # In a real app, we'd process the answers here to generate results
+    # For now, we'll use mock data
+    mock_results = {
+        'top_careers': ['Data Scientist', 'UX Designer', 'Environmental Consultant'],
+        'personality_summary': 'You have a creative and analytical mind with strong problem-solving abilities.',
+        'traits': {
+            'analytical': 85,
+            'creative': 72,
+            'social': 65,
+            'practical': 60,
+            'enterprising': 58
+        }
+    }
+    
     return render_template(
         'basic-results.html',
+        lang=lang,
+        pet=pet,
+        results=mock_results,
+        audio_playing=session.get('audio_playing', True)
+    )
+
+@app.route('/payment')
+def payment():
+    """Payment and premium offer page."""
+    lang = session.get('language', 'en')
+    country = session.get('country', 'Global')
+    
+    return render_template(
+        'payment.html',
+        lang=lang,
+        country=country,
         audio_playing=session.get('audio_playing', True)
     )
 
@@ -147,36 +200,14 @@ def get_questions(lang):
     questions = load_questions(lang)
     return jsonify(questions)
 
-@app.route('/api/locations')
-def get_locations():
-    """API endpoint to get locations with timestamps and quotes."""
-    locations = load_locations()
-    return jsonify(locations)
-
-@app.route('/api/personality/<trait>', methods=['GET'])
-def get_personality_trait(trait):
-    """API endpoint to get information about a personality trait."""
-    traits = load_personality_traits()
-    trait_info = traits.get(trait, {
-        'name': trait.capitalize(),
-        'description': 'A unique aspect of your personality.',
-        'icon': 'default-trait.png'
-    })
-    return jsonify(trait_info)
-
 @app.route('/api/submit-answers', methods=['POST'])
 def submit_answers():
     """API endpoint to submit quiz answers and calculate results."""
     data = request.json
     answers = data.get('answers', [])
     
-    # In a real implementation, you would:
-    # 1. Process answers to determine personality traits
-    # 2. Calculate career recommendations
-    # 3. Store results in database
-    # 4. Return basic results or redirect to payment
-    
-    # Mock processing for demonstration
+    # In a real implementation, process answers and determine career recommendations
+    # For demonstration, using mock data
     mock_results = {
         'top_careers': ['Data Scientist', 'UX Designer', 'Environmental Consultant'],
         'personality_summary': 'You have a creative and analytical mind with strong problem-solving abilities.',
@@ -189,9 +220,12 @@ def submit_answers():
         }
     }
     
+    # Store results in session
+    session['quiz_results'] = mock_results
+    
     return jsonify({
         'status': 'success',
-        'results': mock_results
+        'redirect': url_for('user_info')
     })
 
 @app.route('/api/submit-user-info', methods=['POST'])
@@ -206,7 +240,24 @@ def submit_user_info():
         'country': data.get('country')
     }
     
-    return jsonify({'status': 'success'})
+    return jsonify({
+        'status': 'success',
+        'redirect': url_for('basic_results')
+    })
+
+@app.route('/api/submit-payment', methods=['POST'])
+def submit_payment():
+    """Process payment information (mock implementation)"""
+    data = request.json
+    payment_method = data.get('payment_method')
+    email = data.get('email')
+    
+    # This would connect to a payment processor in a real implementation
+    # For now, just acknowledge receipt
+    return jsonify({
+        'status': 'success',
+        'message': 'Your payment is being processed. Your detailed report will be emailed to you shortly.'
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

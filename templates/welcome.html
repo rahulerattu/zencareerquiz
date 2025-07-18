@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Discover Your Professional Path</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+</head>
+<body>
+    <div class="content-wrapper">
+        <div class="container" id="mainContainer">
+            <h1 class="main-title" id="mainTitle">Welcome to ZenCareer</h1>
+            <p class="subtitle" id="mainSubtitle">Embark on a journey around the world to discover your ideal career path</p>
+            
+            <h2 id="langTitle">Select Your Language</h2>
+            <div class="language-grid" id="languageGrid">
+                <!-- English is always the first option -->
+                <button class="language-btn" data-lang="en" data-country="Global">English</button>
+                
+                <!-- Indian languages -->
+                <button class="language-btn" data-lang="hi" data-country="India">हिन्दी (Hindi)</button>
+                <button class="language-btn" data-lang="ml" data-country="India">മലയാളം (Malayalam)</button>
+                <button class="language-btn" data-lang="ta" data-country="India">தமிழ் (Tamil)</button>
+                <button class="language-btn" data-lang="te" data-country="India">తెలుగు (Telugu)</button>
+                <button class="language-btn" data-lang="kn" data-country="India">ಕನ್ನಡ (Kannada)</button>
+                <button class="language-btn" data-lang="or" data-country="India">ଓଡ଼ିଆ (Oriya)</button>
+                <button class="language-btn" data-lang="bn" data-country="India">বাংলা (Bengali)</button>
+                
+                <!-- Southeast Asian languages -->
+                <button class="language-btn" data-lang="vi" data-country="Vietnam">Tiếng Việt</button>
+                <button class="language-btn" data-lang="th" data-country="Thailand">ไทย (Thai)</button>
+                <button class="language-btn" data-lang="km" data-country="Cambodia">ខ្មែរ (Khmer)</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Background particles animation -->
+    <div id="particles"></div>
+    
+    <!-- Audio controls -->
+    <div class="audio-controls" id="audioControls" data-playing="{{ audio_playing|lower }}">
+        <svg class="audio-icon" id="soundOnIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}block{% else %}none{% endif %};">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <svg class="audio-icon" id="soundOffIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}none{% else %}block{% endif %};">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+    </div>
+    
+    <!-- Audio elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="{{ url_for('static', filename='audio/ambience.mp3') }}" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound">
+        <source src="https://zencareer.b-cdn.net/click.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/audio-manager.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // GSAP Animations
+            gsap.set("#mainContainer", { opacity: 0, y: 30 });
+            gsap.set("#mainTitle", { opacity: 0, y: -20 });
+            gsap.set("#mainSubtitle", { opacity: 0 });
+            gsap.set("#langTitle", { opacity: 0, y: 20 });
+            gsap.set(".language-btn", { opacity: 0, scale: 0.8 });
+            
+            const tl = gsap.timeline();
+            
+            tl.to("#mainContainer", { opacity: 1, y: 0, duration: 1, ease: "power2.out" })
+              .to("#mainTitle", { opacity: 1, y: 0, duration: 0.8, ease: "back.out(1.7)" })
+              .to("#mainSubtitle", { opacity: 1, duration: 0.8 }, "-=0.4")
+              .to("#langTitle", { opacity: 1, y: 0, duration: 0.8 }, "-=0.4")
+              .to(".language-btn", { 
+                  opacity: 1, 
+                  scale: 1, 
+                  duration: 0.5, 
+                  stagger: 0.05,
+                  ease: "back.out(1.7)" 
+              }, "-=0.4");
+            
+            // Language selection
+            const languageBtns = document.querySelectorAll('.language-btn');
+            
+            languageBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Play click sound
+                    window.playClick();
+                    
+                    // Get selected language
+                    const lang = this.getAttribute('data-lang');
+                    const country = this.getAttribute('data-country');
+                    
+                    // Store in session storage
+                    sessionStorage.setItem('selectedLanguage', lang);
+                    sessionStorage.setItem('selectedCountry', country);
+                    
+                    // Animate out
+                    gsap.to("#mainContainer", {
+                        opacity: 0,
+                        y: -50,
+                        duration: 0.6,
+                        onComplete: () => {
+                            // Redirect to pet selection page
+                            window.location.href = `/pet-selection?lang=${lang}`;
+                        }
+                    });
+                });
+            });
+            
+            // Create background particles
+            function createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                const particleCount = 50;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Random size between 5-15px
+                    const size = Math.random() * 10 + 5;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Random position
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    // Random opacity
+                    particle.style.opacity = Math.random() * 0.5 + 0.1;
+                    
+                    // Add to container
+                    particlesContainer.appendChild(particle);
+                    
+                    // Animate with GSAP instead of CSS
+                    gsap.to(particle, {
+                        y: -window.innerHeight - size,
+                        x: "random(-100, 100)",
+                        rotation: "random(-360, 360)",
+                        duration: "random(15, 40)",
+                        repeat: -1,
+                        delay: Math.random() * 15,
+                        ease: "none"
+                    });
+                }
+            }
+            
+            createParticles();
+        });
+    </script>
+</body>
+</html>

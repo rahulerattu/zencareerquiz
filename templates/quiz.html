@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - World Journey Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-background-container">
+        <video id="videoBackground" class="video-background" muted>
+            <source src="https://zencareer.b-cdn.net/world_journey.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="overlay"></div>
+    
+    <!-- Quiz Content -->
+    <div class="content-wrapper">
+        <div id="quizContainer" class="quiz-wrapper">
+            <div class="progress-container">
+                <div class="progress-bar-outer">
+                    <div id="progressBar" class="progress-bar-inner"></div>
+                </div>
+                <span id="progressLabel" class="progress-label">Question 1/40</span>
+            </div>
+            
+            <div class="pet-and-question-container">
+                <div class="pet-display">
+                    <img id="petImage" src="" alt="Your Guide" class="pet-guide-image">
+                </div>
+                <div class="question-bubble" id="questionBubble">
+                    <p id="questionText" class="question-text">Loading your next question...</p>
+                </div>
+            </div>
+            
+            <div id="answersContainer" class="answers-grid">
+                <!-- Answer options will be generated dynamically -->
+            </div>
+            
+            <div class="quote-container" id="quoteContainer">
+                <p id="quoteText" class="quote-text">The greatest journey begins with a single step.</p>
+                <p id="quoteAuthor" class="quote-author">Lao Tzu</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <div class="spinner"></div>
+        <p>Preparing your next destination...</p>
+    </div>
+    
+    <!-- Audio Controls -->
+    <div class="audio-controls" id="audioControls" data-playing="{{ audio_playing|lower }}">
+        <svg class="audio-icon" id="soundOnIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}block{% else %}none{% endif %};">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+        <svg class="audio-icon" id="soundOffIcon" viewBox="0 0 24 24" style="display: {% if audio_playing %}none{% else %}block{% endif %};">
+            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+        </svg>
+    </div>
+    
+    <!-- Audio Elements -->
+    <audio id="backgroundMusic" loop>
+        <source src="{{ url_for('static', filename='audio/ambience.mp3') }}" type="audio/mpeg">
+    </audio>
+    <audio id="clickSound">
+        <source src="https://zencareer.b-cdn.net/click.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/audio-manager.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize variables
+            const petName = "{{ pet }}";
+            const petData = JSON.parse('{{ pet_data|safe }}');
+            const timestamps = JSON.parse('{{ timestamps|safe }}');
+            const locations = JSON.parse('{{ locations|safe }}');
+            const questions = JSON.parse('{{ questions|safe }}');
+            
+            let currentQuestionIndex = 0;
+            let userAnswers = [];
+            let videoPlaying = false;
+            let currentTimestampIndex = 0;
+            
+            // Set pet image
+            const petImage = document.getElementById('petImage');
+            petImage.src = `https://zencareer.b-cdn.net/${petName}.jpg`;
+            
+            // Initial GSAP setup
+            gsap.set("#quizContainer", { opacity: 0 });
+            gsap.set("#petImage", { scale: 0.8, opacity: 0 });
+            gsap.set("#questionBubble", { opacity: 0, x: -20 });
+            gsap.set("#quoteContainer", { opacity: 0, y: 20 });
+            
+            // Animate in the container
+            gsap.to("#quizContainer", {
+                opacity: 1,
+                duration: 1,
+                ease: "power2.out",
+                onComplete: () => {
+                    // Animate in the components
+                    gsap.to("#petImage", {
+                        scale: 1,
+                        opacity: 1,
+                        duration: 0.8,
+                        ease: "back.out(1.7)"
+                    });
+                    
+                    gsap.to("#questionBubble", {
+                        opacity: 1,
+                        x: 0,
+                        duration: 0.8,
+                        delay: 0.2,
+                        ease: "power2.out"
+                    });
+                    
+                    gsap.to("#quoteContainer", {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.8,
+                        delay: 0.4,
+                        ease: "power2.out"
+                    });
+                }
+            });
+            
+            // Video handling
+            const videoBackground = document.getElementById('videoBackground');
+            
+            videoBackground.addEventListener('loadedmetadata', function() {
+                // Start playing when video is loaded
+                startQuiz();
+            });
+            
+            videoBackground.addEventListener('timeupdate', function() {
+                // Check if we need to pause at a timestamp
+                if (currentTimestampIndex < timestamps.length) {
+                    if (videoBackground.currentTime >= timestamps[currentTimestampIndex]) {
+                        videoBackground.pause();
+                        videoPlaying = false;
+                        
+                        // Show the question
+                        showQuestion(currentQuestionIndex, locations[currentTimestampIndex]);
+                        
+                        // Increment timestamp index for next pause
+                        currentTimestampIndex++;
+                    }
+                }
+            });
+            
+            videoBackground.addEventListener('ended', function() {
+                // If video ends, we've completed the quiz
+                finishQuiz();
+            });
+            
+            function startQuiz() {
+                videoBackground.play().catch(error => {
+                    console.error('Error playing video:', error);
+                    // Fallback if autoplay fails
+                    showStartButton();
+                });
+                videoPlaying = true;
+            }
+            
+            function showStartButton() {
+                // If autoplay is blocked, show a start button
+                const quizContainer = document.getElementById('quizContainer');
+                const startButton = document.createElement('button');
+                startButton.className = 'cta-button';
+                startButton.textContent = 'Start Journey';
+                startButton.addEventListener('click', function() {
+                    window.playClick();
+                    videoBackground.play().then(() => {
+                        videoPlaying = true;
+                        
+                        // Animate button out
+                        gsap.to(this, {
+                            opacity: 0,
+                            y: -20,
+                            duration: 0.3,
+                            onComplete: () => this.remove()
+                        });
+                    }).catch(error => {
+                        console.error('Error playing video after click:', error);
+                    });
+                });
+                
+                // Insert at the beginning of quiz container
+                quizContainer.insertBefore(startButton, quizContainer.firstChild);
+                
+                // Animate in the button
+                gsap.from(startButton, {
+                    opacity: 0,
+                    y: 20,
+                    scale: 0.8,
+                    duration: 0.5,
+                    ease: "back.out(1.7)"
+                });
+            }
+            
+            function showQuestion(questionIndex, location) {
+                const question = questions[questionIndex];
+                
+                // Animate out old content
+                const timeline = gsap.timeline();
+                
+                timeline.to("#questionBubble", {
+                    opacity: 0,
+                    x: -20,
+                    duration: 0.4,
+                    ease: "power2.in",
+                    onComplete: () => {
+                        // Update question text
+                        document.getElementById('questionText').textContent = question.text;
+                        
+                        // Update location quote with animation
+                        gsap.to("#quoteContainer", {
+                            opacity: 0,
+                            y: -10,
+                            duration: 0.3,
+                            onComplete: () => {
+                                document.getElementById('quoteText').textContent = location.quote || "The journey is the reward.";
+                                document.getElementById('quoteAuthor').textContent = location.author || "";
+                                
+                                gsap.to("#quoteContainer", {
+                                    opacity: 1,
+                                    y: 0,
+                                    duration: 0.5,
+                                    ease: "power2.out"
+                                });
+                            }
+                        });
+                        
+                        // Clear previous answers
+                        const answersContainer = document.getElementById('answersContainer');
+                        answersContainer.innerHTML = '';
+                        
+                        // Add answer options - ensure there are exactly 5
+                        const options = question.options || ["Option 1", "Option 2", "Option 3", "Option 4", "Option 5"];
+                        options.slice(0, 5).forEach((option, index) => {
+                            const answerButton = document.createElement('button');
+                            answerButton.className = 'answer-option';
+                            answerButton.textContent = option;
+                            answerButton.dataset.index = index;
+                            
+                            // Set initial state for GSAP
+                            gsap.set(answerButton, {
+                                opacity: 0,
+                                y: 20
+                            });
+                            
+                            answerButton.addEventListener('click', function() {
+                                window.playClick();
+                                selectAnswer(questionIndex, index);
+                            });
+                            
+                            answersContainer.appendChild(answerButton);
+                            
+                            // Animate in each answer option with stagger
+                            gsap.to(answerButton, {
+                                opacity: 1,
+                                y: 0,
+                                duration: 0.5,
+                                delay: 0.1 + (index * 0.1),
+                                ease: "power2.out"
+                            });
+                        });
+                    }
+                })
+                .to("#questionBubble", {
+                    opacity: 1,
+                    x: 0,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+                
+                // Update progress bar with GSAP animation
+                updateProgress();
+                
+                // Make the pet bounce with excitement
+                gsap.to("#petImage", {
+                    y: -10,
+                    duration: 0.3,
+                    repeat: 1,
+                    yoyo: true,
+                    ease: "power2.inOut"
+                });
+            }
+            
+            function selectAnswer(questionIndex, answerIndex) {
+                // Store user's answer
+                userAnswers[questionIndex] = answerIndex;
+                
+                // Highlight selected answer with GSAP
+                const answerOptions = document.querySelectorAll('.answer-option');
+                answerOptions.forEach((option, idx) => {
+                    if (idx === answerIndex) {
+                        gsap.to(option, {
+                            backgroundColor: "rgba(76, 175, 80, 0.4)",
+                            borderColor: "#4CAF50",
+                            boxShadow: "0 0 15px rgba(76, 175, 80, 0.5)",
+                            scale: 1.05,
+                            duration: 0.3
+                        });
+                    } else {
+                        gsap.to(option, {
+                            opacity: 0.6,
+                            scale: 0.95,
+                            duration: 0.3
+                        });
+                    }
+                });
+                
+                // Prepare for next question with animation sequence
+                setTimeout(() => {
+                    const quizContainer = document.getElementById('quizContainer');
+                    const loadingIndicator = document.getElementById('loadingIndicator');
+                    
+                    gsap.to(quizContainer, {
+                        opacity: 0,
+                        y: -30,
+                        duration: 0.6,
+                        ease: "power2.in",
+                        onComplete: () => {
+                            quizContainer.style.display = 'none';
+                            
+                            // Show loading indicator
+                            loadingIndicator.style.display = 'flex';
+                            gsap.from(loadingIndicator, {
+                                opacity: 0,
+                                scale: 0.9,
+                                duration: 0.4
+                            });
+                            
+                            setTimeout(() => {
+                                // Hide loading indicator
+                                gsap.to(loadingIndicator, {
+                                    opacity: 0,
+                                    scale: 0.9,
+                                    duration: 0.4,
+                                    onComplete: () => {
+                                        loadingIndicator.style.display = 'none';
+                                        quizContainer.style.display = '';
+                                        
+                                        // Reset quiz container position
+                                        gsap.set(quizContainer, {
+                                            y: 30
+                                        });
+                                        
+                                        // Continue to next question or finish quiz
+                                        currentQuestionIndex++;
+                                        
+                                        if (currentQuestionIndex >= questions.length || currentTimestampIndex >= timestamps.length) {
+                                            finishQuiz();
+                                        } else {
+                                            // Continue playing video to next timestamp
+                                            videoBackground.play();
+                                            videoPlaying = true;
+                                            
+                                            // Animate in quiz container
+                                            gsap.to(quizContainer, {
+                                                opacity: 1,
+                                                y: 0,
+                                                duration: 0.7,
+                                                ease: "power2.out"
+                                            });
+                                        }
+                                    }
+                                });
+                            }, 1500); // Show loading for 1.5 seconds
+                        }
+                    });
+                }, 800); // Wait before transitioning to next question
+            }
+            
+            function updateProgress() {
+                const totalQuestions = Math.min(questions.length, timestamps.length);
+                const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+                
+                // Update progress bar with GSAP animation
+                gsap.to("#progressBar", {
+                    width: `${progressPercent}%`,
+                    duration: 0.8,
+                    ease: "power1.out"
+                });
+                
+                document.getElementById('progressLabel').textContent = `Question ${currentQuestionIndex + 1}/${totalQuestions}`;
+            }
+            
+            function finishQuiz() {
+                // Final animation before submitting
+                gsap.to("#quizContainer", {
+                    opacity: 0,
+                    y: -50,
+                    duration: 0.8,
+                    ease: "power2.in"
+                });
+                
+                // Submit answers to server
+                setTimeout(() => {
+                    fetch('/api/submit-answers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            answers: userAnswers
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting answers:', error);
+                        alert('There was an error submitting your answers. Please try again.');
+                    });
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
