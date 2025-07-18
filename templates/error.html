@@ -24,6 +24,16 @@
         .back-home {
             margin-top: 2rem;
         }
+        .debug-info {
+            margin-top: 2rem;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #eee;
+        }
     </style>
 </head>
 <body>
@@ -42,6 +52,14 @@
                 
                 <div class="back-home">
                     <a href="{{ url_for('welcome') }}" class="cta-button">Return to Home</a>
+                </div>
+                
+                <div class="debug-info">
+                    <p>Debug Information:</p>
+                    <p>Time: {{ now }}</p>
+                    <p>Path: {{ request.path }}</p>
+                    <p>Method: {{ request.method }}</p>
+                    <p>Browser: {{ request.user_agent }}</p>
                 </div>
             </div>
         </div>

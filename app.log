@@ -1,0 +1,37 @@
+2025-07-18 09:11:12,360 - __main__ - INFO - Testing route: /
+2025-07-18 09:11:23,469 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.2:5000
+2025-07-18 09:11:23,470 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-07-18 09:11:23,487 - werkzeug - INFO -  * Restarting with stat
+2025-07-18 09:11:24,967 - werkzeug - WARNING -  * Debugger is active!
+2025-07-18 09:11:24,979 - werkzeug - INFO -  * Debugger PIN: 143-759-301
+2025-07-18 09:12:10,347 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 09:12:10] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2025-07-18 09:12:10,691 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 09:12:10] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2025-07-18 09:12:10,712 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 09:12:10] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2025-07-18 09:12:11,257 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 09:12:11] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2025-07-18 09:12:11,518 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 09:12:11] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2025-07-18 09:18:38,820 - werkzeug - INFO -  * Detected change in 'C:\\zencareerlocal\\app.py', reloading
+2025-07-18 09:18:38,916 - werkzeug - INFO -  * Restarting with stat
+2025-07-18 09:18:40,543 - werkzeug - WARNING -  * Debugger is active!
+2025-07-18 09:18:40,558 - werkzeug - INFO -  * Debugger PIN: 143-759-301
+2025-07-18 09:18:58,499 - __main__ - DEBUG - Rendering welcome page
+2025-07-18 09:18:58,508 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 09:18:58] "GET / HTTP/1.1" 200 -
+2025-07-18 09:18:59,005 - __main__ - ERROR - Unhandled exception: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-07-18 09:18:59,014 - __main__ - ERROR - Traceback (most recent call last):
+  File "C:\Users\Rahul EB\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Rahul EB\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1458, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\Rahul EB\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1440, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Rahul EB\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\Rahul EB\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 655, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+
+2025-07-18 09:18:59,090 - werkzeug - INFO - 127.0.0.1 - - [18/Jul/2025 09:18:59] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -

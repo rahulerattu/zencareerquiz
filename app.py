@@ -4,29 +4,30 @@ import os
 import logging
 import sys
 import traceback
-from flask_session import Session  # For server-side sessions
 import requests  # For fetching remote JSON files
+from datetime import datetime, timedelta
 
 # Set up logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout)
+        logging.StreamHandler(sys.stdout),
+        logging.FileHandler('app.log')
     ]
 )
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "zen_career_secret_key")  # Better to use environment variable
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "zen_career_secret_key")
+app.config["DEBUG"] = True
+# Set session to use filesystem instead of signed cookies
 app.config["SESSION_TYPE"] = "filesystem"
-app.config["SESSION_PERMANENT"] = True
-app.config["SESSION_FILE_DIR"] = os.environ.get("SESSION_FILE_DIR", "./flask_session")
-app.config["SESSION_USE_SIGNER"] = True
-Session(app)
+# Set permanent session lifetime to 1 hour
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=1)
 
 # Ensure session directory exists
-os.makedirs(app.config["SESSION_FILE_DIR"], exist_ok=True)
+os.makedirs('flask_session', exist_ok=True)
 
 # Define timestamps for video pauses
 VIDEO_TIMESTAMPS = [
@@ -53,6 +54,66 @@ LANGUAGES = {
     'km': {'name': 'ខ្មែរ (Khmer)', 'country': 'Cambodia'}
 }
 
+# Debug endpoint to help diagnose issues
+@app.route('/debug')
+def debug_info():
+    """Return debug information about the application environment"""
+    debug_data = {
+        "Environment": {
+            "Python Version": sys.version,
+            "Flask Version": Flask.__version__,
+            "Working Directory": os.getcwd(),
+            "Debug Mode": app.debug,
+            "Testing Mode": app.testing
+        },
+        "Paths": {
+            "Static Folder": app.static_folder,
+            "Template Folder": app.template_folder
+        },
+        "Configuration": {
+            key: str(value) for key, value in app.config.items() 
+            if key not in ('SECRET_KEY')  # Don't expose the secret key
+        },
+        "Request": {
+            "Headers": dict(request.headers),
+            "Endpoint": request.endpoint,
+            "URL": request.url,
+            "Method": request.method
+        },
+        "Session Info": {
+            "Session Active": session.get('language', 'No session') != 'No session',
+            "Session Keys": list(session.keys()) if hasattr(session, 'keys') else 'No keys method'
+        }
+    }
+    
+    # Check if required directories exist
+    paths_to_check = [
+        ("Static Folder", app.static_folder),
+        ("Template Folder", app.template_folder),
+        ("Data Folder", os.path.join(os.getcwd(), 'data'))
+    ]
+    
+    directory_status = {}
+    for name, path in paths_to_check:
+        directory_status[name] = {
+            "Path": path,
+            "Exists": os.path.exists(path),
+            "Is Directory": os.path.isdir(path) if os.path.exists(path) else False,
+            "Readable": os.access(path, os.R_OK) if os.path.exists(path) else False,
+            "Writable": os.access(path, os.W_OK) if os.path.exists(path) else False
+        }
+    
+    debug_data["Directory Status"] = directory_status
+    
+    # Check for template files
+    template_files = []
+    if os.path.isdir(app.template_folder):
+        template_files = os.listdir(app.template_folder)
+    
+    debug_data["Template Files"] = template_files
+    
+    return jsonify(debug_data)
+
 # Ensure data directory exists
 os.makedirs('data', exist_ok=True)
 
@@ -74,11 +135,14 @@ def load_json_data(filename):
 def load_pet_data(pet_name):
     """Load pet data from CDN."""
     try:
+        logger.debug(f"Attempting to load pet data for {pet_name}")
         response = requests.get(f"https://zencareer.b-cdn.net/{pet_name}.json")
         if response.status_code == 200:
+            logger.debug(f"Successfully loaded pet data for {pet_name}")
             return response.json()
         else:
             logger.warning(f"Failed to load pet data for {pet_name}. Status code: {response.status_code}")
+            # Return empty dict as fallback
             return {}
     except Exception as e:
         logger.error(f"Error loading pet data for {pet_name}: {e}")
@@ -105,7 +169,7 @@ def load_locations():
                 "quote": "The sea, once it casts its spell, holds one in its net of wonder forever.",
                 "author": "Jacques Cousteau"
             },
-            # Add more default locations if needed
+            # Add more default locations
         ]
     return locations_data
 
@@ -172,15 +236,20 @@ def load_personality_traits():
 # Error handler
 @app.errorhandler(Exception)
 def handle_exception(e):
+    # Log the error and stacktrace
     logger.error(f"Unhandled exception: {str(e)}")
     logger.error(traceback.format_exc())
-    return render_template('error.html', error=str(e)), 500
+    
+    # Return error page
+    error_message = str(e)
+    return render_template('error.html', error=error_message, now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 500
 
 # Routes
 @app.route('/')
 def welcome():
     """Serve the welcome/language selection page."""
     try:
+        logger.debug("Rendering welcome page")
         # Initialize audio state in session
         if 'audio_playing' not in session:
             session['audio_playing'] = True
@@ -188,17 +257,18 @@ def welcome():
         return render_template(
             'welcome.html', 
             languages=LANGUAGES,
-            audio_playing=session['audio_playing']
+            audio_playing=session.get('audio_playing', True)
         )
     except Exception as e:
         logger.error(f"Error in welcome route: {str(e)}")
         logger.error(traceback.format_exc())
-        return render_template('error.html', error=str(e)), 500
+        return render_template('error.html', error=str(e), now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 500
 
 @app.route('/pet-selection')
 def pet_selection():
     """Pet guide selection page."""
     try:
+        logger.debug("Rendering pet selection page")
         lang = request.args.get('lang', 'en')
         session['language'] = lang
         country = LANGUAGES.get(lang, {}).get('country', 'Global')
@@ -214,12 +284,13 @@ def pet_selection():
     except Exception as e:
         logger.error(f"Error in pet_selection route: {str(e)}")
         logger.error(traceback.format_exc())
-        return render_template('error.html', error=str(e)), 500
+        return render_template('error.html', error=str(e), now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 500
 
 @app.route('/quiz')
 def quiz():
     """Main quiz page with video integration."""
     try:
+        logger.debug("Rendering quiz page")
         lang = session.get('language', 'en')
         pet = request.args.get('pet', 'panda')
         
@@ -232,8 +303,17 @@ def quiz():
         # Get questions matching the language
         questions = load_questions(lang)
         
-        # Load pet data from CDN
-        pet_data = load_pet_data(pet)
+        # Load pet data from CDN with error handling
+        try:
+            pet_data = load_pet_data(pet)
+        except Exception as pet_error:
+            logger.warning(f"Failed to load pet data: {str(pet_error)}")
+            pet_data = {}  # Use empty dict as fallback
+        
+        # Log data for debugging
+        logger.debug(f"Pet: {pet}")
+        logger.debug(f"Questions count: {len(questions)}")
+        logger.debug(f"Locations count: {len(locations)}")
         
         return render_template(
             'quiz.html',
@@ -247,12 +327,13 @@ def quiz():
     except Exception as e:
         logger.error(f"Error in quiz route: {str(e)}")
         logger.error(traceback.format_exc())
-        return render_template('error.html', error=str(e)), 500
+        return render_template('error.html', error=str(e), now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 500
 
 @app.route('/user-info')
 def user_info():
     """User information collection page."""
     try:
+        logger.debug("Rendering user info page")
         lang = session.get('language', 'en')
         pet = session.get('pet', 'panda')
         
@@ -265,12 +346,13 @@ def user_info():
     except Exception as e:
         logger.error(f"Error in user_info route: {str(e)}")
         logger.error(traceback.format_exc())
-        return render_template('error.html', error=str(e)), 500
+        return render_template('error.html', error=str(e), now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 500
 
 @app.route('/basic-results')
 def basic_results():
     """Basic (free) results page."""
     try:
+        logger.debug("Rendering basic results page")
         lang = session.get('language', 'en')
         pet = session.get('pet', 'panda')
         
@@ -298,12 +380,13 @@ def basic_results():
     except Exception as e:
         logger.error(f"Error in basic_results route: {str(e)}")
         logger.error(traceback.format_exc())
-        return render_template('error.html', error=str(e)), 500
+        return render_template('error.html', error=str(e), now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 500
 
 @app.route('/payment')
 def payment():
     """Payment and premium offer page."""
     try:
+        logger.debug("Rendering payment page")
         lang = session.get('language', 'en')
         country = session.get('country', 'Global')
         
@@ -316,7 +399,7 @@ def payment():
     except Exception as e:
         logger.error(f"Error in payment route: {str(e)}")
         logger.error(traceback.format_exc())
-        return render_template('error.html', error=str(e)), 500
+        return render_template('error.html', error=str(e), now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")), 500
 
 # API Endpoints
 @app.route('/api/toggle-audio', methods=['POST'])
@@ -347,6 +430,7 @@ def submit_answers():
     try:
         data = request.json
         answers = data.get('answers', [])
+        logger.debug(f"Received {len(answers)} answers")
         
         # In a real implementation, process answers and determine career recommendations
         # For demonstration, using mock data
@@ -379,6 +463,7 @@ def submit_user_info():
     """API endpoint to store user information."""
     try:
         data = request.json
+        logger.debug(f"Received user info submission")
         
         # Store in session for now
         session['user_info'] = {
@@ -403,6 +488,7 @@ def submit_payment():
         data = request.json
         payment_method = data.get('payment_method')
         email = data.get('email')
+        logger.debug(f"Received payment submission for {email}")
         
         # This would connect to a payment processor in a real implementation
         # For now, just acknowledge receipt
@@ -416,5 +502,5 @@ def submit_payment():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    # Set debug to False in production
-    app.run(debug=False)
+    # Run in debug mode locally
+    app.run(debug=True, host='0.0.0.0', port=5000)
