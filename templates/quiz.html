@@ -3,296 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZenCareer - Career Discovery Journey</title>
+    <title>ZenCareer - Career Discovery Quiz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Add Lottie player for JSON animations -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
 </head>
 <body>
-    <div class="quiz-container">
+    <div class="quiz-screen">
         <div class="video-container">
-            <video id="worldJourney" class="world-journey">
-                <source src="https://zencareer.b-cdn.net/world_journey.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <div class="video-overlay">
-                <h2 id="locationTitle">Mount Fuji</h2>
-            </div>
+            <video id="journey-video" src="https://zencareer.b-cdn.net/world_journey.mp4" muted></video>
         </div>
         
-        <!-- Personality trait notification -->
-        <div id="traitNotification" class="trait-notification">
-            <div class="trait-icon">✨</div>
-            <div class="trait-message">
-                <h3>New Personality Trait Discovered!</h3>
-                <p id="traitText">Analytical Thinker</p>
-            </div>
-        </div>
+        <div class="pet-container" id="pet-animation-container"></div>
         
-        <!-- Location quote popup -->
-        <div id="quotePopup" class="quote-popup">
-            <div class="quote-content">
-                <p id="quoteText"></p>
-            </div>
-        </div>
-        
-        <div class="quiz-content">
-            <div class="pet-container">
-                <!-- Lottie animation instead of static image -->
-                <div class="pet-animation-container">
-                    <lottie-player
-                        id="petAnimation"
-                        src="{{ url_for('static', filename='lottie/' + pet + '.json') }}"
-                        background="transparent"
-                        speed="1"
-                        style="width: 180px; height: 180px;"
-                        loop
-                        autoplay>
-                    </lottie-player>
-                </div>
-                <div class="question-bubble">
-                    <p id="petThought">I'm excited to help you discover your ideal career path!</p>
-                </div>
-            </div>
-            
-            <div class="question-container">
-                <h2 class="question-text" id="questionText"></h2>
-                <div class="answers-container" id="answersContainer"></div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar">
-                        <div class="progress" id="progressBar" style="width: 0%"></div>
-                    </div>
-                    <p class="location-indicator" id="locationIndicator">Question 1/40: Mount Fuji</p>
-                </div>
+        <div class="thought-bubble">
+            <div class="quote" id="quote-text"></div>
+            <div class="question" id="question-text"></div>
+            <div class="answers" id="answers-container"></div>
+            <div class="progress-bar">
+                <div class="progress" id="quiz-progress"></div>
             </div>
         </div>
     </div>
     
-    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <!-- Footer -->
+    <div class="footer quiz-footer">
+        <p>© 2025 ZenCareer | Current Time: {{ now.strftime('%Y-%m-%d %H:%M:%S') }} UTC | User: {{ user }}</p>
+    </div>
     
-    <script>
-        // Quiz logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const clickSound = document.getElementById('clickSound');
-            const worldJourney = document.getElementById('worldJourney');
-            const petThought = document.getElementById('petThought');
-            const questionText = document.getElementById('questionText');
-            const answersContainer = document.getElementById('answersContainer');
-            const progressBar = document.getElementById('progressBar');
-            const locationIndicator = document.getElementById('locationIndicator');
-            const locationTitle = document.getElementById('locationTitle');
-            const traitNotification = document.getElementById('traitNotification');
-            const traitText = document.getElementById('traitText');
-            const quotePopup = document.getElementById('quotePopup');
-            const quoteText = document.getElementById('quoteText');
-            
-            // Video timestamps for pausing
-            const timestamps = {{ timestamps|tojson }};
-            
-            // Locations corresponding to timestamps
-            const locations = {{ locations|tojson }};
-            
-            // Quotes for each location
-            const quotes = {{ quotes|tojson }};
-            
-            // Personality traits to reveal
-            const personalityTraits = {{ personality_traits|tojson }};
-            
-            let currentQuestionIndex = 0;
-            let userAnswers = [];
-            let questions = [];
-            let videoIsPlaying = false;
-            let earnedTraits = new Set(); // Keep track of earned traits
-            
-            // Play click sound
-            const playClickSound = () => {
-                clickSound.currentTime = 0;
-                clickSound.play().catch(err => console.log('Audio playback error:', err));
-            };
-            
-            // Update progress
-            const updateProgress = () => {
-                const progress = ((currentQuestionIndex + 1) / timestamps.length) * 100;
-                progressBar.style.width = `${progress}%`;
-                locationIndicator.textContent = `Question ${currentQuestionIndex + 1}/${timestamps.length}: ${locations[currentQuestionIndex]}`;
-                locationTitle.textContent = locations[currentQuestionIndex];
-                
-                // Show location quote
-                showLocationQuote(currentQuestionIndex);
-            };
-            
-            // Show location quote
-            const showLocationQuote = (index) => {
-                if (index < quotes.length) {
-                    quoteText.textContent = quotes[index];
-                    quotePopup.classList.add('show');
-                    
-                    // Hide after 5 seconds
-                    setTimeout(() => {
-                        quotePopup.classList.remove('show');
-                    }, 5000);
-                }
-            };
-            
-            // Display current question
-            const displayQuestion = () => {
-                if (!questions[currentQuestionIndex]) {
-                    console.error("Question not found for index:", currentQuestionIndex);
-                    return;
-                }
-                
-                const question = questions[currentQuestionIndex];
-                
-                // Update pet thought
-                petThought.textContent = question.petThought || "What do you think about this?";
-                
-                // Display question
-                questionText.textContent = question.question;
-                
-                // Clear previous answers
-                answersContainer.innerHTML = '';
-                
-                // Add answer options
-                question.answers.forEach((answer, index) => {
-                    const answerElement = document.createElement('div');
-                    answerElement.classList.add('answer-option');
-                    answerElement.textContent = answer;
-                    answerElement.addEventListener('click', () => selectAnswer(index));
-                    answersContainer.appendChild(answerElement);
-                });
-                
-                // Update progress and location
-                updateProgress();
-                
-                // Check if we should show a trait notification (every 5 questions)
-                if ((currentQuestionIndex > 0) && (currentQuestionIndex % 5 === 0)) {
-                    // Show trait notification
-                    const traitIndex = Math.floor(currentQuestionIndex / 5) % personalityTraits.length;
-                    const trait = personalityTraits[traitIndex];
-                    
-                    // Add to earned traits
-                    earnedTraits.add(trait);
-                    
-                    // Show notification
-                    showTraitNotification(trait);
-                }
-            };
-            
-            // Show personality trait notification
-            const showTraitNotification = (trait) => {
-                traitText.textContent = trait;
-                traitNotification.classList.add('show');
-                
-                // Hide after 3 seconds
-                setTimeout(() => {
-                    traitNotification.classList.remove('show');
-                }, 3000);
-            };
-            
-            // Handle answer selection
-            const selectAnswer = (answerIndex) => {
-                playClickSound();
-                
-                // Save answer
-                userAnswers.push({
-                    questionIndex: currentQuestionIndex,
-                    answerIndex: answerIndex,
-                    location: locations[currentQuestionIndex]
-                });
-                
-                // Move to next question or finish
-                if (currentQuestionIndex < timestamps.length - 1) {
-                    currentQuestionIndex++;
-                    
-                    // Play video to next timestamp
-                    playVideoToNextTimestamp();
-                } else {
-                    // Quiz completed, submit answers and redirect
-                    submitAnswers();
-                }
-            };
-            
-            // Play video to next timestamp
-            const playVideoToNextTimestamp = () => {
-                if (currentQuestionIndex < timestamps.length) {
-                    // If video is paused, play it
-                    if (worldJourney.paused) {
-                        worldJourney.play().catch(err => console.log('Video playback error:', err));
-                        videoIsPlaying = true;
-                    }
-                }
-            };
-            
-            // Submit answers to server
-            const submitAnswers = () => {
-                fetch("{{ url_for('submit_answers') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        answers: userAnswers,
-                        earnedTraits: Array.from(earnedTraits)
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.redirect) {
-                        window.location.href = data.redirect;
-                    } else {
-                        console.error('Error submitting answers:', data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            };
-            
-            // Video controls
-            worldJourney.addEventListener('loadedmetadata', () => {
-                // Start with the first location
-                worldJourney.currentTime = timestamps[0];
-                // Don't autoplay initially - just pause at Mount Fuji
-                worldJourney.pause();
-                displayQuestion();
-            });
-            
-            worldJourney.addEventListener('timeupdate', () => {
-                // Check if we've reached the next timestamp
-                const currentTime = Math.floor(worldJourney.currentTime);
-                const nextTimestampIndex = timestamps.indexOf(currentTime);
-                
-                if (videoIsPlaying && nextTimestampIndex !== -1 && nextTimestampIndex === currentQuestionIndex) {
-                    // Pause at timestamp and display new question
-                    worldJourney.pause();
-                    videoIsPlaying = false;
-                    displayQuestion();
-                }
-            });
-            
-            // Force load Lottie animations properly
-            const players = document.querySelectorAll('lottie-player');
-            players.forEach(player => {
-                player.addEventListener('error', function(e) {
-                    console.error('Lottie animation error:', e);
-                    // Try to reload
-                    const src = player.getAttribute('src');
-                    player.load(src);
-                });
-            });
-            
-            // Fetch questions from server
-            fetch("{{ url_for('get_questions') }}")
-                .then(response => response.json())
-                .then(data => {
-                    questions = data;
-                    displayQuestion(); // Now displays the first question when loaded
-                })
-                .catch(error => {
-                    console.error('Error fetching questions:', error);
-                });
-        });
-    </script>
+    <!-- Audio elements -->
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <audio id="ambienceSound" src="{{ url_for('static', filename='audio/ambience.mp3') }}" loop preload="auto"></audio>
+    <audio id="transitionSound" src="{{ url_for('static', filename='audio/transition.mp3') }}" preload="auto"></audio>
+    
+    <script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
 </body>
 </html>

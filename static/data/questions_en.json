@@ -1,0 +1,134 @@
+[
+    {
+        "question": "What type of environment do you prefer to work in?",
+        "quote": "The environment you choose to work in shapes not just your career, but your daily happiness and well-being.",
+        "answers": [
+            "A structured office environment",
+            "A creative and flexible space",
+            "Outdoors or in nature",
+            "Remote work from anywhere",
+            "A mix of different environments"
+        ]
+    },
+    {
+        "question": "How do you approach problem-solving?",
+        "quote": "The way we solve problems reveals more about us than the solutions themselves.",
+        "answers": [
+            "Analytical and methodical",
+            "Creative and intuitive",
+            "Collaborative with others",
+            "Trial and error until I find a solution",
+            "Research-based approach"
+        ]
+    },
+    {
+        "question": "What motivates you most in your work?",
+        "quote": "Understanding your motivation is the key to finding meaningful work that energizes rather than depletes you.",
+        "answers": [
+            "Financial rewards and stability",
+            "Making a positive impact on others",
+            "Learning and personal growth",
+            "Recognition and achievement",
+            "Work-life balance and flexibility"
+        ]
+    },
+    {
+        "question": "Which skill do you most enjoy using?",
+        "quote": "The skills we enjoy using often point to our natural talents and greatest potential for excellence.",
+        "answers": [
+            "Technical and analytical skills",
+            "Creative and artistic abilities",
+            "Communication and people skills",
+            "Leadership and management",
+            "Hands-on practical skills"
+        ]
+    },
+    {
+        "question": "How do you prefer to make decisions?",
+        "quote": "The way we make decisions reflects our values and what we truly care about.",
+        "answers": [
+            "Based on logic and facts",
+            "Following my intuition and feelings",
+            "Considering the impact on others",
+            "Weighing all options carefully",
+            "Quick decisions based on experience"
+        ]
+    },
+    {
+        "question": "What type of challenges energize you?",
+        "quote": "The challenges that energize rather than drain us are signposts to our ideal path.",
+        "answers": [
+            "Complex intellectual problems",
+            "Creative projects and design",
+            "Helping others overcome obstacles",
+            "Strategic planning and execution",
+            "Practical, hands-on challenges"
+        ]
+    },
+    {
+        "question": "How important is variety in your work?",
+        "quote": "The degree of variety we crave in our work reflects how our minds process information and stay engaged.",
+        "answers": [
+            "I prefer consistency and routine",
+            "I like some variety within a structured framework",
+            "I need regular change to stay engaged",
+            "I thrive on constant variety and new challenges",
+            "I prefer deep specialization with occasional change"
+        ]
+    },
+    {
+        "question": "How do you handle stress and pressure?",
+        "quote": "Our response to stress reveals much about our resilience and optimal working conditions.",
+        "answers": [
+            "Stay calm and methodical",
+            "Channel it into creativity",
+            "Talk it through with others",
+            "Take charge and lead through it",
+            "Break it down into manageable steps"
+        ]
+    },
+    {
+        "question": "What role do you naturally take in a team?",
+        "quote": "The role we naturally assume in teams points to our social strengths and leadership tendencies.",
+        "answers": [
+            "The analyst who provides insights",
+            "The innovator who generates ideas",
+            "The mediator who builds harmony",
+            "The leader who drives action",
+            "The implementer who gets things done"
+        ]
+    },
+    {
+        "question": "How important is making a social impact through your work?",
+        "quote": "The desire to create positive change reveals our connection to purpose beyond personal gain.",
+        "answers": [
+            "Very important - it's my primary goal",
+            "Important but balanced with personal goals",
+            "Somewhat important but not essential",
+            "Nice to have but not a priority",
+            "I focus on other aspects of work fulfillment"
+        ]
+    },
+    {
+        "question": "What is your ideal work pace?",
+        "quote": "Our preferred pace of work reflects our natural energy cycles and how we process tasks.",
+        "answers": [
+            "Steady and measured",
+            "Creative bursts followed by reflection",
+            "Balanced with regular breaks",
+            "Fast-paced and dynamic",
+            "Varies based on the project"
+        ]
+    },
+    {
+        "question": "How do you prefer to learn new skills?",
+        "quote": "The way we learn best is a window into how our minds process and integrate new information.",
+        "answers": [
+            "Structured courses and reading",
+            "Exploration and experimentation",
+            "Learning from others and discussion",
+            "Setting goals and achieving them",
+            "Hands-on practice and experience"
+        ]
+    }
+]

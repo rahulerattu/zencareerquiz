@@ -5,163 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZenCareer - Your Results</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- Add Lottie player for JSON animations -->
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-    <!-- Add Chart.js for better visualizations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="results-page">
-    <div class="container">
+<body>
+    <div class="main-container results-screen">
         <div class="results-container">
             <div class="results-header">
-                <h1 class="results-title">Your Career Guidance Results</h1>
-                <p class="subtitle">Based on your personality traits, interests, and strengths</p>
+                <h1>Your ZenCareer Results</h1>
+                <p>Based on your responses, we've identified your top career paths</p>
             </div>
             
-            <div class="pet-congratulations">
-                <div class="pet-animation-container">
-                    <lottie-player
-                        src="{{ url_for('static', filename='lottie/' + pet + '.json') }}"
-                        background="transparent"
-                        speed="1"
-                        style="width: 120px; height: 120px;"
-                        loop
-                        autoplay>
-                    </lottie-player>
-                </div>
-                <div class="question-bubble">
-                    <p>Great job! I've analyzed your responses and found your top career matches!</p>
-                </div>
+            <div class="pet-result" id="pet-result"></div>
+            
+            <div class="career-paths" id="top-careers">
+                <h2>Your Top 3 Career Paths</h2>
+                <!-- Career paths will be inserted here via JavaScript -->
             </div>
             
-            <div class="personality-badges">
+            <div class="personality-summary" id="personality-summary">
                 <h2>Your Personality Traits</h2>
-                <div class="badges-container">
-                    {% for trait in traits %}
-                    <div class="personality-badge">
-                        <div class="badge-icon">✨</div>
-                        <div class="badge-title">{{ trait }}</div>
-                    </div>
-                    {% endfor %}
+                <div class="chart-container">
+                    <canvas id="personality-chart"></canvas>
                 </div>
+                <!-- Personality traits will be inserted here via JavaScript -->
             </div>
             
-            <h2>Top Career Recommendations</h2>
-            <div class="career-recommendations">
-                {% for career in careers %}
-                <div class="career-card">
-                    <div class="career-icon">{{ career.icon }}</div>
-                    <h3 class="career-title">{{ career.title }}</h3>
-                    <p class="career-match">{{ career.match }}% Match</p>
-                    <p class="career-fields">{{ career.fields|join(', ') }}</p>
-                </div>
-                {% endfor %}
-            </div>
-            
-            <div class="personality-summary">
-                <h2>Your Personality Analysis</h2>
-                
-                <div class="personality-section">
-                    <h3>MBTI Type: {{ mbti.type }}</h3>
-                    <p>{{ mbti.description }}</p>
-                </div>
-                
-                <div class="personality-section">
-                    <h3>Three Gunas Balance</h3>
-                    <p>Your dominant energy: <strong>{{ gunas.dominant|title }}</strong></p>
-                    <p>{{ gunas.sattva }}% Sattva (Harmony, Knowledge) - {{ gunas.rajas }}% Rajas (Action, Passion) - {{ gunas.tamas }}% Tamas (Inertia, Stability)</p>
-                    {% if gunas_chart %}
-                    <div class="chart-container">
-                        <img src="{{ gunas_chart }}" alt="Gunas Distribution" class="result-chart">
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <div class="personality-section">
-                    <h3>Ikigai Balance</h3>
-                    <p>Overall balance score: <strong>{{ ikigai.balance }}%</strong></p>
-                    <div class="ikigai-scores">
-                        <div class="ikigai-score">
-                            <span class="score-label">What you love:</span>
-                            <span class="score-value">{{ ikigai.passion }}%</span>
-                        </div>
-                        <div class="ikigai-score">
-                            <span class="score-label">What the world needs:</span>
-                            <span class="score-value">{{ ikigai.mission }}%</span>
-                        </div>
-                        <div class="ikigai-score">
-                            <span class="score-label">What you're good at:</span>
-                            <span class="score-value">{{ ikigai.profession }}%</span>
-                        </div>
-                        <div class="ikigai-score">
-                            <span class="score-label">What you can be paid for:</span>
-                            <span class="score-value">{{ ikigai.vocation }}%</span>
-                        </div>
-                    </div>
-                    {% if ikigai_chart %}
-                    <div class="chart-container">
-                        <img src="{{ ikigai_chart }}" alt="Ikigai Balance" class="result-chart">
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <div class="personality-section">
-                    <h3>Psychometric Profile</h3>
-                    <div class="psychometric-scores">
-                        {% for dimension, score in psychometric.items() %}
-                        <div class="psychometric-score">
-                            <span class="score-label">{{ dimension }}:</span>
-                            <div class="score-bar-container">
-                                <div class="score-bar" style="width: {{ score }}%">
-                                    <span class="score-value">{{ score }}%</span>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% if psychometric_chart %}
-                    <div class="chart-container">
-                        <img src="{{ psychometric_chart }}" alt="Psychometric Profile" class="result-chart">
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="upgrade-container">
-                <h2>Unlock Your Complete Career Analysis</h2>
-                <p>Get detailed insights including:</p>
+            <div class="cta-section">
+                <h2>Want a Detailed Career Analysis?</h2>
+                <p>Upgrade to receive a comprehensive report with:</p>
                 <ul>
-                    <li>Year-by-year career progression roadmap</li>
-                    <li>Detailed compatibility analysis for 20+ career paths</li>
-                    <li>Personalized strengths and development areas</li>
-                    <li>Educational and certification recommendations</li>
+                    <li>Year-by-year career progression plan</li>
+                    <li>Top 20 career matches with compatibility scores</li>
+                    <li>Detailed strengths & weaknesses analysis</li>
+                    <li>Personalized education & certification roadmap</li>
                 </ul>
-                <a href="{{ url_for('payment') }}" class="upgrade-button" onclick="playClickSound()">Get Detailed Report</a>
+                
+                <div class="email-form">
+                    <input type="email" id="email-input" class="email-input" placeholder="Your Email Address">
+                    <input type="number" id="age-input" class="age-input" placeholder="Age" min="15" max="100">
+                    <button id="upgrade-btn" class="upgrade-btn">Get Full Report</button>
+                </div>
+            </div>
+            
+            <div id="payment-section" class="payment-section">
+                <h2>Complete Your Purchase</h2>
+                <p id="payment-country-text">Payment methods for <span id="country-name">your country</span>:</p>
+                
+                <div class="payment-options">
+                    <button class="option-btn payment-btn">Credit Card</button>
+                    <button class="option-btn payment-btn">PayPal</button>
+                </div>
+                
+                <div class="qr-container" id="qr-container">
+                    <!-- Country-specific QR will be inserted here -->
+                </div>
             </div>
         </div>
     </div>
     
-    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 ZenCareer | Current Time: {{ now.strftime('%Y-%m-%d %H:%M:%S') }} UTC | User: {{ user }}</p>
+    </div>
     
-    <script>
-        const clickSound = document.getElementById('clickSound');
-        
-        function playClickSound() {
-            clickSound.currentTime = 0;
-            clickSound.play().catch(err => console.log('Audio playback error:', err));
-        }
-        
-        // Force load Lottie animations properly
-        document.addEventListener('DOMContentLoaded', function() {
-            const players = document.querySelectorAll('lottie-player');
-            players.forEach(player => {
-                player.addEventListener('error', function(e) {
-                    console.error('Lottie animation error:', e);
-                    const src = player.getAttribute('src');
-                    player.load(src);
-                });
-            });
-        });
-    </script>
+    <!-- Audio elements -->
+    <audio id="clickSound" src="https://zencareer.b-cdn.net/click.mp3" preload="auto"></audio>
+    <audio id="ambienceSound" src="{{ url_for('static', filename='audio/ambience.mp3') }}" loop preload="auto"></audio>
+    
+    <script src="{{ url_for('static', filename='js/results.js') }}"></script>
 </body>
 </html>
