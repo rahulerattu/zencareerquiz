@@ -1,134 +1,74 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize variables
-    let selectedLanguage = '';
-    let selectedCountry = '';
-    let selectedPet = '';
+    // Create floating particles
+    createParticles();
     
-    // Get audio elements
-    const clickSound = document.getElementById('clickSound');
-    const ambienceSound = document.getElementById('ambienceSound');
+    // Language selection functionality
+    const languageButtons = document.querySelectorAll('.language-btn');
+    const loadingIndicator = document.getElementById('loading');
     
-    // Get sections
-    const languageSection = document.querySelector('.language-section');
-    const petSection = document.querySelector('.pet-section');
-    const startSection = document.querySelector('.start-section');
-    
-    // Initialize Lottie animations
-    const pandaAnimation = lottie.loadAnimation({
-        container: document.getElementById('panda-animation'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: false,
-        path: 'https://zencareer.b-cdn.net/panda.json'
-    });
-    
-    const penguinAnimation = lottie.loadAnimation({
-        container: document.getElementById('penguin-animation'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: false,
-        path: 'https://zencareer.b-cdn.net/penguin.json'
-    });
-    
-    const puppyAnimation = lottie.loadAnimation({
-        container: document.getElementById('puppy-animation'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: false,
-        path: 'https://zencareer.b-cdn.net/puppy.json'
-    });
-    
-    // Start playing animations
-    pandaAnimation.play();
-    penguinAnimation.play();
-    puppyAnimation.play();
-    
-    // Start ambient music when user interacts with the page
-    document.body.addEventListener('click', function() {
-        if (ambienceSound.paused) {
-            ambienceSound.volume = 0.5;
-            ambienceSound.play().catch(err => {
-                console.log("Audio play failed:", err);
-            });
-        }
-    }, { once: true });
-    
-    // Function to play click sound
-    function playClickSound() {
-        clickSound.currentTime = 0;
-        clickSound.play().catch(err => {
-            console.log("Click sound play failed:", err);
-        });
-    }
-    
-    // Add click sound to all buttons
-    document.querySelectorAll('button').forEach(button => {
-        button.addEventListener('click', playClickSound);
-    });
-    
-    // Language selection
-    const languageButtons = document.querySelectorAll('.language-section .option-btn');
     languageButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Remove selected class from all language buttons
-            languageButtons.forEach(btn => btn.classList.remove('selected'));
+            const language = this.getAttribute('data-lang');
             
-            // Add selected class to clicked button
-            this.classList.add('selected');
+            // Store selected language
+            localStorage.setItem('selectedLanguage', language);
             
-            // Store selected language and country
-            selectedLanguage = this.dataset.language;
-            selectedCountry = this.dataset.country;
+            // Show loading animation
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'flex';
+            }
             
-            // Transition to pet selection
-            languageSection.classList.add('fade-out');
-            
+            // Navigate to pet selection with language parameter
             setTimeout(() => {
-                languageSection.classList.add('hidden');
-                petSection.style.display = 'block';
-                
-                setTimeout(() => {
-                    petSection.classList.add('fade-in');
-                }, 50);
-            }, 500);
+                window.location.href = '/pet-selection?lang=' + language;
+            }, 800);
         });
     });
     
-    // Pet selection
-    const petButtons = document.querySelectorAll('.pet-section .option-btn');
-    petButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove selected class from all pet buttons
-            petButtons.forEach(btn => btn.classList.remove('selected'));
-            
-            // Add selected class to clicked button
-            this.classList.add('selected');
-            
-            // Store selected pet
-            selectedPet = this.dataset.pet;
-            
-            // Transition to start section
-            petSection.classList.add('fade-out');
-            
-            setTimeout(() => {
-                petSection.classList.add('hidden');
-                startSection.style.display = 'block';
-                
-                setTimeout(() => {
-                    startSection.classList.add('fade-in');
-                }, 50);
-            }, 500);
-        });
-    });
-    
-    // Start button click
-    document.getElementById('start-journey').addEventListener('click', function() {
-        // Store selections in localStorage
-        localStorage.setItem('zencareer_language', selectedLanguage);
-        localStorage.setItem('zencareer_country', selectedCountry);
-        localStorage.setItem('zencareer_pet', selectedPet);
+    // Create particle effect
+    function createParticles() {
+        const particleCount = 30;
+        const colors = ['rgba(255,255,255,0.3)', 'rgba(74,108,209,0.3)', 'rgba(33,208,192,0.3)'];
         
-        // Redirect to quiz page
-        window.location.href = '/quiz';
-    });
+        for (let i = 0; i < particleCount; i++) {
+            setTimeout(() => {
+                createParticle(colors);
+            }, i * 100);
+        }
+    }
+    
+    function createParticle(colors) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random styling
+        const size = Math.random() * 10 + 5;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const left = Math.random() * 100;
+        const duration = Math.random() * 15 + 10;
+        const delay = Math.random() * 5;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = color;
+        particle.style.left = `${left}%`;
+        particle.style.bottom = '-20px';
+        particle.style.animation = `float-up ${duration}s linear ${delay}s`;
+        
+        document.body.appendChild(particle);
+        
+        // Remove particle after animation completes
+        setTimeout(() => {
+            if (document.body.contains(particle)) {
+                document.body.removeChild(particle);
+                createParticle(colors); // Create a new particle to replace it
+            }
+        }, (duration + delay) * 1000);
+    }
+    
+    // Typewriter effect for main title
+    const mainTitle = document.querySelector('.main-title');
+    if (mainTitle) {
+        mainTitle.classList.add('typewriter');
+    }
 });

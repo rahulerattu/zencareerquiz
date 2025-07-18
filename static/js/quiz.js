@@ -1,219 +1,351 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Get elements
-    const journeyVideo = document.getElementById('journey-video');
-    const quoteText = document.getElementById('quote-text');
-    const questionText = document.getElementById('question-text');
-    const answersContainer = document.getElementById('answers-container');
-    const quizProgress = document.getElementById('quiz-progress');
-    const petContainer = document.getElementById('pet-animation-container');
-    const clickSound = document.getElementById('clickSound');
-    const ambienceSound = document.getElementById('ambienceSound');
-    const transitionSound = document.getElementById('transitionSound');
-    const thoughtBubble = document.querySelector('.thought-bubble');
+    // Get pet selection from localStorage
+    const selectedPet = localStorage.getItem('selectedPet') || 'panda';
+    const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
     
-    // Get user selections from localStorage
-    const selectedLanguage = localStorage.getItem('zencareer_language') || 'en';
-    const selectedCountry = localStorage.getItem('zencareer_country') || 'global';
-    const selectedPet = localStorage.getItem('zencareer_pet') || 'panda';
+    // Set pet image
+    const petImage = document.getElementById('petImage');
+    if (petImage) {
+        petImage.src = `https://zencareer.b-cdn.net/${selectedPet}.jpg`;
+        petImage.alt = `Your ${selectedPet.charAt(0).toUpperCase() + selectedPet.slice(1)} Guide`;
+    }
     
-    // Video timestamps for questions (in seconds)
-    const timestamps = [
-        6, 12, 18, 24, 30, 36, 42, 48, 54,
-        60, 66, 72, 78, 84, 90, 96, 102, 108,
-        114, 120, 126, 132, 138, 144, 150,
-        156, 162, 168, 174, 180, 186,
-        192, 198, 204, 210, 216, 222, 228,
-        234, 240
-    ];
-    
-    // Initialize variables
+    // Video timestamp handling
+    const videoBackground = document.getElementById('backgroundVideo');
+    let timestamps = [];
+    let locations = [];
+    let questions = [];
+    let currentTimestampIndex = 0;
     let currentQuestionIndex = 0;
     let userAnswers = [];
-    let petAnimation;
-    let questions = [];
-    let isTransitioning = false;
+    let personalityTraits = {};
     
-    // Start ambient music
-    ambienceSound.volume = 0.5;
-    ambienceSound.play().catch(err => {
-        console.log("Audio play failed:", err);
-    });
+    // Try to get data from page if provided
+    try {
+        timestamps = JSON.parse(document.getElementById('quiz-data').dataset.timestamps || '[]');
+        locations = JSON.parse(document.getElementById('quiz-data').dataset.locations || '[]');
+        questions = JSON.parse(document.getElementById('quiz-data').dataset.questions || '[]');
+    } catch (e) {
+        console.error('Error parsing quiz data:', e);
+        // Fetch them from API
+        fetchQuizData();
+    }
     
-    // Load pet animation based on user selection
-    function loadPetAnimation() {
-        petAnimation = lottie.loadAnimation({
-            container: petContainer,
-            renderer: 'svg',
-            loop: true,
-            autoplay: true,
-            path: `https://zencareer.b-cdn.net/${selectedPet}.json`
+    // Setup video timestamp pausing
+    if (videoBackground) {
+        videoBackground.addEventListener('timeupdate', function() {
+            if (currentTimestampIndex < timestamps.length) {
+                if (videoBackground.currentTime >= timestamps[currentTimestampIndex]) {
+                    videoBackground.pause();
+                    displayQuestion(currentQuestionIndex);
+                    updateLocationAndQuote(currentTimestampIndex);
+                }
+            }
         });
     }
     
-    // Function to play click sound
-    function playClickSound() {
-        clickSound.currentTime = 0;
-        clickSound.play().catch(err => {
-            console.log("Click sound play failed:", err);
-        });
-    }
-    
-    // Function to play transition sound
-    function playTransitionSound() {
-        transitionSound.currentTime = 0;
-        transitionSound.play().catch(err => {
-            console.log("Transition sound play failed:", err);
-        });
-    }
-    
-    // Function to fetch questions based on selected language
-    async function fetchQuestions() {
-        try {
-            const response = await fetch(`/api/questions/${selectedLanguage}`);
-            questions = await response.json();
-            
-            // Start quiz after questions are loaded
-            initQuiz();
-        } catch (error) {
-            console.error('Error fetching questions:', error);
-            // Fallback to English questions if there's an error
-            const response = await fetch('/api/questions/en');
-            questions = await response.json();
-            initQuiz();
-        }
-    }
-    
-    // Function to display current question with smooth transition
-    function displayQuestion() {
-        if (isTransitioning) return;
-        isTransitioning = true;
-        
-        // Fade out current question
-        thoughtBubble.classList.add('fade-out');
-        
-        setTimeout(() => {
-            // Get current question
-            const currentQuestion = questions[currentQuestionIndex];
-            
-            // Update question text and quote
-            quoteText.textContent = currentQuestion.quote;
-            questionText.textContent = currentQuestion.question;
-            
-            // Clear previous answers
-            answersContainer.innerHTML = '';
-            
-            // Add answer buttons
-            currentQuestion.answers.forEach((answer, index) => {
-                const button = document.createElement('button');
-                button.className = 'answer-btn';
-                button.textContent = answer;
-                
-                button.addEventListener('click', () => {
-                    if (!isTransitioning) {
-                        playClickSound();
-                        handleAnswerSelection(index);
-                    }
-                });
-                
-                answersContainer.appendChild(button);
+    // Fetch quiz data if not provided in page
+    function fetchQuizData() {
+        // Fetch timestamps and locations
+        fetch('/api/locations')
+            .then(response => response.json())
+            .then(data => {
+                locations = data;
+                timestamps = data.map(loc => loc.timestamp);
+            })
+            .catch(error => {
+                console.error('Error loading locations:', error);
+                // Fallback to hardcoded timestamps
+                timestamps = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60];
             });
             
-            // Update progress bar
-            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-            quizProgress.style.width = `${progress}%`;
-            
-            // Fade in new question
-            thoughtBubble.classList.remove('fade-out');
-            thoughtBubble.classList.add('fade-in');
-            
-            setTimeout(() => {
-                thoughtBubble.classList.remove('fade-in');
-                isTransitioning = false;
-            }, 500);
-        }, 500);
-    }
-    
-    // Function to handle answer selection
-    function handleAnswerSelection(answerIndex) {
-        if (isTransitioning) return;
-        
-        // Store user's answer
-        userAnswers.push({
-            questionIndex: currentQuestionIndex,
-            answerIndex: answerIndex
-        });
-        
-        // Play transition sound
-        playTransitionSound();
-        
-        // Move to next question or finish quiz
-        if (currentQuestionIndex < questions.length - 1) {
-            currentQuestionIndex++;
-            
-            // Resume video playback until next timestamp
-            resumeVideoPlayback();
-        } else {
-            // Quiz completed
-            finishQuiz();
-        }
-    }
-    
-    // Function to resume video playback until next timestamp
-    function resumeVideoPlayback() {
-        journeyVideo.play();
-        
-        // Set timeupdate listener to pause at next timestamp
-        const nextTimestamp = timestamps[currentQuestionIndex];
-        
-        const timeUpdateListener = () => {
-            if (journeyVideo.currentTime >= nextTimestamp) {
-                journeyVideo.pause();
-                displayQuestion();
-                journeyVideo.removeEventListener('timeupdate', timeUpdateListener);
-            }
-        };
-        
-        journeyVideo.addEventListener('timeupdate', timeUpdateListener);
-    }
-    
-    // Function to finish quiz and redirect to results
-    function finishQuiz() {
-        // Store user answers in localStorage
-        localStorage.setItem('zencareer_answers', JSON.stringify(userAnswers));
-        
-        // Fade out thought bubble
-        thoughtBubble.classList.add('fade-out');
-        
-        setTimeout(() => {
-            // Redirect to results page
-            window.location.href = '/results';
-        }, 1000);
+        // Fetch questions in selected language
+        fetch(`/api/questions/${selectedLanguage}`)
+            .then(response => response.json())
+            .then(data => {
+                questions = data;
+                initQuiz();
+            })
+            .catch(error => {
+                console.error('Error loading questions:', error);
+            });
     }
     
     // Initialize quiz
     function initQuiz() {
-        loadPetAnimation();
+        // Setup progress bar
+        updateProgress();
         
-        // Set initial video position to first timestamp and pause
-        journeyVideo.addEventListener('loadedmetadata', () => {
-            journeyVideo.currentTime = timestamps[0] - 0.5; // Start slightly before first timestamp
-            journeyVideo.play();
-            
-            // When it reaches first timestamp, pause and show first question
-            const timeUpdateListener = () => {
-                if (journeyVideo.currentTime >= timestamps[0]) {
-                    journeyVideo.pause();
-                    displayQuestion();
-                    journeyVideo.removeEventListener('timeupdate', timeUpdateListener);
-                }
-            };
-            
-            journeyVideo.addEventListener('timeupdate', timeUpdateListener);
-        });
-        
-        journeyVideo.load();
+        // Start the video
+        if (videoBackground) {
+            videoBackground.play().catch(e => console.log('Video play prevented:', e));
+        }
     }
     
-    // Start the quiz by fetching questions first
-    fetchQuestions();
-});
+    // Display current question
+    function displayQuestion(index) {
+        const questionText = document.getElementById('questionText');
+        const answersContainer = document.getElementById('answersContainer');
+        
+        if (!questions[index]) {
+            console.error(`No question found at index ${index}`);
+            return;
+        }
+        
+        // Update question text with animation
+        if (questionText) {
+            questionText.classList.add('fade-out');
+            
+            setTimeout(() => {
+                questionText.textContent = questions[index].question;
+                questionText.classList.remove('fade-out');
+                questionText.classList.add('fade-in');
+                
+                setTimeout(() => {
+                    questionText.classList.remove('fade-in');
+                }, 500);
+            }, 500);
+        }
+        
+        // Clear and update answer options
+        if (answersContainer) {
+            answersContainer.innerHTML = '';
+            
+            questions[index].options.forEach((option, i) => {
+                const answerElement = document.createElement('div');
+                answerElement.classList.add('answer-option');
+                answerElement.textContent = option.text;
+                answerElement.setAttribute('data-index', i);
+                
+                answerElement.addEventListener('click', function() {
+                    // Handle answer selection
+                    selectAnswer(index, i, option.scores);
+                });
+                
+                // Add with delay for staggered animation
+                setTimeout(() => {
+                    answersContainer.appendChild(answerElement);
+                    answerElement.classList.add('slide-in-right');
+                    
+                    setTimeout(() => {
+                        answerElement.classList.remove('slide-in-right');
+                    }, 500);
+                }, i * 100);
+            });
+        }
+    }
+    
+    // Select an answer and proceed
+    function selectAnswer(questionIndex, answerIndex, scores) {
+        // Store user's answer
+        userAnswers[questionIndex] = answerIndex;
+        
+        // Process personality trait scores
+        if (scores) {
+            Object.keys(scores).forEach(trait => {
+                if (!personalityTraits[trait]) {
+                    personalityTraits[trait] = 0;
+                }
+                personalityTraits[trait] += scores[trait];
+                
+                // Check if we've reached a threshold to show a trait popup
+                if (personalityTraits[trait] >= 5 && !localStorage.getItem(`trait_${trait}_shown`)) {
+                    // Mark this trait as shown
+                    localStorage.setItem(`trait_${trait}_shown`, 'true');
+                    
+                    // Show personality trait gained popup
+                    showPersonalityTraitPopup(trait);
+                }
+            });
+        }
+        
+        // Highlight selected answer
+        const answerOptions = document.querySelectorAll('.answer-option');
+        answerOptions.forEach(option => {
+            option.classList.remove('selected');
+        });
+        
+        const selectedOption = document.querySelector(`.answer-option[data-index="${answerIndex}"]`);
+        if (selectedOption) {
+            selectedOption.classList.add('selected');
+        }
+        
+        // Fade out answers
+        const answersContainer = document.getElementById('answersContainer');
+        if (answersContainer) {
+            answersContainer.classList.add('fade-out');
+        }
+        
+        // Wait before moving to next question
+        setTimeout(() => {
+            // Increase indices
+            currentQuestionIndex++;
+            currentTimestampIndex++;
+            
+            // Update progress bar
+            updateProgress();
+            
+            if (answersContainer) {
+                answersContainer.classList.remove('fade-out');
+            }
+            
+            // Check if we've reached the end of the quiz
+            if (currentQuestionIndex >= questions.length) {
+                // Quiz completed
+                finishQuiz();
+            } else {
+                // Continue with next question
+                if (videoBackground) {
+                    videoBackground.play();
+                }
+            }
+        }, 800);
+    }
+    
+    // Update location info and motivational quote
+    function updateLocationAndQuote(index) {
+        const quoteText = document.getElementById('quoteText');
+        const quoteAuthor = document.getElementById('quoteAuthor');
+        
+        if (!locations[index]) {
+            return;
+        }
+        
+        if (quoteText) {
+            quoteText.textContent = locations[index].quote || '';
+        }
+        
+        if (quoteAuthor) {
+            quoteAuthor.textContent = locations[index].author ? `- ${locations[index].author}` : '';
+        }
+    }
+    
+    // Update progress bar
+    function updateProgress() {
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        
+        if (progressBar && questions.length > 0) {
+            const percentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+        
+        if (progressText) {
+            progressText.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+        }
+    }
+    
+    // Show personality trait gained popup
+    function showPersonalityTraitPopup(trait) {
+        // Create popup if it doesn't exist
+        let popup = document.getElementById('personalityPopup');
+        
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'personalityPopup';
+            popup.className = 'personality-popup';
+            document.body.appendChild(popup);
+        }
+        
+        // Fetch trait information
+        fetch(`/api/personality/${trait}`)
+            .then(response => response.json())
+            .then(traitInfo => {
+                popup.innerHTML = `
+                    <div class="popup-badge">
+                        <img src="/static/images/personality-badges/${traitInfo.icon}" alt="${traitInfo.name}" class="badge-unlock">
+                    </div>
+                    <h2 class="popup-title">New Trait Discovered!</h2>
+                    <h3>${traitInfo.name}</h3>
+                    <p class="popup-description">${traitInfo.description}</p>
+                    <button class="popup-close">Continue</button>
+                `;
+                
+                popup.classList.add('active');
+                
+                const closeButton = popup.querySelector('.popup-close');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function() {
+                        popup.classList.remove('active');
+                        setTimeout(() => {
+                            if (videoBackground) {
+                                videoBackground.play();
+                            }
+                        }, 500);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching trait info:', error);
+                
+                // Show generic popup
+                popup.innerHTML = `
+                    <div class="popup-badge">
+                        <img src="/static/images/personality-badges/default-trait.png" alt="${trait}" class="badge-unlock">
+                    </div>
+                    <h2 class="popup-title">New Trait Discovered!</h2>
+                    <h3>${trait.charAt(0).toUpperCase() + trait.slice(1)}</h3>
+                    <p class="popup-description">You've developed a new aspect of your personality!</p>
+                    <button class="popup-close">Continue</button>
+                `;
+                
+                popup.classList.add('active');
+                
+                const closeButton = popup.querySelector('.popup-close');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function() {
+                        popup.classList.remove('active');
+                        setTimeout(() => {
+                            if (videoBackground) {
+                                videoBackground.play();
+                            }
+                        }, 500);
+                    });
+                }
+            });
+    }
+    
+    // Finish quiz and move to next step
+    function finishQuiz() {
+        // Store quiz results
+        localStorage.setItem('quizAnswers', JSON.stringify(userAnswers));
+        localStorage.setItem('personalityTraits', JSON.stringify(personalityTraits));
+        
+        // Show completion animation/message
+        const quizArea = document.getElementById('quizArea');
+        if (quizArea) {
+            quizArea.innerHTML = `
+                <div class="quiz-completion">
+                    <h2 class="completion-title">Journey Complete!</h2>
+                    <p class="completion-message">You've completed your self-discovery journey. Now let's explore what we've learned about you.</p>
+                    <div class="completion-pet">
+                        <img src="https://zencareer.b-cdn.net/${selectedPet}.jpg" alt="${selectedPet}" class="glow-pulse">
+                    </div>
+                    <button id="continueBtn" class="cta-button">Continue to Results</button>
+                </div>
+            `;
+            
+            // Add celebration effects
+            createConfetti();
+            
+            // Continue button
+            const continueBtn = document.getElementById('continueBtn');
+            if (continueBtn) {
+                continueBtn.addEventListener('click', function() {
+                    window.location.href = '/user-info';
+                });
+            }
+        }
+    }
+    
+    // Create confetti celebration effect
+    function createConfetti() {
+        const confettiCount = 100;
+        const colors = ['#ff9566', '#4a6cd1', '#21d0c0', '#ffffff'];
+        
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            
+            // Random styling
+            const size = Math.random() * 10 

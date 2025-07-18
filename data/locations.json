@@ -1,0 +1,72 @@
+[
+  {
+    "timestamp": 6,
+    "location": "Mount Fuji, Japan",
+    "description": "The iconic snow-capped mountain of Japan",
+    "quote": "Your mountain is waiting, so get on your way.",
+    "author": "Dr. Seuss"
+  },
+  {
+    "timestamp": 12,
+    "location": "Great Barrier Reef, Australia",
+    "description": "The world's largest coral reef system",
+    "quote": "The sea, once it casts its spell, holds one in its net of wonder forever.",
+    "author": "Jacques Cousteau"
+  },
+  {
+    "timestamp": 18,
+    "location": "Grand Canyon, USA",
+    "description": "A steep-sided canyon carved by the Colorado River",
+    "quote": "In the presence of eternity, the mountains are as transient as the clouds.",
+    "author": "Robert Green Ingersoll"
+  },
+  {
+    "timestamp": 24,
+    "location": "Northern Lights, Norway",
+    "description": "A natural light display in the Earth's sky",
+    "quote": "Look at the sky. We are not alone. The whole universe is friendly to us and conspires only to give the best to those who dream and work.",
+    "author": "A. P. J. Abdul Kalam"
+  },
+  {
+    "timestamp": 30,
+    "location": "Taj Mahal, India",
+    "description": "An ivory-white marble mausoleum",
+    "quote": "A teardrop on the cheek of time.",
+    "author": "Rabindranath Tagore, on the Taj Mahal"
+  },
+  {
+    "timestamp": 36,
+    "location": "Machu Picchu, Peru",
+    "description": "A 15th-century Inca citadel",
+    "quote": "The purpose of life is to live it, to taste experience to the utmost, to reach out eagerly and without fear for newer and richer experience.",
+    "author": "Eleanor Roosevelt"
+  },
+  {
+    "timestamp": 42,
+    "location": "Venice, Italy",
+    "description": "A city of canals and historic architecture",
+    "quote": "Travel makes one modest. You see what a tiny place you occupy in the world.",
+    "author": "Gustave Flaubert"
+  },
+  {
+    "timestamp": 48,
+    "location": "Serengeti, Tanzania",
+    "description": "An ecosystem in Africa known for its wildlife",
+    "quote": "The only man I envy is the man who has not yet been to Africa – for he has so much to look forward to.",
+    "author": "Richard Mullin"
+  },
+  {
+    "timestamp": 54,
+    "location": "Great Wall of China",
+    "description": "A series of fortifications made of stone, brick, and other materials",
+    "quote": "The journey of a thousand miles begins with a single step.",
+    "author": "Lao Tzu"
+  },
+  {
+    "timestamp": 60,
+    "location": "Santorini, Greece",
+    "description": "A volcanic island known for its stunning views",
+    "quote": "We travel not to escape life, but for life not to escape us.",
+    "author": "Anonymous"
+  }
+]

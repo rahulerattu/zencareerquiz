@@ -1,0 +1,62 @@
+{
+  "analytical": {
+    "name": "Analytical Thinker",
+    "description": "You possess a keen mind that naturally breaks down complex problems into logical components. You value precision, data, and rational thinking.",
+    "icon": "analytical.png",
+    "careers": ["Data Scientist", "Financial Analyst", "Engineer", "Research Scientist", "Software Developer"]
+  },
+  "creative": {
+    "name": "Creative Visionary",
+    "description": "You see the world through a unique lens, always finding innovative ways to express ideas and solve problems. You think outside conventional boundaries.",
+    "icon": "creative.png",
+    "careers": ["UX Designer", "Creative Director", "Architect", "Content Creator", "Product Designer"]
+  },
+  "social": {
+    "name": "People Connector",
+    "description": "You have a natural talent for understanding others and building meaningful relationships. You thrive in environments where you can help and collaborate.",
+    "icon": "social.png",
+    "careers": ["Counselor", "HR Manager", "Teacher", "Social Worker", "Customer Experience Manager"]
+  },
+  "enterprising": {
+    "name": "Dynamic Leader",
+    "description": "You have a natural drive to take initiative and lead projects or ventures. You're persuasive and enjoy taking calculated risks to achieve ambitious goals.",
+    "icon": "enterprising.png",
+    "careers": ["Entrepreneur", "Marketing Director", "Business Development", "Sales Manager", "Project Manager"]
+  },
+  "practical": {
+    "name": "Pragmatic Executor",
+    "description": "You excel at implementing solutions and bringing ideas to life. You focus on efficiency, results, and practical applications of knowledge.",
+    "icon": "practical.png",
+    "careers": ["Operations Manager", "Skilled Tradesperson", "Supply Chain Manager", "Quality Assurance", "Technical Specialist"]
+  },
+  "investigative": {
+    "name": "Curious Investigator",
+    "description": "You have a natural drive to understand how things work and to discover new knowledge. You enjoy research and deep intellectual challenges.",
+    "icon": "investigative.png",
+    "careers": ["Research Scientist", "Market Analyst", "Investigative Journalist", "Medical Diagnostician", "Cybersecurity Analyst"]
+  },
+  "artistic": {
+    "name": "Expressive Artist",
+    "description": "You have a strong aesthetic sense and a need to create and communicate through various artistic mediums. You value beauty and emotional expression.",
+    "icon": "artistic.png",
+    "careers": ["Graphic Designer", "Writer", "Musician", "Interior Designer", "Filmmaker"]
+  },
+  "conventional": {
+    "name": "Organized Systematizer",
+    "description": "You excel at creating order from chaos and maintaining systems. You have attention to detail and appreciate clear structures and processes.",
+    "icon": "conventional.png",
+    "careers": ["Accountant", "Administrative Manager", "Database Administrator", "Legal Secretary", "Financial Planner"]
+  },
+  "realistic": {
+    "name": "Hands-On Problem Solver",
+    "description": "You prefer working with physical objects, tools, and machinery. You take a straightforward approach to solving problems and value tangible results.",
+    "icon": "realistic.png",
+    "careers": ["Civil Engineer", "Mechanic", "Construction Manager", "Chef", "Physical Therapist"]
+  },
+  "adventurous": {
+    "name": "Courageous Explorer",
+    "description": "You seek excitement and new experiences. You're comfortable with risk and uncertainty, and you adapt quickly to changing situations.",
+    "icon": "adventurous.png",
+    "careers": ["Emergency Responder", "Outdoor Guide", "Foreign Correspondent", "Event Coordinator", "Environmental Scientist"]
+  }
+}
