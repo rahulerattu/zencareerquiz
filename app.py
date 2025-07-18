@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "zen_career_secret_key")
-app.config["DEBUG"] = True
+app.config["DEBUG"] = os.environ.get("FLASK_DEBUG", "False").lower() == "true"
 # Set session to use filesystem instead of signed cookies
 app.config["SESSION_TYPE"] = "filesystem"
 # Set permanent session lifetime to 1 hour
@@ -39,7 +39,7 @@ VIDEO_TIMESTAMPS = [
     234, 240
 ]
 
-# Language options
+# Language options with associated countries
 LANGUAGES = {
     'en': {'name': 'English', 'country': 'Global'},
     'hi': {'name': 'हिन्दी (Hindi)', 'country': 'India'},
@@ -52,6 +52,12 @@ LANGUAGES = {
     'vi': {'name': 'Tiếng Việt (Vietnamese)', 'country': 'Vietnam'},
     'th': {'name': 'ไทย (Thai)', 'country': 'Thailand'},
     'km': {'name': 'ខ្មែរ (Khmer)', 'country': 'Cambodia'}
+}
+
+# Country-specific payment QR codes
+COUNTRY_QR_CODES = {
+    'India': 'qrindia.png',
+    'Vietnam': 'qrvietnam.png'
 }
 
 # Debug endpoint to help diagnose issues
@@ -112,6 +118,17 @@ def debug_info():
     
     debug_data["Template Files"] = template_files
     
+    # Check for static files
+    static_files = {}
+    if os.path.isdir(app.static_folder):
+        for root, dirs, files in os.walk(app.static_folder):
+            rel_path = os.path.relpath(root, app.static_folder)
+            if rel_path == '.':
+                rel_path = ''
+            static_files[rel_path] = files
+    
+    debug_data["Static Files"] = static_files
+    
     return jsonify(debug_data)
 
 # Ensure data directory exists
@@ -133,12 +150,22 @@ def load_json_data(filename):
         return None
 
 def load_pet_data(pet_name):
-    """Load pet data from CDN."""
+    """Load pet data from CDN or local static directory."""
     try:
-        logger.debug(f"Attempting to load pet data for {pet_name}")
+        # First try loading from local static directory
+        local_path = os.path.join('static', 'images', f"{pet_name}.json")
+        logger.debug(f"Attempting to load pet data from local path: {local_path}")
+        
+        if os.path.exists(local_path):
+            with open(local_path, 'r', encoding='utf-8') as f:
+                logger.debug(f"Successfully loaded pet data for {pet_name} from local file")
+                return json.load(f)
+        
+        # If not found locally, try CDN
+        logger.debug(f"Attempting to load pet data from CDN for {pet_name}")
         response = requests.get(f"https://zencareer.b-cdn.net/{pet_name}.json")
         if response.status_code == 200:
-            logger.debug(f"Successfully loaded pet data for {pet_name}")
+            logger.debug(f"Successfully loaded pet data for {pet_name} from CDN")
             return response.json()
         else:
             logger.warning(f"Failed to load pet data for {pet_name}. Status code: {response.status_code}")
@@ -170,6 +197,27 @@ def load_locations():
                 "author": "Jacques Cousteau"
             },
             # Add more default locations
+            {
+                "timestamp": 18,
+                "location": "Grand Canyon, USA",
+                "description": "A steep-sided canyon carved by the Colorado River",
+                "quote": "In all things of nature there is something of the marvelous.",
+                "author": "Aristotle"
+            },
+            {
+                "timestamp": 24,
+                "location": "Machu Picchu, Peru",
+                "description": "An ancient Inca citadel set high in the Andes Mountains",
+                "quote": "The journey of a thousand miles begins with one step.",
+                "author": "Lao Tzu"
+            },
+            {
+                "timestamp": 30,
+                "location": "Serengeti National Park, Tanzania",
+                "description": "Home to the greatest wildlife spectacle on Earth",
+                "quote": "The world is a book and those who do not travel read only one page.",
+                "author": "Saint Augustine"
+            }
         ]
     return locations_data
 
@@ -206,7 +254,36 @@ def load_questions(lang):
                     "Ensure tasks are completed efficiently"
                 ]
             },
-            # Add more default questions
+            {
+                "text": "I learn best by:",
+                "options": [
+                    "Reading and thinking about concepts",
+                    "Hands-on practice and experimentation",
+                    "Listening to explanations and discussions",
+                    "Observing others demonstrate skills",
+                    "Teaching concepts to others"
+                ]
+            },
+            {
+                "text": "When making decisions, I prioritize:",
+                "options": [
+                    "Logical analysis of facts and data",
+                    "Intuition and gut feelings",
+                    "Impact on people involved",
+                    "Practical outcomes and results",
+                    "Innovative and unconventional approaches"
+                ]
+            },
+            {
+                "text": "My ideal work environment is:",
+                "options": [
+                    "Structured and organized",
+                    "Creative and flexible",
+                    "Collaborative and team-oriented",
+                    "Independent and autonomous",
+                    "Fast-paced and challenging"
+                ]
+            }
         ]
         
     return questions
@@ -303,7 +380,7 @@ def quiz():
         # Get questions matching the language
         questions = load_questions(lang)
         
-        # Load pet data from CDN with error handling
+        # Load pet data from local files or CDN with error handling
         try:
             pet_data = load_pet_data(pet)
         except Exception as pet_error:
@@ -390,10 +467,15 @@ def payment():
         lang = session.get('language', 'en')
         country = session.get('country', 'Global')
         
+        # Get country-specific QR code if available
+        qr_code = COUNTRY_QR_CODES.get(country, None)
+        logger.debug(f"Country: {country}, QR code: {qr_code}")
+        
         return render_template(
             'payment.html',
             lang=lang,
             country=country,
+            qr_code=qr_code,
             audio_playing=session.get('audio_playing', True)
         )
     except Exception as e:
@@ -488,7 +570,7 @@ def submit_payment():
         data = request.json
         payment_method = data.get('payment_method')
         email = data.get('email')
-        logger.debug(f"Received payment submission for {email}")
+        logger.debug(f"Received payment submission for {email}, method: {payment_method}")
         
         # This would connect to a payment processor in a real implementation
         # For now, just acknowledge receipt
