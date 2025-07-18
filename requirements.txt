@@ -20,5 +20,9 @@ pytest==7.4.0
 pytest-flask==1.2.0
 flake8==6.1.0
 
-# Optional - Image Processing (if needed)
-# Pillow==10.0.0
+# Additional production requirements
+Werkzeug==2.3.7
+itsdangerous==2.1.2
+click==8.1.7
+Jinja2==3.1.2
+MarkupSafe==2.1.3

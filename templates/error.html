@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenCareer - Error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        .error-icon {
+            font-size: 4rem;
+            color: #ff9566;
+            margin-bottom: 1rem;
+        }
+        .error-message {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(255, 149, 102, 0.1);
+            border-radius: 10px;
+        }
+        .back-home {
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="error-container">
+                <div class="error-icon">⚠️</div>
+                <h1 class="main-title">Oops! Something went wrong</h1>
+                <p class="subtitle">We're sorry, but we encountered an error while processing your request.</p>
+                
+                <div class="error-message">
+                    <p>{{ error }}</p>
+                </div>
+                
+                <div class="back-home">
+                    <a href="{{ url_for('welcome') }}" class="cta-button">Return to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Report error to console for debugging
+        console.error("Application error:", "{{ error }}");
+    </script>
+</body>
+</html>
